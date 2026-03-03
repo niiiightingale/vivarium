@@ -1,19 +1,92 @@
 [gd_scene format=3 uid="uid://o76d02en4m6o"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1305s"]
-transparency = 1
+[ext_resource type="Shader" uid="uid://ch60cpg3uiu3l" path="res://Soilshader.gdshader" id="1_3mqji"]
+[ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://SoilManager.gd" id="1_rpqi1"]
+[ext_resource type="Texture2D" uid="uid://ciss6yoptkv6e" path="res://coast_sand_rocks_02_nor_gl_4k.jpg" id="2_x4av3"]
+[ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3mqji"]
-albedo_color = Color(0.34117648, 0.24705882, 1, 1)
+[sub_resource type="Environment" id="Environment_1305s"]
 
-[node name="Node3D" type="Node3D" unique_id=1910372508]
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_3mqji"]
+dof_blur_amount = 0.09
 
-[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1065732030]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-material_override = SubResource("StandardMaterial3D_1305s")
-size = Vector3(5, 5, 5)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rpqi1"]
+render_priority = 0
+shader = ExtResource("1_3mqji")
+shader_parameter/height_scale = 1.0
+shader_parameter/soil_default_color = Color(0.1, 0.08, 0.07, 1)
+shader_parameter/soil_default_roughness = 0.25
+shader_parameter/albedo = Color(0, 0, 0, 1)
+shader_parameter/albedo_texture_size = Vector2i(0, 0)
+shader_parameter/point_size = 0.0
+shader_parameter/roughness = 0.0
+shader_parameter/metallic_texture_channel = Vector4(0, 0, 0, 0)
+shader_parameter/specular = 0.0
+shader_parameter/metallic = 0.0
+shader_parameter/texture_normal = ExtResource("2_x4av3")
+shader_parameter/normal_scale = 1.000000807500001
+shader_parameter/uv1_scale = Vector3(0, 0, 0)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(0, 0, 0)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/water_level_threshold = 0.02
+shader_parameter/drying_start_height = 0.1
+shader_parameter/fully_dry_height = 0.5
+shader_parameter/color_puddle = Color(0.01, 0.01, 0.02, 1)
+shader_parameter/color_wet_mud = Color(0.1, 0.08, 0.07, 1)
+shader_parameter/color_dry_earth = Color(0.4, 0.4, 0.35, 1)
+shader_parameter/roughness_puddle = 0.05
+shader_parameter/roughness_wet_mud = 0.3
+shader_parameter/roughness_dry_earth = 0.85
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=394118809]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.248194, 0)
-material_override = SubResource("StandardMaterial3D_3mqji")
-size = Vector3(0.1, 0.1, 0.1)
+[sub_resource type="PlaneMesh" id="PlaneMesh_x4av3"]
+material = SubResource("ShaderMaterial_rpqi1")
+size = Vector2(5, 5)
+subdivide_width = 100
+subdivide_depth = 100
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_uxrcv"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_rf2cd"]
+
+[node name="Terrarium" type="Node3D" unique_id=1910372508]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=497509122]
+environment = SubResource("Environment_1305s")
+camera_attributes = SubResource("CameraAttributesPractical_3mqji")
+
+[node name="SoilSystem" type="Node3D" parent="." unique_id=1573332195]
+script = ExtResource("1_rpqi1")
+brush_radius = 1.0
+brush_strength = 0.005
+
+[node name="PlaneMesh" type="MeshInstance3D" parent="SoilSystem" unique_id=1349472380]
+mesh = SubResource("PlaneMesh_x4av3")
+
+[node name="SoilBody" type="StaticBody3D" parent="SoilSystem" unique_id=1407309881]
+
+[node name="SoilCollision" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=885626742]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=848446816]
+transform = Transform3D(1, 0, 0, 0, -0.86141646, 0.5078992, 0, -0.5078992, -0.86141646, 0, 3.8562012, 0)
+shadow_enabled = true
+shadow_bias = 3.0
+shadow_normal_bias = 4.027
+sky_mode = 1
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
+script = ExtResource("4_uxrcv")
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 20)
+fov = 35.0
+near = 0.001
+
+[node name="CSGSphere3D" type="RigidBody3D" parent="." unique_id=2028749424]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 33.081936, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CSGSphere3D" unique_id=199521]
+shape = SubResource("SphereShape3D_uxrcv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CSGSphere3D" unique_id=753724587]
+mesh = SubResource("SphereMesh_rf2cd")
