@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://o76d02en4m6o"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1305s"]
+transparency = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3mqji"]
+albedo_color = Color(0.34117648, 0.24705882, 1, 1)
+
+[node name="Node3D" type="Node3D" unique_id=1910372508]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1065732030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+material_override = SubResource("StandardMaterial3D_1305s")
+size = Vector3(5, 5, 5)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=394118809]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.248194, 0)
+material_override = SubResource("StandardMaterial3D_3mqji")
+size = Vector3(0.1, 0.1, 0.1)
