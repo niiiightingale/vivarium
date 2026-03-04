@@ -1,104 +1,103 @@
-// NOTE: Shader automatically converted from Godot Engine 4.6.1.stable's StandardMaterial3D.
-
 shader_type spatial;
 
+render_mode cull_back, depth_draw_opaque;
 
-render_mode cull_disabled, depth_draw_opaque;
+// ==========================================
+// 1. 形状控制参数
+// ==========================================
+uniform float min_top_height : hint_range(0.0, 2.0) = 0.6;    // 顶面默认起始高度
+uniform float min_bottom_height : hint_range(-1.0, 1.0) = 0.0; // 【新增】底面默认起始高度
 
-// 接收外部传进来的参数
 uniform sampler2D height_map : hint_default_black, filter_linear, repeat_disable;
-uniform float height_scale = 1.0; // 隆起的高低倍率，方便随时调节
-uniform vec3 soil_default_color : source_color = vec3(0.1, 0.08, 0.07); // 湿漉漉的黑褐色
-uniform float soil_default_roughness = 0.25; // 反光度
+uniform float height_scale = 1.0;
 
-uniform vec4 albedo : source_color;
-uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
-uniform ivec2 albedo_texture_size;
-uniform float point_size : hint_range(0.1, 128.0, 0.1);
+uniform sampler2D bottom_shape_map : hint_default_black, filter_linear, repeat_disable;
+uniform float bottom_scale = 0.5; 
 
-uniform float roughness : hint_range(0.0, 1.0);
-uniform sampler2D texture_metallic : hint_default_white, filter_linear_mipmap, repeat_enable;
-uniform vec4 metallic_texture_channel;
-uniform sampler2D texture_roughness : hint_roughness_r, filter_linear_mipmap, repeat_enable;
+const float physical_size = 5.0;  
 
-uniform float specular : hint_range(0.0, 1.0, 0.01);
-uniform float metallic : hint_range(0.0, 1.0, 0.01);
+// ==========================================
+// 2. 独立的全局水分系统
+// ==========================================
+uniform float global_moisture : hint_range(0.0, 1.0) = 0.5; 
 
-uniform sampler2D texture_normal : hint_roughness_normal, filter_linear_mipmap, repeat_enable;
-uniform float normal_scale : hint_range(-16.0, 16.0);
+uniform vec3 color_dry_earth : source_color = vec3(0.4, 0.4, 0.35); 
+uniform vec3 color_wet_mud : source_color = vec3(0.1, 0.08, 0.07);  
+uniform vec3 color_puddle : source_color = vec3(0.01, 0.01, 0.02);  
+uniform vec3 color_side_dirt : source_color = vec3(0.08, 0.06, 0.05);
 
-uniform vec3 uv1_scale;
-uniform vec3 uv1_offset;
-uniform vec3 uv2_scale;
-uniform vec3 uv2_offset;
+uniform float roughness_dry_earth = 0.85; 
+uniform float roughness_wet_mud = 0.3;    
+uniform float roughness_puddle = 0.05;
 
-group_uniforms EcoSystem;
-// 1. 水位线高度 (低于这个高度会形成积水视觉)
-uniform float water_level_threshold = 0.02; 
-// 2. 干燥开始高度 (高于这个高度泥土开始发灰)
-uniform float drying_start_height = 0.1;
-// 3. 完全干燥高度 (高于这个高度泥土完全变灰)
-uniform float fully_dry_height = 0.5;
+// ==========================================
+// 3. 法线贴图系统 
+// ==========================================
+uniform sampler2D top_normal_map : hint_normal, filter_linear_mipmap, repeat_enable;
+uniform float top_normal_scale : hint_range(-16.0, 16.0) = 1.0;
+uniform vec2 top_uv_scale = vec2(1.0, 1.0); 
 
-// 【新增】三种状态的颜色
-uniform vec3 color_puddle : source_color = vec3(0.01, 0.01, 0.02); // 极深蓝黑 (积水)
-uniform vec3 color_wet_mud : source_color = vec3(0.1, 0.08, 0.07); // 深黑褐色 (湿泥)
-uniform vec3 color_dry_earth : source_color = vec3(0.4, 0.4, 0.35); // 浅灰褐色 (干土)
+uniform sampler2D side_normal_map : hint_normal, filter_linear_mipmap, repeat_enable;
+uniform float side_normal_scale : hint_range(-16.0, 16.0) = 1.0;
+uniform vec2 side_uv_scale = vec2(1.0, 1.0); 
 
-// 【新增】三种状态的粗糙度
-uniform float roughness_puddle = 0.05;   // 极光滑 (水面反射)
-uniform float roughness_wet_mud = 0.3;    // 较光滑 (湿泥反光)
-uniform float roughness_dry_earth = 0.85; // 很粗糙 (干土漫反射)
+varying vec3 v_normal;
+varying vec3 v_world_pos; 
 
-varying float v_world_height; // 用来把 Y 轴高度从 vertex 传给 fragment
 void vertex() {
-    // 1. 读取高度图在当前坐标 (UV) 的红色通道值
-    float h = texture(height_map, UV).r;
+    vec2 global_uv = (VERTEX.xz / physical_size) + 0.5;
     
-    // 2. 将网格的顶点 (VERTEX) 沿着 Y 轴 (向上) 抬升！
-    VERTEX.y += h * height_scale;
-	v_world_height = VERTEX.y;
+    // 1. 【修改】底面目标高度 = 新增的底面默认高度 + 烘焙高度图起伏
+    float target_bottom = min_bottom_height + (texture(bottom_shape_map, global_uv).r * bottom_scale);
+    
+    // 2. 顶面目标高度 = 顶面默认高度 + 笔刷隆起偏移
+    float top_offset = texture(height_map, global_uv).r * height_scale;
+    float target_top = min_top_height + top_offset; 
+    
+    // 3. 空间插值，让 BoxMesh 撑开在顶底之间
+    float normalized_y = VERTEX.y + 0.5;
+    VERTEX.y = mix(target_bottom, target_top, normalized_y);
+    
+    v_normal = NORMAL;
+    v_world_pos = VERTEX; 
 }
 
 void fragment() {
-	vec2 base_uv = UV;
+    vec3 surface_color;
+    float surface_roughness;
+    
+    if (global_moisture < 0.5) {
+        float factor = global_moisture * 2.0;
+        surface_color = mix(color_dry_earth, color_wet_mud, factor);
+        surface_roughness = mix(roughness_dry_earth, roughness_wet_mud, factor);
+    } else {
+        float factor = (global_moisture - 0.5) * 2.0;
+        surface_color = mix(color_wet_mud, color_puddle, factor);
+        surface_roughness = mix(roughness_wet_mud, roughness_puddle, factor);
+    }
+    
+    float is_top = smoothstep(0.4, 0.8, abs(v_normal.y));
+    vec3 side_color = mix(color_dry_earth * 0.5, color_side_dirt, global_moisture);
+    
+    ALBEDO = mix(side_color, surface_color, is_top);
+    ROUGHNESS = mix(0.9, surface_roughness, is_top);
+    
+    float current_metallic = mix(0.0, 0.1, max(0.0, (global_moisture - 0.5) * 2.0));
+    METALLIC = mix(0.0, current_metallic, is_top);
 
-	vec4 albedo_tex = texture(texture_albedo, base_uv);
-	ALBEDO = albedo.rgb * albedo_tex.rgb;
+    vec2 top_uv = ((v_world_pos.xz / physical_size) + 0.5) * top_uv_scale;
 
-	float metallic_tex = dot(texture(texture_metallic, base_uv), metallic_texture_channel);
-	METALLIC = metallic_tex * metallic;
-	SPECULAR = specular;
+    vec3 abs_n = abs(v_normal);
+    vec2 side_uv;
+    if (abs_n.x > abs_n.z) {
+        side_uv = v_world_pos.zy * side_uv_scale;
+    } else {
+        side_uv = v_world_pos.xy * side_uv_scale;
+    }
 
-	vec4 roughness_texture_channel = vec4(1.0, 0.0, 0.0, 0.0);
-	float roughness_tex = dot(texture(texture_roughness, base_uv), roughness_texture_channel);
-	ROUGHNESS = roughness_tex * roughness;
+    vec3 top_normal_tex = texture(top_normal_map, top_uv).rgb;
+    vec3 side_normal_tex = texture(side_normal_map, side_uv).rgb;
 
-	// Normal Map: Enabled
-	NORMAL_MAP = texture(texture_normal, base_uv).rgb;
-	NORMAL_MAP_DEPTH = normal_scale;
-	
-	NORMAL = normalize(cross(dFdy(VERTEX), dFdx(VERTEX)));
-	
-	vec3 final_color;
-	float final_roughness;
-	
-	// 1. 计算【干燥度】(0.0=湿泥, 1.0=完全干土)
-	// 使用 smoothstep 在指定高度区间进行丝滑过渡
-	float dry_factor = smoothstep(drying_start_height, fully_dry_height, v_world_height);
-	
-	// 先计算泥土本身的干湿混合
-	vec3 soil_color = mix(color_wet_mud, color_dry_earth, dry_factor);
-	float soil_roughness = mix(roughness_wet_mud, roughness_dry_earth, dry_factor);
-	
-	// 2. 计算【积水度】(低于阈值积水)
-	// 高度越接近底部，puddle_factor 越接近 1.0
-	float puddle_factor = smoothstep(water_level_threshold, 0.0, v_world_height);
-	
-	// 3. 最终混合：在泥土之上覆盖水坑效果
-	ALBEDO = mix(soil_color, color_puddle, puddle_factor);
-	ROUGHNESS = mix(soil_roughness, roughness_puddle, puddle_factor);
-	
-	// 可选：给水坑加一点点金属感，让反光更锐利，更像水面
-	METALLIC = mix(0.0, 0.1, puddle_factor);
+    NORMAL_MAP = mix(side_normal_tex, top_normal_tex, is_top);
+    NORMAL_MAP_DEPTH = mix(side_normal_scale, top_normal_scale, is_top);
 }

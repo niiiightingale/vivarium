@@ -2,52 +2,71 @@
 
 [ext_resource type="Shader" uid="uid://ch60cpg3uiu3l" path="res://Soilshader.gdshader" id="1_3mqji"]
 [ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://SoilManager.gd" id="1_rpqi1"]
-[ext_resource type="Texture2D" uid="uid://ciss6yoptkv6e" path="res://coast_sand_rocks_02_nor_gl_4k.jpg" id="2_x4av3"]
+[ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://底面高度图.png" id="3_rf2cd"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
+[ext_resource type="Texture2D" uid="uid://kymjss86qwdm" path="res://GroundDirtRocky020_NRM_2K.jpg" id="5_5crlr"]
+[ext_resource type="PackedScene" uid="uid://nskabnxc7xdg" path="res://缸体以及环境.tscn" id="5_rf2cd"]
+
+[sub_resource type="Gradient" id="Gradient_rf2cd"]
+offsets = PackedFloat32Array(0.14839181, 0.3121345, 1)
+colors = PackedColorArray(0.16, 0.16, 0.16, 1, 0.16901729, 0.2177749, 0.1690343, 1, 0.8571295, 0.99999934, 0.8878352, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_a814b"]
+gradient = SubResource("Gradient_rf2cd")
+fill_from = Vector2(0.5194223, 1)
+fill_to = Vector2(0.499502, 0)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_5crlr"]
+panorama = SubResource("GradientTexture2D_a814b")
+
+[sub_resource type="Sky" id="Sky_hbc2u"]
+sky_material = SubResource("PanoramaSkyMaterial_5crlr")
 
 [sub_resource type="Environment" id="Environment_1305s"]
+background_mode = 2
+background_color = Color(0.778018, 0.7942319, 0.7959166, 1)
+background_energy_multiplier = 1.2
+sky = SubResource("Sky_hbc2u")
+adjustment_enabled = true
+adjustment_brightness = 1.4
+adjustment_contrast = 1.1
+adjustment_saturation = 1.1
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_3mqji"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 4.5
+dof_blur_far_transition = 20.0
 dof_blur_amount = 0.09
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_rpqi1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uxrcv"]
 render_priority = 0
 shader = ExtResource("1_3mqji")
+shader_parameter/min_top_height = 0.5830000276925
+shader_parameter/min_bottom_height = -0.125999958485
 shader_parameter/height_scale = 1.0
-shader_parameter/soil_default_color = Color(0.1, 0.08, 0.07, 1)
-shader_parameter/soil_default_roughness = 0.25
-shader_parameter/albedo = Color(0, 0, 0, 1)
-shader_parameter/albedo_texture_size = Vector2i(0, 0)
-shader_parameter/point_size = 0.0
-shader_parameter/roughness = 0.0
-shader_parameter/metallic_texture_channel = Vector4(0, 0, 0, 0)
-shader_parameter/specular = 0.0
-shader_parameter/metallic = 0.0
-shader_parameter/texture_normal = ExtResource("2_x4av3")
-shader_parameter/normal_scale = 1.000000807500001
-shader_parameter/uv1_scale = Vector3(0, 0, 0)
-shader_parameter/uv1_offset = Vector3(0, 0, 0)
-shader_parameter/uv2_scale = Vector3(0, 0, 0)
-shader_parameter/uv2_offset = Vector3(0, 0, 0)
-shader_parameter/water_level_threshold = 0.02
-shader_parameter/drying_start_height = 0.1
-shader_parameter/fully_dry_height = 0.5
-shader_parameter/color_puddle = Color(0.01, 0.01, 0.02, 1)
-shader_parameter/color_wet_mud = Color(0.1, 0.08, 0.07, 1)
-shader_parameter/color_dry_earth = Color(0.4, 0.4, 0.35, 1)
-shader_parameter/roughness_puddle = 0.05
-shader_parameter/roughness_wet_mud = 0.3
+shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
+shader_parameter/bottom_scale = 0.5
+shader_parameter/global_moisture = 0.0
+shader_parameter/color_dry_earth = Color(0.103700854, 0.035541993, 0.008452566, 1)
+shader_parameter/color_wet_mud = Color(0.2569428, 0.21101296, 0.19570503, 1)
+shader_parameter/color_puddle = Color(0.12831527, 0.07442988, 0.041761227, 1)
+shader_parameter/color_side_dirt = Color(0.08, 0.06, 0.05, 1)
 shader_parameter/roughness_dry_earth = 0.85
+shader_parameter/roughness_wet_mud = 0.3
+shader_parameter/roughness_puddle = 0.05
+shader_parameter/top_normal_map = ExtResource("5_5crlr")
+shader_parameter/top_normal_scale = 0.7850007972874984
+shader_parameter/top_uv_scale = Vector2(0.3, 0.3)
+shader_parameter/side_normal_map = ExtResource("5_5crlr")
+shader_parameter/side_normal_scale = 0.6170007893075002
+shader_parameter/side_uv_scale = Vector2(0.3, 0.3)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_x4av3"]
-material = SubResource("ShaderMaterial_rpqi1")
-size = Vector2(5, 5)
+[sub_resource type="BoxMesh" id="BoxMesh_rpqi1"]
+material = SubResource("ShaderMaterial_uxrcv")
+size = Vector3(5, 1, 5)
 subdivide_width = 100
+subdivide_height = 3
 subdivide_depth = 100
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_uxrcv"]
-
-[sub_resource type="SphereMesh" id="SphereMesh_rf2cd"]
 
 [node name="Terrarium" type="Node3D" unique_id=1910372508]
 
@@ -61,32 +80,38 @@ brush_radius = 1.0
 brush_strength = 0.005
 
 [node name="PlaneMesh" type="MeshInstance3D" parent="SoilSystem" unique_id=1349472380]
-mesh = SubResource("PlaneMesh_x4av3")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05233252, 0)
+mesh = SubResource("BoxMesh_rpqi1")
 
 [node name="SoilBody" type="StaticBody3D" parent="SoilSystem" unique_id=1407309881]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
 [node name="SoilCollision" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=885626742]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=848446816]
-transform = Transform3D(1, 0, 0, 0, -0.86141646, 0.5078992, 0, -0.5078992, -0.86141646, 0, 3.8562012, 0)
-shadow_enabled = true
-shadow_bias = 3.0
-shadow_normal_bias = 4.027
-sky_mode = 1
-
 [node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
 script = ExtResource("4_uxrcv")
+min_zoom = 5.0
+max_zoom = 20.0
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 20)
 fov = 35.0
 near = 0.001
 
-[node name="CSGSphere3D" type="RigidBody3D" parent="." unique_id=2028749424]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 33.081936, 0)
+[node name="OmniLight3D" type="SpotLight3D" parent="CameraPivot/Camera3D" unique_id=738878655]
+light_color = Color(1, 0.8875, 0.73, 1)
+light_energy = 20.0
+light_indirect_energy = 1.957
+shadow_enabled = true
+spot_range = 10.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CSGSphere3D" unique_id=199521]
-shape = SubResource("SphereShape3D_uxrcv")
+[node name="缸体以及环境" parent="." unique_id=277480888 instance=ExtResource("5_rf2cd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00053209066, 0.0045621395, 0.000880003)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CSGSphere3D" unique_id=753724587]
-mesh = SubResource("SphereMesh_rf2cd")
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=717750952]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3689947, 0)
+light_color = Color(1, 0.8875, 0.73, 1)
+light_energy = 5.314
+light_indirect_energy = 1.957
+shadow_enabled = true
+omni_range = 7.487985

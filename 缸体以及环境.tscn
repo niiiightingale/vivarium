@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://nskabnxc7xdg"]
+
+[ext_resource type="PackedScene" uid="uid://0ts3wjvavask" path="res://缸体以及环境.glb" id="1_o6fti"]
+[ext_resource type="Shader" uid="uid://bp5unujafuej0" path="res://Glass.gdshader" id="2_xgecj"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qu51n"]
+render_priority = 0
+shader = ExtResource("2_xgecj")
+shader_parameter/glass_color = Color(1.028095, 1.028095, 1.028095, 1)
+shader_parameter/roughness = 0.0
+shader_parameter/ior = 1.2080000098800001
+shader_parameter/edge_darkness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xgecj"]
+albedo_color = Color(0.15631491, 0.15631491, 0.15631491, 1)
+metallic = 1.0
+roughness = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qu51n"]
+albedo_color = Color(0.3826233, 0.3247774, 0.23160887, 1)
+roughness = 0.73
+
+[node name="缸体以及环境" unique_id=277480888 instance=ExtResource("1_o6fti")]
+
+[node name="缸体" parent="." index="0" unique_id=1154529]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_qu51n")
+
+[node name="纱网" parent="." index="1" unique_id=1264978510]
+surface_material_override/0 = SubResource("StandardMaterial3D_xgecj")
+
+[node name="碎石" parent="." index="2" unique_id=1855369903]
+surface_material_override/0 = SubResource("StandardMaterial3D_qu51n")
