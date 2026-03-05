@@ -20,9 +20,16 @@ config/icon="res://icon.svg"
 window/size/viewport_width=2560
 window/size/viewport_height=1440
 
+[layer_names]
+
+3d_physics/layer_1="Default"
+3d_physics/layer_2="Soil"
+
 [physics]
 
+common/physics_ticks_per_second=90
 3d/physics_engine="Jolt Physics"
+common/physics_interpolation=true
 
 [rendering]
 

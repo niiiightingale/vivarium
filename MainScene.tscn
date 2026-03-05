@@ -3,9 +3,10 @@
 [ext_resource type="Shader" uid="uid://ch60cpg3uiu3l" path="res://Soilshader.gdshader" id="1_3mqji"]
 [ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://SoilManager.gd" id="1_rpqi1"]
 [ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://底面高度图.png" id="3_rf2cd"]
+[ext_resource type="Texture2D" uid="uid://bvm05t04krx6y" path="res://coast_sand_rocks_02_nor_dx_4k.jpg" id="4_5crlr"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
 [ext_resource type="Texture2D" uid="uid://kymjss86qwdm" path="res://GroundDirtRocky020_NRM_2K.jpg" id="5_5crlr"]
-[ext_resource type="PackedScene" uid="uid://nskabnxc7xdg" path="res://缸体以及环境.tscn" id="5_rf2cd"]
+[ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://缸体和环境.tscn" id="7_5crlr"]
 
 [sub_resource type="Gradient" id="Gradient_rf2cd"]
 offsets = PackedFloat32Array(0.14839181, 0.3121345, 1)
@@ -54,7 +55,7 @@ shader_parameter/color_side_dirt = Color(0.08, 0.06, 0.05, 1)
 shader_parameter/roughness_dry_earth = 0.85
 shader_parameter/roughness_wet_mud = 0.3
 shader_parameter/roughness_puddle = 0.05
-shader_parameter/top_normal_map = ExtResource("5_5crlr")
+shader_parameter/top_normal_map = ExtResource("4_5crlr")
 shader_parameter/top_normal_scale = 0.7850007972874984
 shader_parameter/top_uv_scale = Vector2(0.3, 0.3)
 shader_parameter/side_normal_map = ExtResource("5_5crlr")
@@ -68,6 +69,18 @@ subdivide_width = 100
 subdivide_height = 3
 subdivide_depth = 100
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_5crlr"]
+size = Vector3(5.1497803, 0.6610718, 5.0567627)
+
+[sub_resource type="Gradient" id="Gradient_5crlr"]
+offsets = PackedFloat32Array(0, 0.7381841, 1)
+colors = PackedColorArray(0.23213318, 0.4192848, 9.62615e-08, 0.4862745, 1, 1, 1, 0, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_hbc2u"]
+gradient = SubResource("Gradient_5crlr")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
 [node name="Terrarium" type="Node3D" unique_id=1910372508]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=497509122]
@@ -78,15 +91,31 @@ camera_attributes = SubResource("CameraAttributesPractical_3mqji")
 script = ExtResource("1_rpqi1")
 brush_radius = 1.0
 brush_strength = 0.005
+clumps_per_second = 100.0
 
 [node name="PlaneMesh" type="MeshInstance3D" parent="SoilSystem" unique_id=1349472380]
+physics_interpolation_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05233252, 0)
+layers = 3
 mesh = SubResource("BoxMesh_rpqi1")
 
 [node name="SoilBody" type="StaticBody3D" parent="SoilSystem" unique_id=1407309881]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+collision_layer = 3
 
 [node name="SoilCollision" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=885626742]
+physics_interpolation_mode = 1
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=373154117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0.0029907227)
+shape = SubResource("BoxShape3D_5crlr")
+
+[node name="PlacementCursor" type="Decal" parent="SoilSystem" unique_id=1515158654]
+layers = 2
+size = Vector3(1, 0.5, 1)
+texture_albedo = SubResource("GradientTexture2D_hbc2u")
+cull_mask = 1047554
 
 [node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
 script = ExtResource("4_uxrcv")
@@ -94,7 +123,7 @@ min_zoom = 5.0
 max_zoom = 20.0
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
-transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 20)
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.052, 20)
 fov = 35.0
 near = 0.001
 
@@ -105,13 +134,13 @@ light_indirect_energy = 1.957
 shadow_enabled = true
 spot_range = 10.0
 
-[node name="缸体以及环境" parent="." unique_id=277480888 instance=ExtResource("5_rf2cd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00053209066, 0.0045621395, 0.000880003)
-
-[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=717750952]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.3689947, 0)
+[node name="OmniLight3D" type="SpotLight3D" parent="." unique_id=1780966752]
+transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 4.445097, 0.0027054248)
 light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 5.314
+light_energy = 16.0
 light_indirect_energy = 1.957
 shadow_enabled = true
-omni_range = 7.487985
+spot_range = 7.53442
+
+[node name="缸体和环境" parent="." unique_id=1719478435 instance=ExtResource("7_5crlr")]
+visible = false
