@@ -1,0 +1,203 @@
+[gd_scene format=4 uid="uid://o76d02en4m6o"]
+
+[ext_resource type="Shader" uid="uid://ch60cpg3uiu3l" path="res://Soilshader.gdshader" id="1_3mqji"]
+[ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://SoilManager.gd" id="1_rpqi1"]
+[ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://底面高度图.png" id="3_rf2cd"]
+[ext_resource type="Texture2D" uid="uid://bvm05t04krx6y" path="res://coast_sand_rocks_02_nor_dx_4k.jpg" id="4_5crlr"]
+[ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
+[ext_resource type="Texture2D" uid="uid://kymjss86qwdm" path="res://GroundDirtRocky020_NRM_2K.jpg" id="5_5crlr"]
+[ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://缸体和环境.tscn" id="7_5crlr"]
+
+[sub_resource type="Gradient" id="Gradient_rf2cd"]
+offsets = PackedFloat32Array(0.14839181, 0.3121345, 1)
+colors = PackedColorArray(0.16, 0.16, 0.16, 1, 0.16901729, 0.2177749, 0.1690343, 1, 0.8571295, 0.99999934, 0.8878352, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_a814b"]
+gradient = SubResource("Gradient_rf2cd")
+fill_from = Vector2(0.5194223, 1)
+fill_to = Vector2(0.499502, 0)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_5crlr"]
+panorama = SubResource("GradientTexture2D_a814b")
+
+[sub_resource type="Sky" id="Sky_hbc2u"]
+sky_material = SubResource("PanoramaSkyMaterial_5crlr")
+
+[sub_resource type="Environment" id="Environment_1305s"]
+background_mode = 2
+background_color = Color(0.778018, 0.7942319, 0.7959166, 1)
+background_energy_multiplier = 1.2
+sky = SubResource("Sky_hbc2u")
+adjustment_enabled = true
+adjustment_brightness = 1.4
+adjustment_contrast = 1.1
+adjustment_saturation = 1.1
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_3mqji"]
+dof_blur_far_distance = 4.5
+dof_blur_far_transition = 20.0
+dof_blur_amount = 0.09
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uxrcv"]
+render_priority = 0
+shader = ExtResource("1_3mqji")
+shader_parameter/min_top_height = 0.5830000276925
+shader_parameter/min_bottom_height = -0.125999958485
+shader_parameter/height_scale = 1.0
+shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
+shader_parameter/bottom_scale = 0.5
+shader_parameter/global_moisture = 0.0
+shader_parameter/color_dry_earth = Color(0.103700854, 0.035541993, 0.008452566, 1)
+shader_parameter/color_wet_mud = Color(0.2569428, 0.21101296, 0.19570503, 1)
+shader_parameter/color_puddle = Color(0.12831527, 0.07442988, 0.041761227, 1)
+shader_parameter/color_side_dirt = Color(0.08, 0.06, 0.05, 1)
+shader_parameter/roughness_dry_earth = 0.85
+shader_parameter/roughness_wet_mud = 0.3
+shader_parameter/roughness_puddle = 0.05
+shader_parameter/top_normal_map = ExtResource("4_5crlr")
+shader_parameter/top_normal_scale = 0.7850007972874984
+shader_parameter/top_uv_scale = Vector2(0.3, 0.3)
+shader_parameter/side_normal_map = ExtResource("5_5crlr")
+shader_parameter/side_normal_scale = 0.6170007893075002
+shader_parameter/side_uv_scale = Vector2(0.3, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rpqi1"]
+material = SubResource("ShaderMaterial_uxrcv")
+size = Vector3(5, 1, 5)
+subdivide_width = 100
+subdivide_height = 3
+subdivide_depth = 100
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5crlr"]
+size = Vector3(5.1497803, 0.6610718, 5.0567627)
+
+[sub_resource type="Gradient" id="Gradient_5crlr"]
+offsets = PackedFloat32Array(0, 0.7381841, 1)
+colors = PackedColorArray(0.23213318, 0.4192848, 9.62615e-08, 0.4862745, 1, 1, 1, 0, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_hbc2u"]
+gradient = SubResource("Gradient_5crlr")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5crlr"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+scale_min = 0.5
+scale_max = 1.1999999
+collision_mode = 1
+collision_friction = 0.8
+collision_bounce = 0.1
+collision_use_scale = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5lpu"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_p7e40"]
+_surfaces = [{
+"aabb": AABB(-0.035247367, -0.026593814, -0.029427359, 0.06437047, 0.055771947, 0.05605205),
+"format": 34896613377,
+"index_count": 240,
+"index_data": PackedByteArray("AAAWABcAAAAYABYAFwAMAAAAAAAHABgAAAAMAAcAGQAMABcABwAVABgAGAAaABYADAAbAAcAGAAVAAgAGAAIABoABwAcABUABwAbABwADAADABsAGQADAAwAGwAdABwAHAAeABUAHAAdAB4AHwAdABsAAwAfABsAGQAgAAMAAwAgAB8AHgAUABUAFQAUAAgAHQAhAB4AHwABAB0AHQABACEAHwAiAAEAIAAiAB8AAQAQACEAIgAQAAEAHgAhAAIAHgACABQAEAAjACEAIQAjAAIACgAQACIAIAAkACIAJAAKACIADQAkACAADQAgABkADgAKACQADQAOACQACgAGABAAEAAGACMABQANABkABQAZABcADwAOAA0ABQAPAA0AJQAKAA4AJQAGAAoAFwAmAAUAJgAPAAUAFgAmABcADwALAA4ACwAlAA4AJwAPACYAJwALAA8AFgAJACYACQAnACYAFgAaAAkAJwAoAAsAKAAlAAsACQASACcAEgAoACcAGgASAAkAEQAlACgAEQAGACUAIwAGABEABAARACgAEgAEACgAIwARABMAEwARAAQAAgAjABMAFAACABMAKQASABoAKQAEABIAKQATAAQAFAATACkACAApABoACAAUACkA"),
+"lods": [0.010368239, PackedByteArray("AAAMAAcADAADAAcAAwABAAcADAANAAMAAwAKAAEADQAKAAMABQANAAwABQAMAAAADQAOAAoABQAPAA0ADwAOAA0ACgAQAAEACQAPAAUAAAAJAAUADwALAA4ACwAKAA4ACQALAA8AAQAQAAIABwABAAIACgAGABAACwAGAAoAEAAGAAIACQARAAsAEQAGAAsAEgARAAkAAAASAAkABgARABMAAgAGABMAEgAEABEAEwARAAQAAAAIABIACAAEABIAFAATAAQACAAUAAQAFAACABMAAAAVAAgAFQAUAAgAAgAUABUABwAVAAAABwACABUA"), 0.021196784, PackedByteArray("AAADAAcAAwABAAcABwAIAAAABwABAAIABwACAAgAAQAGAAIACAACAAQAAgAGAAQAAAAIAAkACAAEAAkABQADAAAAAAAJAAUAAwAKAAEACgAGAAEABQAKAAMABAAGAAsACQAEAAsACwAGAAoACQALAAUACwAKAAUA"), 0.050892547, PackedByteArray("AAABAAIAAwABAAAAAAACAAQABQADAAAAAAAEAAUAAgAGAAQABAAGAAUAAQAGAAIABQAGAAMAAwAGAAEA")],
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 42,
+"vertex_data": PackedByteArray("2Xo6BsagAAAStgWtwAkAACg2GbKGIwAAZNl4PfY+AACcHXSuecoAAMrGJDewwwAAPZH//6eGAADqc9wZJSYAAEwreUZPgQAAV2x0Qob4AADA5mjwfpIAAOuqsKzA8QAALrpqBWlZAAD//8WEmpwAAHfip+JEzAAA2semhf//AADTpSrmAF4AANpexvf0xQAA0kJvYofwAADNIqjNtI8AAAAA6m59WgAAJi2qS7NAAAA8iQAAStAAAK2uPhRarQAAQm/OCemNAABH2fExMYQAAKpGKzfmvwAA2qU+LK8UAADAcTBQpB0AALyPX3cAAAAAYkraehQjAACU1dVhNRwAADP6jHpVXAAApH01s2cxAACA5sy1K1IAAAJu5f7FbAAA5fKDtn2GAAD1oPfW8MUAAMKtrClk4wAA/n7uYd/yAAD9a9C4vuwAALUoZnedpwAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_5crlr"]
+resource_name = "泥土颗粒_棱角球"
+_surfaces = [{
+"aabb": AABB(-0.035247367, -0.026593814, -0.029427359, 0.06437047, 0.055771947, 0.05605205),
+"attribute_data": PackedByteArray("Lbr//6KLYK8tumCv6KIRh7no//+56GCvc9ERh1x0r9eii///XHQRh9FFr9cWXf//iy7//wAAYK9FFxGHRZfX67loOZtFF6/Xiy5gr3RROZvRRRGHiq7X63PRr9f//6/X/3/X6/9/OZt0UYjDuWjX69FFYK8uOojDogs5m6ILiMNc9IjD0MWIw3PRYK8W3TmbLbqv10WXOZvoItfrLjrX64sur9foIojDRRdgr+giOZsuOjmbFl1grxZdr9d0UdfruWiIw1x0YK//f4jDoouv1+iir9dFl4jD6KJgr4quOZuKrojD0MXX69DFOZsW3YjDueiv1xbd1+tc9Nfr"),
+"format": 34896613399,
+"index_count": 240,
+"index_data": PackedByteArray("DAAmACcAJgAoACcAJgARACgAJwAoAAoAEQApACgAEQAfACkAKAAdAAoAKQAdACgAHwAqACkAHwANACoADQAeACoAHgArACoAHgAOACsAKgArABIAKQAqABIAKQASAB0AHQASABwAEgAsABwALAATABwALAAUABMAHAATAC0AHQAcABoAGgAcAC0ACgAdABoACgAaAC4ACgAuAC8ALgAbAC8ALwAbAAsALgAHABsAGgAwAC4ALgAwAAcAGgAtADAAMAAtADEALQAQADEAEAAZADEAEAAJABkAMQAZAAEAMAAxADIAMgAxAAEABwAwADIABwAyADMAGAAHADMAGAAzAA8ACAAYAA8ADwAzADQAMgA1ADMAMwA1ADQAMgABADUANQABADYAAQAlADYAJQA3ADYAJQADADcANgA3AAIANQA2ADgAOAA2AAIANAA1ADgANAA4ACQAFQA0ACQAFQAkADkAAAAVADkAOQAkABYAOAAhACQAJAAhABYAOAACACEAIQACACIAAgA6ACIAOgAjACIAOgAGACMAIgAjAAUAIQAiADsAOwAiAAUAFgAhADsAOwAFACAAFgA7ADwAOwAgADwAPAAgABcAPQAWADwAPgA8ABcAPQA8AD4ABAA9AD4A"),
+"lods": [0.010368239, PackedByteArray("CAAYAA8AGAAHAA8ABwABAA8ABwAQAAEAEAAZAAEAEAAJABkAGgAQAAcAGwAaAAcAGgAcABAACgAaABsACgAbAAsAHQAcABoACgAdABoAHQASABwAEgATABwAEgAUABMAEQAdAAoAEQASAB0ADAARAAoAEQAeABIAHgAOABIAHwAeABEAHwANAB4AFgAFACAABAAWACAABAAgABcAFgAhAAUAIQAiAAUAIgAjAAUABgAjACIAAgAGACIAIQACACIAJAAhABYAAgAhACQAAAAkABYAFQAkAAAAFQACACQAFQABAAIAAQAlAAIAJQADAAIA"), 0.021196784, PackedByteArray("CAAHAA8ABwABAA8ABwAQAAEAEAAJAAEACgAQAAcACgAHAAsADAARAAoAEQASAAoAEgATAAoAEgAUABMAEQANABIADQAOABIAAQADAAIAFQABAAIAFQACABYAFQAWAAAAFgACAAUAAgAGAAUAFgAFABcABAAWABcA"), 0.050892547, PackedByteArray("AAABAAIAAQADAAIABAACAAUAAgAGAAUABwABAAgABwAJAAEACgAJAAcACgAHAAsADAANAAoADQAOAAoA")],
+"material": SubResource("StandardMaterial3D_m5lpu"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 63,
+"vertex_data": PackedByteArray("2Xo6BsagmNcStgWtwAmS9ig2GbKGI6TsPZH//6eGof7ZejoGxqD5zZwddK55ynKzPZH//6eGz91k2Xg99j6Z1dl6OgbGoNbwPZH//6eGQ+nKxiQ3sMOysNl6OgbGoAnU2Xo6Bsag2MecHXSuecpmrT2R//+nhifA6nPcGSUmNPzA5mjwfpJ91VdsdEKG+ESS66qwrMDx/5bA5mjwfpIowz2R//+nhsXB6nPcGSUmpOZMK3lGT4HBu1dsdEKG+GCYLrpqBWlZl+PTpSrmAF5O7v//xYSanJC4LrpqBWlZWtB34qfiRMxbrNrHpoX//6OU2l7G9/TFharSQm9ih/Anm9JCb2KH8EabAADqbn1a58fNIqjNtI/MxNpexvf0xfXJJi2qS7NADd7TpSrmAF6b/jyJAABK0LCyra4+FFqtD7jCrawpZOPjn/5+7mHf8gCB/WvQuL7sz5D1oPfW8MWQpvWg99bwxS+t5fKDtn2GJcRH2fExMYTQvq2uPhRaraTBM/qMelVctsyA5sy1K1JT2JTV1WE1HOHi2qU+LK8Uw/TAcTBQpB3M8byPX3cAAGz5pH01s2cxR/gCbuX+xWyX9WJK2noUI97xQm/OCemNGc4CbuX+xWx237UoZnedp42yqkYrN+a/27NCb84J6Y28xjyJAABK0Pa8ES0G1uJkEwB6i9zhNYvDuZ4lVMcPd/rNT6itqIF1hCZtbvdGa8XKDYdWnzgtT4VXHDVUZQOpoeSD7c52Tbk36VG5QwswRWWZDfnRRBPFVTtL4AlO7Ehd4p5EYNtzIavdbHYKO7+2IBRFgGYRuldzRgPLVy82QUYQy9kbm+FbstrlV7HgN2w8+OiUdM4JmmOpkFRD68WSOMehL7BtWjmOTuI5M0Us1MQXZMy4mhHjZ4Ob5Vw7w5xrGmpktzUrXDRIoITqDyul+BBpgZYMhHJwJm+XRPiDjAvynofw2lmErcqmeIn8QzeG2oqmerhFY4rkzkOP1b8xRsoDHrzK")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_p7e40")
+
+[node name="Terrarium" type="Node3D" unique_id=1910372508]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=497509122]
+environment = SubResource("Environment_1305s")
+camera_attributes = SubResource("CameraAttributesPractical_3mqji")
+
+[node name="SoilSystem" type="Node3D" parent="." unique_id=1573332195]
+script = ExtResource("1_rpqi1")
+brush_radius = 1.0
+brush_strength = 0.005
+clumps_per_second = 100.0
+
+[node name="PlaneMesh" type="MeshInstance3D" parent="SoilSystem" unique_id=1349472380]
+physics_interpolation_mode = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05233252, 0)
+layers = 3
+mesh = SubResource("BoxMesh_rpqi1")
+
+[node name="SoilBody" type="StaticBody3D" parent="SoilSystem" unique_id=1407309881]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+collision_layer = 3
+
+[node name="SoilCollision" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=885626742]
+physics_interpolation_mode = 1
+visible = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=373154117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0.0029907227)
+shape = SubResource("BoxShape3D_5crlr")
+
+[node name="PlacementCursor" type="Decal" parent="SoilSystem" unique_id=1515158654]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6788237, 0)
+layers = 2
+size = Vector3(1, 0.5, 1)
+texture_albedo = SubResource("GradientTexture2D_hbc2u")
+cull_mask = 1047554
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="SoilSystem/PlacementCursor" unique_id=1284290929]
+custom_aabb = AABB(8, 8, 8, 0, 0, 0)
+emitting = false
+amount = 500
+lifetime = 2.0
+process_material = SubResource("ParticleProcessMaterial_5crlr")
+draw_pass_1 = SubResource("ArrayMesh_5crlr")
+
+[node name="缸体和环境" parent="SoilSystem" unique_id=1719478435 instance=ExtResource("7_5crlr")]
+
+[node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="SoilSystem" unique_id=877263931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+size = Vector3(5, 4.3721924, 5)
+resolution = 3
+update_mode = 1
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
+script = ExtResource("4_uxrcv")
+min_zoom = 5.0
+max_zoom = 20.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.052, 20)
+fov = 35.0
+near = 0.001
+
+[node name="OmniLight3D" type="SpotLight3D" parent="CameraPivot/Camera3D" unique_id=738878655]
+light_color = Color(1, 0.8875, 0.73, 1)
+light_energy = 20.0
+light_indirect_energy = 1.957
+shadow_enabled = true
+spot_range = 10.0
+
+[node name="OmniLight3D" type="SpotLight3D" parent="." unique_id=1780966752]
+transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 4.445097, 0.0027054248)
+light_color = Color(1, 0.8875, 0.73, 1)
+light_energy = 16.0
+light_indirect_energy = 1.957
+shadow_enabled = true
+spot_range = 7.53442

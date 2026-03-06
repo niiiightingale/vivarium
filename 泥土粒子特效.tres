@@ -1,0 +1,16 @@
+[gd_resource type="ParticleProcessMaterial" format=3 uid="uid://cb08uonbr0c3n"]
+
+[resource]
+emission_shape = 1
+emission_sphere_radius = 0.5
+angle_min = -360.0
+angle_max = 360.00003
+radial_accel_min = -2.2351742e-06
+radial_accel_max = -2.2351742e-06
+damping_min = 4.0
+damping_max = 4.0
+scale_min = 0.5
+scale_max = 3.0
+collision_mode = 2
+sub_emitter_mode = 3
+sub_emitter_amount_at_collision = 15

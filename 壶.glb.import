@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://dboa72tbjdymg"
-path="res://.godot/imported/泥土颗粒.glb-368f370ed485a112e13c74cc97f17ede.scn"
+uid="uid://ct204l0nn2ex0"
+path="res://.godot/imported/壶.glb-5396e962edc08155f8a5e2ce2e1bc253.scn"
 
 [deps]
 
-source_file="res://泥土颗粒.glb"
-dest_files=["res://.godot/imported/泥土颗粒.glb-368f370ed485a112e13c74cc97f17ede.scn"]
+source_file="res://壶.glb"
+dest_files=["res://.godot/imported/壶.glb-5396e962edc08155f8a5e2ce2e1bc253.scn"]
 
 [params]
 
@@ -37,18 +37,6 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={
-"meshes": {
-"泥土颗粒_棱角球": {
-"generate/lightmap_uv": 0,
-"generate/lods": 0,
-"generate/shadow_meshes": 0,
-"lods/normal_merge_angle": 20.0,
-"save_to_file/enabled": true,
-"save_to_file/fallback_path": "",
-"save_to_file/path": ""
-}
-}
-}
+_subresources={}
 gltf/naming_version=2
 gltf/embedded_image_handling=1
