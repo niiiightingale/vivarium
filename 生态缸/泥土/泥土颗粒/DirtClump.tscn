@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://dd6q8ldven60e"]
 
-[ext_resource type="PhysicsMaterial" uid="uid://3h4e7wrg8gqw" path="res://PhysicalMateiral_泥土颗粒.tres" id="1_qpmh6"]
-[ext_resource type="Script" uid="uid://cvtu41oc8f631" path="res://DirtClump.gd" id="2_5oeii"]
-[ext_resource type="ArrayMesh" uid="uid://bnfo4vkd500m7" path="res://DirtClump.tres" id="3_5oeii"]
+[ext_resource type="PhysicsMaterial" uid="uid://3h4e7wrg8gqw" path="res://生态缸/泥土/泥土颗粒/PhysicalMateiral_泥土颗粒.tres" id="1_qpmh6"]
+[ext_resource type="Script" uid="uid://cvtu41oc8f631" path="res://生态缸/泥土/泥土颗粒/DirtClump.gd" id="2_5oeii"]
+[ext_resource type="ArrayMesh" uid="uid://bnfo4vkd500m7" path="res://生态缸/泥土/泥土颗粒/DirtClump.tres" id="3_5oeii"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qpmh6"]
 albedo_color = Color(0.15881893, 0.08535164, 0.060861714, 1)
@@ -12,7 +12,6 @@ roughness = 0.75
 size = Vector3(0.039760113, 0.035557747, 0.037794113)
 
 [node name="DirtClump" type="RigidBody3D" unique_id=2110330001]
-transform = Transform3D(1.925111, 0, 0, 0, 1.925111, 0, 0, 0, 1.925111, 0, 0, 0)
 physics_material_override = ExtResource("1_qpmh6")
 gravity_scale = 4.0
 continuous_cd = true

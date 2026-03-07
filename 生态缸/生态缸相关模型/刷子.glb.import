@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://ct204l0nn2ex0"
-path="res://.godot/imported/壶.glb-5396e962edc08155f8a5e2ce2e1bc253.scn"
+uid="uid://dmnm2h3jo3eju"
+path="res://.godot/imported/刷子.glb-a49871c198a8c665c86f90283cb8de87.scn"
 
 [deps]
 
-source_file="res://壶.glb"
-dest_files=["res://.godot/imported/壶.glb-5396e962edc08155f8a5e2ce2e1bc253.scn"]
+source_file="res://生态缸/生态缸相关模型/刷子.glb"
+dest_files=["res://.godot/imported/刷子.glb-a49871c198a8c665c86f90283cb8de87.scn"]
 
 [params]
 

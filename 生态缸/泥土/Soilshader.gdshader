@@ -9,6 +9,8 @@ uniform float min_top_height : hint_range(0.0, 2.0) = 0.6;    // 顶面默认起
 uniform float min_bottom_height : hint_range(-1.0, 1.0) = 0.0; // 【新增】底面默认起始高度
 
 uniform sampler2D height_map : hint_default_black, filter_linear, repeat_disable;
+uniform sampler2D moss_map;
+uniform vec3 moss_color : source_color = vec3(0.1, 0.4, 0.05);
 uniform float height_scale = 1.0;
 
 uniform sampler2D bottom_shape_map : hint_default_black, filter_linear, repeat_disable;

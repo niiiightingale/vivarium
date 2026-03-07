@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://0ts3wjvavask"
-path="res://.godot/imported/缸体以及环境.glb-e9c8d2c7fa333b345155d452b3257042.scn"
+path="res://.godot/imported/缸体以及环境.glb-f89eae26557cce1af40e641b1d056170.scn"
 
 [deps]
 
-source_file="res://缸体以及环境.glb"
-dest_files=["res://.godot/imported/缸体以及环境.glb-e9c8d2c7fa333b345155d452b3257042.scn"]
+source_file="res://生态缸/生态缸相关模型/缸体以及环境.glb"
+dest_files=["res://.godot/imported/缸体以及环境.glb-f89eae26557cce1af40e641b1d056170.scn"]
 
 [params]
 

@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://bw02wtc1uubit"]
-
-[ext_resource type="PackedScene" uid="uid://ct204l0nn2ex0" path="res://壶.glb" id="1_yljkp"]
-
-[node name="壶" unique_id=95177771 instance=ExtResource("1_yljkp")]

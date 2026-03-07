@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kymjss86qwdm"
-path.s3tc="res://.godot/imported/GroundDirtRocky020_NRM_2K.jpg-a96d42313cb47f52420fc09705f42516.s3tc.ctex"
+uid="uid://cxjblj1fxw40"
+path.s3tc="res://.godot/imported/虚线Decal白.png-80249def50a49fba0c7259870233e7f4.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://GroundDirtRocky020_NRM_2K.jpg"
-dest_files=["res://.godot/imported/GroundDirtRocky020_NRM_2K.jpg-a96d42313cb47f52420fc09705f42516.s3tc.ctex"]
+source_file="res://生态缸/贴花/虚线Decal白.png"
+dest_files=["res://.godot/imported/虚线Decal白.png-80249def50a49fba0c7259870233e7f4.s3tc.ctex"]
 
 [params]
 
@@ -22,7 +22,7 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
