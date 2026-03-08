@@ -1,3 +1,4 @@
+class_name SoilManager
 extends Node3D
 
 const GRID_SIZE = 100 
@@ -6,34 +7,29 @@ const PHYSICAL_SIZE = 5.0
 var height_map_image : Image
 var height_map_texture : ImageTexture
 
-@export var brush_radius: float = 0.5  
-@export var brush_strength: float = 0.02 
-
 # ==========================================
 # 沙堆塌陷算法控制参数
+
 # ==========================================
+@export var brush_strength:float = 0.05
 @export var max_slope: float = 0.05   
 @export var flow_rate: float = 0.5    
 var is_terrain_settling: bool = false 
+
+var avalanche_timer: float = 0.0
+var avalanche_interval: float = 0.05 # 间隔 0.05 秒算一次 (相当于 20 FPS 的塌陷动画)
+# 局部唤醒 (脏矩形) 优化参数
+# ==========================================
+var active_min_x: int = 0
+var active_max_x: int = 0
+var active_min_y: int = 0
+var active_max_y: int = 0
+
 
 @onready var soil_body = $SoilBody
 @onready var collision_shape = $SoilBody/SoilCollision
 
 var height_shape = HeightMapShape3D.new() 
-
-# ==========================================
-# 交互与工具参数 
-# ==========================================
-@export var bucket_hover_height: float = 1.5   # 小桶悬浮高度
-@export var brush_hover_height: float = 0.15  # 刷子悬浮高度（地表上方一丢丢）
-
-@export var drop_radius: float = 0.5        
-@export var clumps_per_second: float = 30.0 
-@export var valid_bounds: float = 2.4       
-var spawn_timer: float = 0.0
-
-@onready var player_input = $PlayerInput 
-@onready var tool_manager = $"../ToolManager" # 确保路径指向你的 ToolManager
 
 # ==========================================
 # 物理碰撞延迟刷新与半空坠落队列
@@ -43,6 +39,8 @@ var physics_update_timer: float = 0.0
 @export var physics_update_interval: float = 0.1 
 
 var pending_drops: Array[Dictionary] = []
+
+
 
 func _ready():
 	height_map_image = Image.create(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RF)
@@ -72,25 +70,23 @@ func update_physics_collision():
 func _process(delta):
 	var current_time = Time.get_ticks_msec() / 1000.0 
 	
-	# ==========================================
-	# 1. 处理小桶坠落队列 (仅加法)
-	# ==========================================
-	var terrain_modified = false
+	# 1. 坠落队列正常跑 (不降频，保证倒土的跟手感)
 	for i in range(pending_drops.size() - 1, -1, -1):
 		if current_time >= pending_drops[i]["time"]:
 			var drop_pos = pending_drops[i]["pos"]
-			# 0.01 是单次落地的泥土厚度
-			apply_soil_brush(drop_pos, drop_radius, 0.01, true) 
+			var drop_radius = pending_drops[i]["radius"]
+			apply_soil_brush(drop_pos, drop_radius, brush_strength, true) 
 			pending_drops.remove_at(i) 
-			terrain_modified = true
 			
-	if terrain_modified or is_terrain_settling:
-		is_terrain_settling = simulate_soil_avalanche() 
-		needs_physics_update = true
+	# 2. 塌陷算法降频执行！
+	if is_terrain_settling:
+		avalanche_timer += delta
+		if avalanche_timer >= avalanche_interval:
+			is_terrain_settling = simulate_soil_avalanche() 
+			needs_physics_update = true
+			avalanche_timer = 0.0
 
-	# ==========================================
-	# 2. 延迟刷新物理碰撞
-	# ==========================================
+	# 3. 延迟刷新物理
 	if needs_physics_update:
 		physics_update_timer += delta
 		if physics_update_timer >= physics_update_interval:
@@ -98,60 +94,26 @@ func _process(delta):
 			needs_physics_update = false
 			physics_update_timer = 0.0
 
-	# ==========================================
-	# 3. 接收指令：根据 ToolManager 切换逻辑
-	# ==========================================
-	if player_input and player_input.is_valid_location:
-		var safe_pos = player_input.target_position
-		var current_mode = tool_manager.get_current_mode()
-		
-		# 更新视觉表现位置：桶高，刷低
-		if current_mode == ToolManager.ToolMode.BUCKET:
-			# 假设你的桶节点叫 bucket_tool，这里同步它的 Y 轴
-			tool_manager.bucket_tool.global_position.y = safe_pos.y + bucket_hover_height
-		else:
-			tool_manager.brush_tool.global_position.y = safe_pos.y + brush_hover_height
-
-		if player_input.is_interacting:
-			if current_mode == ToolManager.ToolMode.BUCKET:
-				# --- 小桶逻辑：生成坠落队列 ---
-				spawn_timer += delta
-				var spawn_interval = 1.0 / clumps_per_second 
-				while spawn_timer >= spawn_interval:
-					var fall_time = sqrt(max(0.0, 2.0 * bucket_hover_height / 9.8))
-					var random_angle = randf() * TAU 
-					var random_radius = sqrt(randf()) * drop_radius
-					var target_pos = Vector3(
-						safe_pos.x + cos(random_angle) * random_radius,
-						safe_pos.y,
-						safe_pos.z + sin(random_angle) * random_radius
-					)
-					
-					if abs(target_pos.x) <= valid_bounds and abs(target_pos.z) <= valid_bounds:
-						pending_drops.append({
-							"pos": target_pos,
-							"time": current_time + fall_time 
-						})
-					spawn_timer -= spawn_interval
-			
-			else:
-				# --- 毛刷逻辑：即时降低高度 ---
-				# 刷子扫土是实时的，不需要物理延迟，直接修改高度图
-				apply_soil_brush(safe_pos, brush_radius, brush_strength, false)
-				needs_physics_update = true
-		else:
-			spawn_timer = 0.0
-	else:
-		spawn_timer = 0.0
-
 # ==========================================
-# 核心修改：高度图笔刷 (支持加/减)
+# 👇 核心改造：对外暴露的公共 API 接口 👇
 # ==========================================
+
+# 1. 供 BucketTool 调用的：添加下落任务
+func add_pending_drop(world_pos: Vector3, radius: float, fall_time: float):
+	var current_time = Time.get_ticks_msec() / 1000.0 
+	pending_drops.append({
+		"pos": world_pos,
+		"radius": radius, # 把工具的半径也传进来，提高灵活度
+		"time": current_time + fall_time 
+	})
+
+# 2. 供 ToolManager/BrushTool 调用的：即时修改高度图 (支持加法/减法)
 func apply_soil_brush(world_position: Vector3, radius: float, strength: float, is_adding: bool):
 	var center_x = int((world_position.x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
 	var center_y = int((world_position.z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
 	var pixel_radius = int((radius / PHYSICAL_SIZE) * GRID_SIZE)
 	
+	var changed = false
 	for x in range(center_x - pixel_radius, center_x + pixel_radius):
 		for y in range(center_y - pixel_radius, center_y + pixel_radius):
 			if x >= 0 and x < GRID_SIZE and y >= 0 and y < GRID_SIZE:
@@ -160,44 +122,133 @@ func apply_soil_brush(world_position: Vector3, radius: float, strength: float, i
 				if dist <= pixel_radius:
 					var weight = smoothstep(1.0, 0.0, dist / float(pixel_radius))
 					var current_h = height_map_image.get_pixel(x, y).r
-					
 					var new_h = 0.0
+					
 					if is_adding:
 						new_h = current_h + (strength * weight)
 					else:
-						# 减法逻辑：确保不低于 0.0（或你设定的最低限制）
+						# 减法逻辑：确保不低于 0.0 限制
 						new_h = max(0.0, current_h - (strength * weight))
 					
-					height_map_image.set_pixel(x, y, Color(new_h, 0, 0, 1))
+					# 只有发生实质改变才更新，节约性能
+					if abs(current_h - new_h) > 0.0001:
+						height_map_image.set_pixel(x, y, Color(new_h, 0, 0, 1))
+						changed = true
 	
-	height_map_texture.update(height_map_image)
+	if changed:
+		# 1. 计算当前这一笔刷的范围边界，并往外扩张1格作为安全区
+		var b_min_x = max(0, center_x - pixel_radius - 1)
+		var b_max_x = min(GRID_SIZE, center_x + pixel_radius + 2)
+		var b_min_y = max(0, center_y - pixel_radius - 1)
+		var b_max_y = min(GRID_SIZE, center_y + pixel_radius + 2)
+
+		# 2. 动态更新活跃区块 (脏矩形)
+		if not is_terrain_settling:
+			active_min_x = b_min_x
+			active_max_x = b_max_x
+			active_min_y = b_min_y
+			active_max_y = b_max_y
+		else:
+			# 如果已经在塌陷了，就把新刷的区域和旧区域合并
+			active_min_x = min(active_min_x, b_min_x)
+			active_max_x = max(active_max_x, b_max_x)
+			active_min_y = min(active_min_y, b_min_y)
+			active_max_y = max(active_max_y, b_max_y)
+
+		height_map_texture.update(height_map_image)
+		needs_physics_update = true
+		is_terrain_settling = true # 唤醒塌陷
+
+# 3. 【新增】供 MossSystem 调用的：安全查询高度
+func get_soil_height_at(world_pos: Vector3) -> float:
+	var x = int((world_pos.x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+	var y = int((world_pos.z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+	
+	# 边界保护，防止因为查询越界导致游戏崩溃
+	if x >= 0 and x < GRID_SIZE and y >= 0 and y < GRID_SIZE:
+		return height_map_image.get_pixel(x, y).r
+	return 0.0
 
 # ==========================================
-# 沙堆塌陷算法 (保持不变)
+# 沙堆塌陷算法 (内部算法，保持原样)
 # ==========================================
+# 把方向和距离写死成只读数组，彻底消灭内存分配！
+# 沙堆塌陷算法 (内存级极限优化版)
+# ==========================================
+# 沙堆塌陷算法 (脏矩形极限优化版)
+# ==========================================
+const DIR_X = [1, -1, 0, 0, 1, -1, 1, -1]
+const DIR_Y = [0, 0, 1, -1, 1, -1, -1, 1]
+const DIST  = [1.0, 1.0, 1.0, 1.0, 1.414, 1.414, 1.414, 1.414]
+
 func simulate_soil_avalanche() -> bool:
 	var is_unstable = false
-	for x in range(1, GRID_SIZE - 1):
-		for y in range(1, GRID_SIZE - 1):
-			var current_h = height_map_image.get_pixel(x, y).r
-			var max_diff = 0.0
-			var target_neighbor = Vector2i(-1, -1)
-			var neighbor_h = 0.0
+	var byte_data = height_map_image.get_data()
+	var floats = byte_data.to_float32_array()
+	
+	# 用于记录下一帧需要计算的“脏矩形”范围。初始设为极限反向值
+	var next_min_x = GRID_SIZE
+	var next_max_x = 0
+	var next_min_y = GRID_SIZE
+	var next_max_y = 0
+	
+	# 【核心优化】：只在活跃区块内进行双层循环！
+	for x in range(active_min_x, active_max_x):
+		for y in range(active_min_y, active_max_y):
+			var idx = y * GRID_SIZE + x
+			var current_h = floats[idx]
 			
-			var neighbors = [Vector2i(x+1, y), Vector2i(x-1, y), Vector2i(x, y+1), Vector2i(x, y-1)]
-			for n in neighbors:
-				var nh = height_map_image.get_pixel(n.x, n.y).r
-				var diff = current_h - nh
-				if diff > max_diff:
-					max_diff = diff
-					target_neighbor = n
-					neighbor_h = nh
+			var max_slope_val = 0.0  
+			var target_idx = -1
+			var target_nx = -1
+			var target_ny = -1
+			var neighbor_h = 0.0
+			var target_dist = 1.0    
+			
+			for i in range(8):
+				var nx = x + DIR_X[i]
+				var ny = y + DIR_Y[i]
+				
+				if nx >= 0 and nx < GRID_SIZE and ny >= 0 and ny < GRID_SIZE:
+					var n_idx = ny * GRID_SIZE + nx
+					var nh = floats[n_idx]
+					var height_diff = current_h - nh
+					var current_slope = height_diff / DIST[i]
 					
-			if max_diff > max_slope:
-				var flow_amount = min((max_diff - max_slope) * flow_rate, max_diff / 2.0)
-				height_map_image.set_pixel(x, y, Color(current_h - flow_amount, 0, 0, 1))
-				height_map_image.set_pixel(target_neighbor.x, target_neighbor.y, Color(neighbor_h + flow_amount, 0, 0, 1))
+					if current_slope > max_slope_val:
+						max_slope_val = current_slope
+						target_idx = n_idx
+						target_nx = nx
+						target_ny = ny
+						neighbor_h = nh
+						target_dist = DIST[i]
+					
+			if max_slope_val > max_slope and target_idx != -1:
+				var actual_diff = current_h - neighbor_h
+				var stable_diff = max_slope * target_dist
+				var excess_diff = actual_diff - stable_diff
+				
+				var flow_amount = min(excess_diff * flow_rate, actual_diff / 2.0)
+				
+				floats[idx] -= flow_amount
+				floats[target_idx] += flow_amount
 				is_unstable = true
 				
-	height_map_texture.update(height_map_image)
+				# 【动态扩容】：如果有泥土流动了，把它和它流向的位置加入下一帧的计算范围，并外扩 1 像素缓冲
+				next_min_x = min(next_min_x, min(x, target_nx) - 1)
+				next_max_x = max(next_max_x, max(x, target_nx) + 2)
+				next_min_y = min(next_min_y, min(y, target_ny) - 1)
+				next_max_y = max(next_max_y, max(y, target_ny) + 2)
+				
+	if is_unstable:
+		# 安全更新下一帧的脏矩形边界，防止越界
+		active_min_x = max(0, next_min_x)
+		active_max_x = min(GRID_SIZE, next_max_x)
+		active_min_y = max(0, next_min_y)
+		active_max_y = min(GRID_SIZE, next_max_y)
+		
+		var new_bytes = floats.to_byte_array()
+		height_map_image.set_data(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RF, new_bytes)
+		height_map_texture.update(height_map_image)
+		
 	return is_unstable

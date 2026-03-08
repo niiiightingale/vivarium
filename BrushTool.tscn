@@ -115,7 +115,7 @@ mesh = SubResource("ArrayMesh_c4ejl")
 surface_material_override/0 = SubResource("StandardMaterial3D_tgqfo")
 
 [node name="刷子毛" type="MeshInstance3D" parent="BrushModel" unique_id=274431488]
-transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0.06776769, 0)
 mesh = SubResource("ArrayMesh_tgqfo")
 surface_material_override/0 = SubResource("StandardMaterial3D_sikdc")
 

@@ -8,7 +8,7 @@ extends Node3D
 @export var sweep_angle: float = 30.0     # 刷子摇摆的最大角度 (度数)
 @export var hover_height: float = 0.2     # 刷子悬浮在泥土上方的高度
 
-@onready var brush_model = $BrushModel    # 你的低多边形刷子模型xxx
+@onready var brush_model = $BrushModel    # 你的低多边形刷子模型
 @onready var dust_particles = $DustParticals # 粉尘粒子系统
 
 var is_brushing: bool = false

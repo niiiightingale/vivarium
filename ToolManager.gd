@@ -6,12 +6,21 @@ extends Node3D
 # ==========================================
 enum ToolMode { BUCKET, BRUSH , MOSS }
 var current_mode: ToolMode = ToolMode.BUCKET
+# 苔藓系统子状态
+# ==========================================
+# 0=红(苔藓1), 1=绿(苔藓2), 2=蓝(苔藓3), 3=透明(苔藓4)
+var current_moss_brush: int = 0
 
 # ==========================================
 # 2. 节点引用
 # ==========================================
 # 在编辑器里把你的 BucketTool 和 BrushTool 拖到这两个变量里
+@export var player_input: PlayerInput  # 【新增】直接获取雷达
+@export var soil_manager: Node3D       # 【新增】直接获取泥土系统
+@export var moss_system: MossSystem # 【新增】直接获取苔藓系统
 @export var bucket_tool: Node3D
+@export var drop_radius:float = 0.5
+@export var brush_strength:float = 0.05
 @export var brush_tool: Node3D
 
 # 记录当前玩家是否按住了左键
@@ -26,11 +35,31 @@ func _unhandled_input(event):
 	# A. 切换工具逻辑 (按 X 键)
 	# ==========================================
 	if event.is_action_pressed("toggle_tool"):
-		if current_mode == ToolMode.BUCKET:
-			_apply_tool_switch(ToolMode.BRUSH)
-		else:
-			_apply_tool_switch(ToolMode.BUCKET)
+		match current_mode:
+			ToolMode.BUCKET:
+				_apply_tool_switch(ToolMode.BRUSH)
+			ToolMode.BRUSH:
+				_apply_tool_switch(ToolMode.MOSS)
+			ToolMode.MOSS:
+				_apply_tool_switch(ToolMode.BUCKET)
 
+	# ==========================================
+	# B. 苔藓画笔快捷切换 (数字键 1-4)
+	# ==========================================
+	if current_mode == ToolMode.MOSS and event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_1:
+			current_moss_brush = 0
+			print("🌿 切换到：1号植物 (R通道)")
+		elif event.keycode == KEY_2:
+			current_moss_brush = 1
+			print("🌾 切换到：2号植物 (G通道)")
+		elif event.keycode == KEY_3:
+			current_moss_brush = 2
+			print("🍄 切换到：3号植物 (B通道)")
+		elif event.keycode == KEY_4:
+			current_moss_brush = 3
+			print("🪨 切换到：4号植物 (A通道)")
+			
 	# ==========================================
 	# B. 使用工具逻辑 (鼠标左键按下/松开)
 	# ==========================================
@@ -48,22 +77,34 @@ func _unhandled_input(event):
 			if "is_brushing" in brush_tool:
 				brush_tool.is_brushing = is_using_tool
 
-func _process(_delta):
-	# 从 SoilSystem 或者 PlayerInput 获取鼠标在泥土表面的实时位置
-	# 假设你的 SoilSystem 节点叫 soil_system
-	var soil_system = get_node("../SoilSystem") # 这里的路径根据你实际修改
-	var input = soil_system.player_input
+func _process(delta):
+	# 1. 安全检查：确保我们在检查器里拖入了这两个关键节点
+	if not player_input or not soil_manager:
+		return
 	
-	if input and input.is_valid_location:
-		var target_pos = input.target_position
+	# 2. 获取雷达数据
+	if player_input.is_valid_location:
+		var target_pos = player_input.target_position
 		
-		# 统一驱动当前激活工具的 XZ 坐标
-		if current_mode == ToolMode.BUCKET:
-			# 桶在半空
+		# 3. 统一驱动当前激活工具的视觉位置
+		if current_mode == ToolMode.BUCKET and bucket_tool:
+			# 注意：如果 BucketTool 内部自己写了移动逻辑，这里可以注释掉，防止冲突
 			bucket_tool.global_position = Vector3(target_pos.x, target_pos.y + 1.5, target_pos.z)
-		else:
-			# 刷子贴地 (0.15)
+		elif current_mode == ToolMode.BRUSH and brush_tool:
 			brush_tool.global_position = Vector3(target_pos.x, target_pos.y + 0.15, target_pos.z)
+			
+		# ==========================================
+		# 4. 核心交互分发 (只管刷子和苔藓，小桶自己管自己了)
+		# ==========================================
+		if is_using_tool:
+			if current_mode == ToolMode.BRUSH:
+				# 刷子模式：直接调用泥土系统的减法 API
+				# （假设刷子的半径是 0.5，强度是 0.02。你也可以把这两个值作为变量提取出来）
+				soil_manager.apply_soil_brush(target_pos, drop_radius, brush_strength, false)
+				
+			elif current_mode == ToolMode.MOSS and moss_system:
+				# 最后一个参数不再是写死的数字，而是你当前选中的画笔！
+				moss_system.paint_moss(target_pos, 0.4, 0.05, current_moss_brush)
 # ==========================================
 # 3. 核心切换引擎 (处理显示、隐藏与动画)
 # ==========================================

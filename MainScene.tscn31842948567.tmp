@@ -1,0 +1,166 @@
+[gd_scene format=3 uid="uid://o76d02en4m6o"]
+
+[ext_resource type="Shader" uid="uid://ch60cpg3uiu3l" path="res://生态缸/泥土/Soilshader.gdshader" id="1_3mqji"]
+[ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://生态缸/泥土/SoilManager.gd" id="1_rpqi1"]
+[ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://生态缸/泥土/底面高度图.png" id="3_rf2cd"]
+[ext_resource type="Texture2D" uid="uid://bvm05t04krx6y" path="res://生态缸/泥土/泥土层/coast_sand_rocks_02_nor_dx_4k.jpg" id="4_5crlr"]
+[ext_resource type="PackedScene" uid="uid://c80cl1jrc7nwv" path="res://BrushTool.tscn" id="4_p5x2j"]
+[ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
+[ext_resource type="Texture2D" uid="uid://kymjss86qwdm" path="res://生态缸/泥土/泥土层/GroundDirtRocky020_NRM_2K.jpg" id="5_5crlr"]
+[ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/生态缸相关模型/缸体和环境.tscn" id="7_5crlr"]
+[ext_resource type="PackedScene" uid="uid://7d2bwa721gbp" path="res://BucketTool.tscn" id="8_torvr"]
+[ext_resource type="Script" uid="uid://dictt6f6ovtm8" path="res://ToolManager.gd" id="10_8xkvn"]
+[ext_resource type="Script" uid="uid://daf8ksceo6av3" path="res://PlayerInput.gd" id="11_p5x2j"]
+[ext_resource type="Script" uid="uid://0x72u6oar6kg" path="res://MossSystem.gd" id="12_yvb8b"]
+
+[sub_resource type="Gradient" id="Gradient_rf2cd"]
+offsets = PackedFloat32Array(0.14839181, 0.3121345, 1)
+colors = PackedColorArray(0.16, 0.16, 0.16, 1, 0.16901729, 0.2177749, 0.1690343, 1, 0.8571295, 0.99999934, 0.8878352, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_a814b"]
+gradient = SubResource("Gradient_rf2cd")
+fill_from = Vector2(0.5194223, 1)
+fill_to = Vector2(0.499502, 0)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_5crlr"]
+panorama = SubResource("GradientTexture2D_a814b")
+
+[sub_resource type="Sky" id="Sky_hbc2u"]
+sky_material = SubResource("PanoramaSkyMaterial_5crlr")
+
+[sub_resource type="Environment" id="Environment_1305s"]
+background_mode = 2
+background_color = Color(0.778018, 0.7942319, 0.7959166, 1)
+background_energy_multiplier = 1.2
+sky = SubResource("Sky_hbc2u")
+sdfgi_enabled = true
+glow_enabled = true
+adjustment_enabled = true
+adjustment_brightness = 1.4
+adjustment_contrast = 1.1
+adjustment_saturation = 1.1
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_3mqji"]
+dof_blur_far_distance = 4.5
+dof_blur_far_transition = 20.0
+dof_blur_amount = 0.09
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uxrcv"]
+render_priority = 0
+shader = ExtResource("1_3mqji")
+shader_parameter/min_top_height = 0.5830000276925
+shader_parameter/min_bottom_height = -0.125999958485
+shader_parameter/moss_color = Color(0.1, 0.4, 0.05, 1)
+shader_parameter/height_scale = 1.0
+shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
+shader_parameter/bottom_scale = 0.5
+shader_parameter/global_moisture = 0.0
+shader_parameter/color_dry_earth = Color(0.103700854, 0.035541993, 0.008452566, 1)
+shader_parameter/color_wet_mud = Color(0.2569428, 0.21101296, 0.19570503, 1)
+shader_parameter/color_puddle = Color(0.12831527, 0.07442988, 0.041761227, 1)
+shader_parameter/color_side_dirt = Color(0.08, 0.06, 0.05, 1)
+shader_parameter/roughness_dry_earth = 0.85
+shader_parameter/roughness_wet_mud = 0.3
+shader_parameter/roughness_puddle = 0.05
+shader_parameter/top_normal_map = ExtResource("4_5crlr")
+shader_parameter/top_normal_scale = 0.7850007972874984
+shader_parameter/top_uv_scale = Vector2(0.3, 0.3)
+shader_parameter/side_normal_map = ExtResource("5_5crlr")
+shader_parameter/side_normal_scale = 0.6170007893075002
+shader_parameter/side_uv_scale = Vector2(0.3, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rpqi1"]
+material = SubResource("ShaderMaterial_uxrcv")
+size = Vector3(5, 1, 5)
+subdivide_width = 100
+subdivide_height = 3
+subdivide_depth = 100
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5crlr"]
+size = Vector3(5.1497803, 0.6610718, 5.0567627)
+
+[node name="Terrarium" type="Node3D" unique_id=1910372508]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=497509122]
+environment = SubResource("Environment_1305s")
+camera_attributes = SubResource("CameraAttributesPractical_3mqji")
+
+[node name="SoilSystem" type="Node3D" parent="." unique_id=1573332195]
+script = ExtResource("1_rpqi1")
+flow_rate = 2.0
+
+[node name="PlayerInput" type="Node3D" parent="SoilSystem" unique_id=1489955409 node_paths=PackedStringArray("soil_body")]
+script = ExtResource("11_p5x2j")
+soil_body = NodePath("../SoilBody")
+
+[node name="BucketTool" parent="SoilSystem" unique_id=515833520 node_paths=PackedStringArray("player_input", "soil_manager") instance=ExtResource("8_torvr")]
+visible = false
+player_input = NodePath("../PlayerInput")
+soil_manager = NodePath("..")
+
+[node name="BrushTool" parent="SoilSystem" unique_id=899230605 instance=ExtResource("4_p5x2j")]
+visible = false
+
+[node name="PlaneMesh" type="MeshInstance3D" parent="SoilSystem" unique_id=1349472380]
+physics_interpolation_mode = 1
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05233252, 0)
+layers = 3
+mesh = SubResource("BoxMesh_rpqi1")
+
+[node name="SoilBody" type="StaticBody3D" parent="SoilSystem" unique_id=1407309881]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+collision_layer = 3
+
+[node name="SoilCollision" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=885626742]
+physics_interpolation_mode = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SoilSystem/SoilBody" unique_id=373154117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0.0029907227)
+shape = SubResource("BoxShape3D_5crlr")
+
+[node name="缸体和环境" parent="SoilSystem" unique_id=1719478435 instance=ExtResource("7_5crlr")]
+
+[node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="SoilSystem" unique_id=877263931]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+size = Vector3(5, 4.3721924, 5)
+resolution = 3
+update_mode = 1
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
+script = ExtResource("4_uxrcv")
+pan_speed = 0.005
+idle_time_threshold = 5.0
+opening_zoom = 100.0
+opening_duration = 3.0
+idle_zoom = 15.945
+idle_height_offset = 2.095
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 20)
+fov = 35.0
+near = 0.001
+
+[node name="OmniLight3D" type="SpotLight3D" parent="CameraPivot/Camera3D" unique_id=738878655]
+light_color = Color(1, 0.8875, 0.73, 1)
+light_energy = 20.0
+light_indirect_energy = 1.957
+shadow_enabled = true
+spot_range = 11.411815
+
+[node name="OmniLight3D" type="SpotLight3D" parent="." unique_id=1780966752]
+transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 4.445097, 0.0027054248)
+light_color = Color(1, 0.8875, 0.73, 1)
+light_energy = 20.0
+light_indirect_energy = 2.0
+light_size = 0.2
+shadow_enabled = true
+spot_range = 7.53442
+
+[node name="ToolManager" type="Node3D" parent="." unique_id=949014252 node_paths=PackedStringArray("bucket_tool", "brush_tool", "soil_system")]
+script = ExtResource("10_8xkvn")
+bucket_tool = NodePath("../SoilSystem/BucketTool")
+brush_tool = NodePath("../SoilSystem/BrushTool")
+soil_system = NodePath("../SoilSystem/PlayerInput")
+
+[node name="MossSystem" type="Node" parent="." unique_id=146429818]
+script = ExtResource("12_yvb8b")

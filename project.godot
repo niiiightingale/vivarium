@@ -13,12 +13,18 @@ config_version=5
 config/name="vivarium"
 run/main_scene="uid://o76d02en4m6o"
 config/features=PackedStringArray("4.6", "Forward Plus")
+run/max_fps=120
 config/icon="res://icon.svg"
+
+[debug]
+
+settings/stdout/print_fps=true
 
 [display]
 
 window/size/viewport_width=2560
 window/size/viewport_height=1440
+window/vsync/vsync_mode=0
 
 [editor_plugins]
 

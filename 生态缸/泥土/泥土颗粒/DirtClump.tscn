@@ -1,8 +1,36 @@
-[gd_scene format=3 uid="uid://dd6q8ldven60e"]
+[gd_scene format=3 uid="uid://4se7bhwlddbx"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://3h4e7wrg8gqw" path="res://生态缸/泥土/泥土颗粒/PhysicalMateiral_泥土颗粒.tres" id="1_qpmh6"]
-[ext_resource type="Script" uid="uid://cvtu41oc8f631" path="res://生态缸/泥土/泥土颗粒/DirtClump.gd" id="2_5oeii"]
 [ext_resource type="ArrayMesh" uid="uid://bnfo4vkd500m7" path="res://生态缸/泥土/泥土颗粒/DirtClump.tres" id="3_5oeii"]
+
+[sub_resource type="GDScript" id="GDScript_rrp1t"]
+script/source = "extends RigidBody3D
+
+var is_melting = false
+var soil_manager = null # 生成时，SoilManager 会把自己的引用传过来
+
+func _physics_process(delta):
+	# 如果已经在融化中，就不再重复检测
+	if is_melting: return
+	
+	# 如果土块的移动速度极小（说明砸到地面/石头上停住了）
+	if linear_velocity.length() < 0.1:
+		melt_into_soil()
+
+func melt_into_soil():
+	is_melting = true
+	
+	# 稍微延迟 0.15 秒，给玩家一个“土块砸在地上停顿了一下”的厚重视觉反馈
+	await get_tree().create_timer(0.02).timeout
+	
+	if soil_manager:
+		# 通知管理器：以我当前的 3D 世界坐标为中心，隆起地形！
+		# 这里的 0.4 是笔刷半径，0.02 是隆起高度，你可以自己调手感
+		soil_manager.apply_soil_brush(global_position, 0.4, 0.02)
+	
+	# 瞬间删除自己 (土块模型消失，假装它变成了下面隆起的泥土)
+	queue_free()
+"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qpmh6"]
 albedo_color = Color(0.15881893, 0.08535164, 0.060861714, 1)
@@ -19,7 +47,7 @@ linear_damp_mode = 1
 linear_damp = 20.0
 angular_damp_mode = 1
 angular_damp = 20.0
-script = ExtResource("2_5oeii")
+script = SubResource("GDScript_rrp1t")
 
 [node name="泥土颗粒" type="MeshInstance3D" parent="." unique_id=1835364616]
 mesh = ExtResource("3_5oeii")
