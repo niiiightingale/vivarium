@@ -16,28 +16,27 @@ uniform float bottom_scale = 0.5;
 const float physical_size = 5.0;  
 
 // ==========================================
-// 2. 苔藓与多生态地貌融合系统
+// 2. 风格化地貌融合系统 (纯色块 + 噪波)
 // ==========================================
 uniform sampler2D moss_map : hint_default_black, filter_linear, repeat_disable;
 uniform float moss_blend_softness : hint_range(0.1, 1.0) = 0.8;
 
-// 4 种植物对泥土的实体顶起高度 (R, G, B, A)
-uniform vec4 moss_soil_bump = vec4(0.3, 0.1, 0.05, 0.0);
+// 4 种植物对泥土的实体顶起高度
+uniform vec4 moss_soil_bump = vec4(0.1, 0.1, 0.05, 0.0);
 
-// ✨【优化合并】：鼓包与边缘破碎共用的全局噪波
+// 鼓包与边缘破碎共用的全局噪波
 uniform sampler2D clump_noise : hint_default_white, filter_linear, repeat_enable;
-// 4 种植物独立的鼓包噪波密度 (Scale)
 uniform vec4 clump_noise_scales = vec4(15.0, 80.0, 40.0, 10.0);
-// ✨【新增语意化变量】：单独控制边缘破碎的噪波缩放大小
 uniform float edge_break_scale : hint_range(1.0, 100.0) = 40.0;
 
+// ✨ 恢复纯色面板：在这里直接调出你想要的童话/低面纸片风色彩！
 uniform vec3 moss_color_1 : source_color = vec3(0.2, 0.4, 0.1);  
 uniform vec3 moss_color_2 : source_color = vec3(0.4, 0.35, 0.1); 
 uniform vec3 moss_color_3 : source_color = vec3(0.1, 0.2, 0.3);  
 uniform vec3 moss_color_4 : source_color = vec3(0.3, 0.3, 0.3);  
 
 // ==========================================
-// 3. 全局水分与物理材质系统
+// 3. 全局水分与物理泥土底盘系统
 // ==========================================
 uniform float global_moisture : hint_range(0.0, 1.0) = 0.5; 
 
@@ -50,9 +49,7 @@ uniform float roughness_dry_earth = 0.85;
 uniform float roughness_wet_mud = 0.3;    
 uniform float roughness_puddle = 0.05;
 
-// ==========================================
-// 4. 法线贴图系统 
-// ==========================================
+// 泥土本身的法线贴图保留，用于增加泥土的颗粒感
 uniform sampler2D top_normal_map : hint_normal, filter_linear_mipmap, repeat_enable;
 uniform float top_normal_scale : hint_range(-16.0, 16.0) = 1.0;
 uniform vec2 top_uv_scale = vec2(1.0, 1.0); 
@@ -108,7 +105,6 @@ void fragment() {
     vec2 base_uv = (v_world_pos.xz / physical_size) + 0.5;
     vec4 moss_data = texture(moss_map, base_uv);
     
-    // ✨【核心优化】：直接复用 clump_noise 进行边缘破碎，省去一张贴图！
     float edge_noise_val = texture(clump_noise, v_world_pos.xz / edge_break_scale).r;
     
     float base_total_moss = clamp(moss_data.r + moss_data.g + moss_data.b + moss_data.a, 0.0, 1.0);

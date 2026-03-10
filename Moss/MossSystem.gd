@@ -82,9 +82,27 @@ func _ready():
 	
 	for i in range(4):
 		if multimesh_nodes[i] and multimesh_nodes[i].material_override:
-			var mat = multimesh_nodes[i].material_override
-			mat.set_shader_parameter("height_map", soil_manager.height_map_texture)
-			mat.set_shader_parameter("moss_density_map", moss_texture)
+			# 获取第一层材质
+			var current_mat = multimesh_nodes[i].material_override
+			
+			# ✨ 核心修复：顺藤摸瓜，用 while 循环给所有的 Next Pass 透传动态数据！
+			while current_mat != null:
+				# 1. 传高度图
+				current_mat.set_shader_parameter("height_map", soil_manager.height_map_texture)
+				
+				# 2. 传浓度图 
+				# (⚠️ 注意：我们新版贴地 Shader 里用的名字是 moss_map，
+				# 为了防错，我建议把 moss_map 和 moss_density_map 全给它塞进去)
+				current_mat.set_shader_parameter("moss_map", moss_texture)
+				current_mat.set_shader_parameter("moss_density_map", moss_texture)
+				
+				# 3. 传通道遮罩（如果你 Shader 里用到了的话）
+				var mask = Vector4(0, 0, 0, 0)
+				mask[i] = 1.0
+				current_mat.set_shader_parameter("channel_mask", mask)
+				
+				# 👉 钻进下一层材质，继续循环喂数据！
+				current_mat = current_mat.next_pass
 # ==========================================
 func _physics_process(delta: float) -> void:
 	# 降频刷新保护：如果需要更新，我们每隔 0.1 秒才真正去生成一次 3D 网格，绝不卡顿！
