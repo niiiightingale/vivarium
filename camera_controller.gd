@@ -19,19 +19,43 @@ extends Node3D
 @export var max_pitch: float = -10.0      
 
 # ==========================================
-# 【新增】挂机展示模式参数 (Idle Showcase)
+# 挂机展示模式参数 (Idle Showcase)
 # ==========================================
-@export var enable_idle_mode: bool = true      # 是否开启挂机展示
-@export var idle_time_threshold: float = 10.0  # 多少秒无操作后触发
-@export var opening_zoom: float = 30.0         # 开场极远距离
-@export var opening_duration: float = 4.0      # 【新增】开场运镜耗时（秒），随便调！
+@export var enable_idle_mode: bool = true      
+@export var idle_time_threshold: float = 10.0  
+@export var opening_zoom: float = 30.0         
+@export var opening_duration: float = 4.0      
 
-var opening_tween: Tween # 用来存开场动画的引用，方便随时打断         # 【新增】开场运镜的极远起始距离
-@export var idle_zoom: float = 12.0            # 展示模式下的完美缩放距离
-@export var idle_pitch: float = -30.0          # 展示模式下的完美俯视角度(度数)
+var opening_tween: Tween 
+@export var idle_zoom: float = 12.0            
+@export var idle_pitch: float = -30.0          
 @export var idle_height_offset: float = 2.0
-@export var idle_rotation_speed: float = 0.05  # 自动旋转的速度
-@export var idle_transition_speed: float = 1.5 # 自动归位的平滑过渡速度
+@export var idle_rotation_speed: float = 0.05  
+@export var idle_transition_speed: float = 1.5 
+
+# ==========================================
+# ✨ 终极智能景深 (Smart DoF & AutoFocus)
+# ==========================================
+@export_group("Smart DoF Settings")
+@export var enable_smart_dof: bool = true
+
+@export var show_debug_rays: bool = false      
+
+@export_subgroup("Autofocus Radar (九宫格雷达)")
+@export var focus_reticle_size: float = 0.03       
+@export var focus_speed: float = 25.0              
+@export var edge_slip_threshold: float = 1.5       
+@export var foreground_ignore_ratio: float = 0.6   
+
+@export_subgroup("DoF Curves (X: Zoom, Y: Weight)")
+@export var blur_start_curve: Curve       
+@export var blur_transition_curve: Curve  
+@export var blur_amount_curve: Curve      
+
+@export_subgroup("DoF Ranges (X: Macro, Y: Wide)")
+@export var blur_start_margin_range: Vector2 = Vector2(0.5, 8.0)  
+@export var blur_transition_range: Vector2 = Vector2(0.5, 6.0)    
+@export var blur_amount_range: Vector2 = Vector2(0.12, 0.02)      
 
 @onready var camera = $Camera3D
 
@@ -44,46 +68,61 @@ var target_pitch: float = 0.0
 var is_panning: bool = false
 var is_rotating: bool = false
 
-# 挂机计时器
 var idle_timer: float = 0.0
 var is_idle_mode: bool = false
+
+var smooth_focus_distance: float = 5.0 
+
+var debug_mesh: ImmediateMesh
+var debug_mesh_instance: MeshInstance3D
 
 func _ready():
 	is_idle_mode = true
 	
 	target_position = Vector3(0.0, idle_height_offset, 0.0)
-	target_pitch = deg_to_rad(idle_pitch)
+	target_pitch = deg_to_rad(idle_pitch) 
 	target_yaw = rotation.y 
 	
 	global_position = target_position
-	rotation.x = target_pitch
+	rotation.x = target_pitch 
 	
-	# 1. 初始把真实距离和目标距离都设为极远
 	camera.position.z = opening_zoom
 	target_zoom = opening_zoom 
+	smooth_focus_distance = opening_zoom
 	
-	# 2. 【核心运镜魔法：Tween】
-	# set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT) 是一种“先快后慢”的电影级减速曲线
 	opening_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	opening_tween.tween_property(self, "target_zoom", idle_zoom, opening_duration)
+	
+	if enable_smart_dof:
+		if not camera.attributes:
+			camera.attributes = CameraAttributesPractical.new()
+		camera.attributes.dof_blur_far_enabled = true
+		
+	if show_debug_rays:
+		debug_mesh = ImmediateMesh.new()
+		debug_mesh_instance = MeshInstance3D.new()
+		debug_mesh_instance.mesh = debug_mesh
+		debug_mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		
+		var mat = StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.vertex_color_use_as_albedo = true
+		debug_mesh_instance.material_override = mat
+		
+		add_child(debug_mesh_instance)
+		debug_mesh_instance.top_level = true 
 
-# 【新增】打断挂机状态的方法
 func reset_idle_timer():
 	idle_timer = 0.0
 	if is_idle_mode:
 		is_idle_mode = false
-		# 退出展示模式时，将目标偏航角重置为当前真实角度，防止镜头鬼畜狂转
 		target_yaw = rotation.y
 
 func _unhandled_input(event):
-	# 任何鼠标的点击或滑动，都会瞬间唤醒镜头，交还给玩家控制！
-	# 【核心修改】：只有鼠标按键操作（左键/中键/右键点击、滚轮滚动）才会打断挂机状态！
-	# 纯粹的鼠标滑动 (InputEventMouseMotion) 彻底被放行。
 	if event is InputEventMouseButton:
 		reset_idle_timer()
 
 	if event is InputEventMouseButton:
-		# 1. 焦点缩放 
 		if event.is_action_pressed("camera_zoom_in") or event.is_action_pressed("camera_zoom_out"):
 			var is_zoom_in = event.is_action_pressed("camera_zoom_in")
 			
@@ -114,7 +153,6 @@ func _unhandled_input(event):
 
 			clamp_target_position()
 
-	# 2. 状态开关 
 	if event.is_action_pressed("camera_rotate", false, true):
 		is_rotating = true
 	elif event.is_action_released("camera_rotate", true):
@@ -125,7 +163,6 @@ func _unhandled_input(event):
 	elif event.is_action_released("camera_pan", true):
 		is_panning = false
 
-	# 3. 滑动拖拽执行 
 	if event is InputEventMouseMotion:
 		if is_rotating:
 			target_yaw -= event.relative.x * rotation_speed
@@ -146,35 +183,117 @@ func clamp_target_position():
 	target_position.z = clamp(target_position.z, -bounds_xz, bounds_xz)
 
 func _physics_process(delta: float) -> void:
-	# ==========================================
-	# 【新增】展示模式计时与拦截
-	# ==========================================
-	# 只要玩家没有在按住中键/右键，就开始计时
 	if enable_idle_mode and not is_rotating and not is_panning:
 		idle_timer += delta
 		if idle_timer >= idle_time_threshold:
 			is_idle_mode = true
 
-	# 如果进入了挂机模式，AI开始接管目标变量
 	if is_idle_mode:
-		# 1. 目标位置极其缓慢地向缸体中心(0,0,0)靠拢
-		# 1. 目标位置向缸体中心的高空目标点靠拢
 		var perfect_center = Vector3(0.0, idle_height_offset, 0.0)
 		target_position = target_position.lerp(perfect_center, idle_transition_speed * delta)
-		# 2. 目标缩放退回展示全貌的距离
 		target_zoom = lerp(target_zoom, idle_zoom, idle_transition_speed * delta)
-		# 3. 目标俯仰角抬起到完美的展示角度
-		target_pitch = lerp(target_pitch, deg_to_rad(idle_pitch), idle_transition_speed * delta)
-		# 4. 目标偏航角持续累加，实现永不停止的环绕旋转！
 		target_yaw += idle_rotation_speed * delta
 
-	# ==========================================
-	# 底层物理插值计算 (完全不变，丝滑执行上面的目标)
-	# ==========================================
 	camera.position.z = lerp(camera.position.z, target_zoom, 10.0 * delta)
 	camera.rotation = Vector3.ZERO 
 
 	rotation.y = lerp_angle(rotation.y, target_yaw, 15.0 * delta)
 	rotation.x = lerp_angle(rotation.x, target_pitch, 15.0 * delta)
-
 	global_position = global_position.lerp(target_position, 15.0 * delta)
+
+	# 🚨 核心防线 1：强制刷新相机矩阵！根除一帧延迟带来的横向飞线错觉！
+	camera.force_update_transform()
+
+	# ==========================================
+	# ✨ 智能九宫格自动对焦核心逻辑
+	# ==========================================
+	if enable_smart_dof and camera.attributes is CameraAttributesPractical:
+		var viewport_size = get_viewport().get_visible_rect().size
+		var center = viewport_size / 2.0
+		var offset = min(viewport_size.x, viewport_size.y) * focus_reticle_size
+		
+		var focus_points = [
+			center, 
+			center + Vector2(-offset, -offset), center + Vector2(0, -offset), center + Vector2(offset, -offset), 
+			center + Vector2(-offset, 0),                                     center + Vector2(offset, 0),       
+			center + Vector2(-offset, offset),  center + Vector2(0, offset),  center + Vector2(offset, offset)   
+		]
+		
+		var space_state = get_world_3d().direct_space_state
+		var center_depth = 9999.0
+		var min_grid_depth = 9999.0
+		
+		if show_debug_rays and debug_mesh:
+			debug_mesh_instance.global_transform = Transform3D.IDENTITY
+			debug_mesh.clear_surfaces()
+			debug_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+		
+		for i in range(focus_points.size()):
+			var pt = focus_points[i]
+			var ray_origin = camera.project_ray_origin(pt)
+			var ray_dir = camera.project_ray_normal(pt)
+			
+			var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_dir * 100.0)
+			
+			# 🚨 核心防线 2：只碰撞 Layer 2！彻底根除撞到隐形玻璃引发的景深抽风！
+			query.collision_mask = 2
+			
+			var result = space_state.intersect_ray(query)
+			var current_z_depth = 9999.0
+			var hit_pos = ray_origin + ray_dir * 100.0 
+			
+			if result:
+				hit_pos = result.position
+				current_z_depth = -camera.to_local(hit_pos).z
+			elif ray_dir.y < -0.001:
+				var t = -ray_origin.y / ray_dir.y
+				hit_pos = ray_origin + ray_dir * t
+				current_z_depth = -camera.to_local(hit_pos).z
+				
+			if show_debug_rays and debug_mesh:
+				var line_color = Color.GREEN if i == 0 else Color.RED
+				debug_mesh.surface_set_color(line_color)
+				debug_mesh.surface_add_vertex(ray_origin)
+				debug_mesh.surface_set_color(line_color)
+				debug_mesh.surface_add_vertex(hit_pos)
+				
+			if i == 0:
+				center_depth = current_z_depth
+				
+			if current_z_depth > 0.1 and current_z_depth < min_grid_depth:
+				min_grid_depth = current_z_depth
+				
+		if show_debug_rays and debug_mesh:
+			debug_mesh.surface_end()
+				
+		var target_focus_z = smooth_focus_distance
+		
+		if center_depth < 9000.0:
+			var is_foreground_clutter = min_grid_depth < (center_depth * foreground_ignore_ratio)
+			
+			if (center_depth - min_grid_depth > edge_slip_threshold) and not is_foreground_clutter:
+				target_focus_z = min_grid_depth
+			else:
+				target_focus_z = center_depth
+				
+		elif min_grid_depth < 9000.0:
+			target_focus_z = min_grid_depth
+		else:
+			target_focus_z = target_zoom
+			
+		if focus_speed <= 0.0:
+			smooth_focus_distance = target_focus_z 
+		else:
+			smooth_focus_distance = lerp(smooth_focus_distance, target_focus_z, focus_speed * delta)
+		
+		var current_dist = camera.position.z
+		var zoom_ratio = clamp((current_dist - min_zoom) / (max_zoom - min_zoom), 0.0, 1.0)
+		
+		var start_weight = blur_start_curve.sample_baked(zoom_ratio) if blur_start_curve else zoom_ratio
+		var trans_weight = blur_transition_curve.sample_baked(zoom_ratio) if blur_transition_curve else zoom_ratio
+		var amount_weight = blur_amount_curve.sample_baked(zoom_ratio) if blur_amount_curve else zoom_ratio
+		
+		var blur_margin = lerp(blur_start_margin_range.x, blur_start_margin_range.y, start_weight)
+		camera.attributes.dof_blur_far_distance = smooth_focus_distance + blur_margin
+		camera.attributes.dof_blur_far_transition = lerp(blur_transition_range.x, blur_transition_range.y, trans_weight)
+		camera.attributes.dof_blur_amount = lerp(blur_amount_range.x, blur_amount_range.y, amount_weight)

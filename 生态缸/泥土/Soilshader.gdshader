@@ -2,7 +2,7 @@ shader_type spatial;
 render_mode cull_back, depth_draw_opaque;
 
 // ==========================================
-// 1. 形状与高度控制
+// 1. 形状与高度控制 (完美咬合苔藓)
 // ==========================================
 uniform float min_top_height : hint_range(0.0, 2.0) = 0.6;    
 uniform float min_bottom_height : hint_range(-1.0, 1.0) = 0.0; 
@@ -16,40 +16,30 @@ uniform float bottom_scale = 0.5;
 const float physical_size = 5.0;  
 
 // ==========================================
-// 2. 风格化地貌融合系统 (纯色块 + 噪波)
+// 2. 植被联动系统 (厚度隆起 + 保水变湿)
 // ==========================================
-uniform sampler2D moss_map : hint_default_black, filter_linear, repeat_disable;
-uniform float moss_blend_softness : hint_range(0.1, 1.0) = 0.8;
-
-// 4 种植物对泥土的实体顶起高度
-uniform vec4 moss_soil_bump = vec4(0.1, 0.1, 0.05, 0.0);
-
-// 鼓包与边缘破碎共用的全局噪波
-uniform sampler2D clump_noise : hint_default_white, filter_linear, repeat_enable;
-uniform vec4 clump_noise_scales = vec4(15.0, 80.0, 40.0, 10.0);
-uniform float edge_break_scale : hint_range(1.0, 100.0) = 40.0;
-
-// ✨ 恢复纯色面板：在这里直接调出你想要的童话/低面纸片风色彩！
-uniform vec3 moss_color_1 : source_color = vec3(0.2, 0.4, 0.1);  
-uniform vec3 moss_color_2 : source_color = vec3(0.4, 0.35, 0.1); 
-uniform vec3 moss_color_3 : source_color = vec3(0.1, 0.2, 0.3);  
-uniform vec3 moss_color_4 : source_color = vec3(0.3, 0.3, 0.3);  
+uniform sampler2D moss_map_0 : hint_default_black, filter_linear, repeat_disable;
+uniform sampler2D moss_map_1 : hint_default_black, filter_linear, repeat_disable;
+uniform float moss_thickness : hint_range(0.0, 0.5) = 0.15;
+uniform float moss_moisture_retention : hint_range(0.0, 1.0) = 0.4;
+// ✨ 新增：暴露给面板的植物底部阴影颜色！
+uniform vec3 moss_ao_color : source_color = vec3(0.15, 0.2, 0.15);
+uniform float moss_ao_threshold : hint_range(0.01, 1.0) = 0.15;
 
 // ==========================================
-// 3. 全局水分与物理泥土底盘系统
+// 3. 极简干湿泥土系统 (只有干与湿！)
 // ==========================================
 uniform float global_moisture : hint_range(0.0, 1.0) = 0.5; 
 
 uniform vec3 color_dry_earth : source_color = vec3(0.4, 0.4, 0.35); 
 uniform vec3 color_wet_mud : source_color = vec3(0.1, 0.08, 0.07);  
-uniform vec3 color_puddle : source_color = vec3(0.01, 0.01, 0.02);  
-uniform vec3 color_side_dirt : source_color = vec3(0.08, 0.06, 0.05);
 
 uniform float roughness_dry_earth = 0.85; 
 uniform float roughness_wet_mud = 0.3;    
-uniform float roughness_puddle = 0.05;
 
-// 泥土本身的法线贴图保留，用于增加泥土的颗粒感
+// ==========================================
+// 4. 三向贴图 (Triplanar) 法线系统
+// ==========================================
 uniform sampler2D top_normal_map : hint_normal, filter_linear_mipmap, repeat_enable;
 uniform float top_normal_scale : hint_range(-16.0, 16.0) = 1.0;
 uniform vec2 top_uv_scale = vec2(1.0, 1.0); 
@@ -58,95 +48,95 @@ uniform sampler2D side_normal_map : hint_normal, filter_linear_mipmap, repeat_en
 uniform float side_normal_scale : hint_range(-16.0, 16.0) = 1.0;
 uniform vec2 side_uv_scale = vec2(1.0, 1.0); 
 
+// ==========================================
+// 传递给片元的变量 (Varyings)
+// ==========================================
 varying vec3 v_normal;
 varying vec3 v_world_pos; 
+varying float v_local_moisture; 
+// ✨ 新增的快递员：安全运送世界对齐的 UV 坐标！
+varying vec2 v_global_uv; 
 
 void vertex() {
-	vec2 global_uv = (VERTEX.xz / physical_size) + 0.5;
-	vec3 world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	
-	float target_bottom = min_bottom_height + (texture(bottom_shape_map, global_uv).r * bottom_scale);
-	
-	vec4 moss_data = textureLod(moss_map, global_uv, 0.0);
-	
-	vec4 noises;
-	noises.r = textureLod(clump_noise, (world_pos.xz / clump_noise_scales.r) + 0.5, 0.0).r;
-	noises.g = textureLod(clump_noise, (world_pos.xz / clump_noise_scales.g) + 0.5, 0.0).r;
-	noises.b = textureLod(clump_noise, (world_pos.xz / clump_noise_scales.b) + 0.5, 0.0).r;
-	noises.a = textureLod(clump_noise, (world_pos.xz / clump_noise_scales.a) + 0.5, 0.0).r;
-	
-	vec4 dynamic_bumps = moss_soil_bump * noises;
-	float dynamic_soil_bump = dot(moss_data, dynamic_bumps);
-	
-	float top_offset = texture(height_map, global_uv).r * height_scale;
-	float target_top = min_top_height + top_offset + dynamic_soil_bump; 
-	
-	float normalized_y = VERTEX.y + 0.5;
-	VERTEX.y = mix(target_bottom, target_top, normalized_y);
-	
-	v_normal = NORMAL;
-	v_world_pos = VERTEX; 
+    vec2 global_uv = (VERTEX.xz / physical_size) + 0.5;
+    
+    // ✨ 把算好的绝对坐标交给快递员
+    v_global_uv = global_uv; 
+    
+    vec3 world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+    
+    float target_bottom = min_bottom_height + (texture(bottom_shape_map, global_uv).r * bottom_scale);
+    
+    vec4 moss_data_0 = textureLod(moss_map_0, global_uv, 0.0);
+    vec4 moss_data_1 = textureLod(moss_map_1, global_uv, 0.0);
+    float total_moss = clamp(
+        (moss_data_0.r + moss_data_0.g + moss_data_0.b + moss_data_0.a) + 
+        (moss_data_1.r + moss_data_1.g + moss_data_1.b + moss_data_1.a), 
+        0.0, 1.0
+    );
+    
+    float dynamic_soil_bump = total_moss * moss_thickness;
+    
+    float top_offset = texture(height_map, global_uv).r * height_scale;
+    float target_top = min_top_height + top_offset + dynamic_soil_bump; 
+    
+    float normalized_y = VERTEX.y + 0.5;
+    VERTEX.y = mix(target_bottom, target_top, normalized_y);
+    
+    v_local_moisture = clamp(global_moisture + total_moss * moss_moisture_retention, 0.0, 1.0);
+    
+    v_normal = NORMAL;
+    v_world_pos = VERTEX; 
 }
 
 void fragment() {
-    vec3 surface_color;
-    float surface_roughness;
-    
-    if (global_moisture < 0.5) {
-        float factor = global_moisture * 2.0;
-        surface_color = mix(color_dry_earth, color_wet_mud, factor);
-        surface_roughness = mix(roughness_dry_earth, roughness_wet_mud, factor);
-    } else {
-        float factor = (global_moisture - 0.5) * 2.0;
-        surface_color = mix(color_wet_mud, color_puddle, factor);
-        surface_roughness = mix(roughness_wet_mud, roughness_puddle, factor);
-    }
-    
-    vec2 base_uv = (v_world_pos.xz / physical_size) + 0.5;
-    vec4 moss_data = texture(moss_map, base_uv);
-    
-    float edge_noise_val = texture(clump_noise, v_world_pos.xz / edge_break_scale).r;
-    
-    float base_total_moss = clamp(moss_data.r + moss_data.g + moss_data.b + moss_data.a, 0.0, 1.0);
-    float organic_moss = clamp(base_total_moss - (edge_noise_val * 0.4), 0.0, 1.0); 
-    
-    vec3 mixed_moss_color = surface_color;
-    if (organic_moss > 0.001) {
-        mixed_moss_color = (
-            moss_color_1 * moss_data.r +
-            moss_color_2 * moss_data.g +
-            moss_color_3 * moss_data.b +
-            moss_color_4 * moss_data.a
-        ) / (moss_data.r + moss_data.g + moss_data.b + moss_data.a);
-    }
-    
-    float moss_factor = smoothstep(0.0, moss_blend_softness, organic_moss); 
-    
-    vec3 top_final_color = mix(surface_color, mixed_moss_color, moss_factor);
-    float top_final_roughness = mix(surface_roughness, 0.9, moss_factor);
-    float final_top_normal_scale = mix(top_normal_scale, top_normal_scale * 0.5, moss_factor);
+    vec3 surface_color = mix(color_dry_earth, color_wet_mud, v_local_moisture);
+    float surface_roughness = mix(roughness_dry_earth, roughness_wet_mud, v_local_moisture);
 
     float is_top = smoothstep(0.4, 0.8, abs(v_normal.y));
-    vec3 side_color = mix(color_dry_earth * 0.5, color_side_dirt, global_moisture);
+    vec3 side_color = surface_color * 0.85; 
     
-    ALBEDO = mix(side_color, top_final_color, is_top);
-    ROUGHNESS = mix(0.9, top_final_roughness, is_top);
+    ALBEDO = mix(side_color, surface_color, is_top);
+    ROUGHNESS = surface_roughness; 
+    METALLIC = mix(0.0, 0.15, smoothstep(0.7, 1.0, v_local_moisture)); 
+
+    vec3 blend_weights = abs(v_normal);
+    blend_weights = max(blend_weights - 0.2, 0.0); 
+    blend_weights /= (blend_weights.x + blend_weights.y + blend_weights.z); 
+
+    vec2 uv_x = v_world_pos.zy * side_uv_scale;
+    vec2 uv_y = v_world_pos.xz * top_uv_scale;
+    vec2 uv_z = v_world_pos.xy * side_uv_scale;
+
+    vec3 tex_x = texture(side_normal_map, uv_x).rgb;
+    vec3 tex_y = texture(top_normal_map, uv_y).rgb;
+    vec3 tex_z = texture(side_normal_map, uv_z).rgb;
+
+    vec3 triplanar_normal = tex_x * blend_weights.x + tex_y * blend_weights.y + tex_z * blend_weights.z;
+    float triplanar_scale = side_normal_scale * blend_weights.x + top_normal_scale * blend_weights.y + side_normal_scale * blend_weights.z;
     
-    float current_metallic = mix(0.0, 0.1, max(0.0, (global_moisture - 0.5) * 2.0));
-    METALLIC = mix(0.0, current_metallic, is_top);
+    NORMAL_MAP = triplanar_normal;
+    NORMAL_MAP_DEPTH = triplanar_scale;
 
-    vec2 top_uv = ((v_world_pos.xz / physical_size) + 0.5) * top_uv_scale;
-    vec3 abs_n = abs(v_normal);
-    vec2 side_uv;
-    if (abs_n.x > abs_n.z) {
-        side_uv = v_world_pos.zy * side_uv_scale;
-    } else {
-        side_uv = v_world_pos.xy * side_uv_scale;
-    }
-
-    vec3 top_normal_tex = texture(top_normal_map, top_uv).rgb;
-    vec3 side_normal_tex = texture(side_normal_map, side_uv).rgb;
-
-    NORMAL_MAP = mix(side_normal_tex, top_normal_tex, is_top);
-    NORMAL_MAP_DEPTH = mix(side_normal_scale, final_top_normal_scale, is_top);
+    // ✨ Fake AO (伪环境光遮蔽)
+    // ==========================================
+    vec4 moss_0 = texture(moss_map_0, v_global_uv);
+    vec4 moss_1 = texture(moss_map_1, v_global_uv);
+    
+    float total_moss = clamp(
+        dot(moss_0, vec4(1.0)) + dot(moss_1, vec4(1.0)), 
+        0.0, 1.0
+    );
+    
+    // 🚨 核心改动：用 smoothstep 把线性的苔藓浓度“拔苗助长”！
+    // 意思：当浓度从 0 涨到 moss_ao_threshold (比如 0.15) 时，ao_weight 就已经从 0 飙升到 1 了！
+    // 这样即便浓度只有 0.15 的稀疏苔藓，也能拥有 100% 的深色底座！
+    float ao_weight = smoothstep(0.0, moss_ao_threshold, total_moss);
+    
+    // 这里不再用 total_moss，而是用算好的 ao_weight
+    vec3 fake_ao = mix(vec3(1.0), moss_ao_color, ao_weight);
+    
+    ALBEDO = ALBEDO * fake_ao; 
+    // 粗糙度保持原样，用线性的 total_moss 比较自然
+    ROUGHNESS = mix(ROUGHNESS, 1.0, total_moss);
 }

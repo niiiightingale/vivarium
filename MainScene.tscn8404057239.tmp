@@ -48,8 +48,7 @@ panorama = SubResource("GradientTexture2D_a814b")
 sky_material = SubResource("PanoramaSkyMaterial_5crlr")
 
 [sub_resource type="Environment" id="Environment_1305s"]
-background_mode = 2
-background_energy_multiplier = 0.8
+background_energy_multiplier = 1.08
 sky = SubResource("Sky_hbc2u")
 ambient_light_source = 2
 ambient_light_color = Color(0, 0.12788624, 0.25375974, 1)
@@ -57,17 +56,15 @@ ambient_light_energy = 16.0
 tonemap_mode = 3
 ssr_fade_in = 0.18467155
 ssao_enabled = true
-ssao_radius = 0.5
-ssao_intensity = 16.0
-ssao_power = 0.47795933
+ssao_radius = 3.61
+ssao_intensity = 5.54
 ssao_detail = 0.0
 ssao_horizon = 0.2
-ssao_sharpness = 0.0
+ssao_sharpness = 0.18
 ssil_radius = 4.93
 ssil_intensity = 1.59
-sdfgi_enabled = true
 sdfgi_read_sky_light = false
-sdfgi_min_cell_size = 0.6
+sdfgi_bounce_feedback = 0.84
 glow_intensity = 7.26
 fog_light_color = Color(0.30408016, 0.5353004, 0.5124433, 1)
 fog_light_energy = 2.35
@@ -94,8 +91,7 @@ shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
 shader_parameter/bottom_scale = 0.5
 shader_parameter/moss_thickness = 0.0510000024225
 shader_parameter/moss_moisture_retention = 0.0
-shader_parameter/moss_ao_color = Color(0.19784528, 0.6917016, 0.99999994, 1)
-shader_parameter/moss_ao_threshold = 0.50000002305148
+shader_parameter/moss_ao_color = Color(0.055379808, 0.08536873, 0.055954486, 1)
 shader_parameter/global_moisture = 0.50000002375
 shader_parameter/color_dry_earth = Color(0.4088592, 0.21223393, 0.08892784, 1)
 shader_parameter/color_wet_mud = Color(0.15419325, 0.122384615, 0.11178077, 1)
@@ -120,17 +116,17 @@ size = Vector3(5.1497803, 0.6610718, 5.0567627)
 
 [sub_resource type="Curve" id="Curve_4mcbk"]
 _limits = [0.0, 10.0, 0.0, 0.20999299]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 1, Vector2(0.075843215, 0), 0.0, 0.0, 0, 0, Vector2(0.20999299, 10), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 1, Vector2(0.104996495, 0), 0.0, 170.78975, 0, 0, Vector2(0.20999299, 10), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="Curve" id="Curve_mctxq"]
 _limits = [0.0, 5.0, 0.0, 0.5]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 5), 0.0, 0.0, 0, 0]
+_data = [Vector2(0.27845746, 0), 0.0, 0.61344635, 0, 0, Vector2(0.5, 5), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_nm5af"]
 _limits = [0.0, 0.01, 0.0, 0.2]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 0.01), 0.0, 0.0, 0, 0]
+_data = [Vector2(0.11393617, 0), 0.0, 0.0, 0, 0, Vector2(0.17351064, 0.01), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_4mcbk"]
@@ -138,7 +134,7 @@ dof_blur_far_enabled = true
 
 [sub_resource type="Curve" id="Curve_8qg48"]
 _limits = [0.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 1.4707491), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.6039107), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Gradient" id="Gradient_3slyh"]
@@ -186,14 +182,14 @@ shader_parameter/vertical_shade_curve = SubResource("GradientTexture1D_anuui")
 shader_parameter/mesh_original_height = 1.0
 shader_parameter/size_curve = SubResource("CurveTexture_anuui")
 shader_parameter/offset_curve = SubResource("CurveTexture_8qg48")
-shader_parameter/terrain_align_strength = 0.330000015675
-shader_parameter/moss_scale = 0.026
+shader_parameter/terrain_align_strength = 0.342000016245
+shader_parameter/moss_scale = 0.04
 shader_parameter/sway_speed = 0.6
 shader_parameter/sway_strength = 0.03
 shader_parameter/hydration = 1.0
 shader_parameter/puff_height = 0.0
 shader_parameter/elevation_offset = 0.7650000363375
-shader_parameter/micro_y_variance = 0.070000003325
+shader_parameter/micro_y_variance = 0.25600001216
 shader_parameter/spawn_density = 1.0
 shader_parameter/max_slope_degree = 45.0
 shader_parameter/physical_size = 5.0
@@ -612,7 +608,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0
 shape = SubResource("BoxShape3D_5crlr")
 
 [node name="缸体和环境" parent="SoilManager" unique_id=1719478435 instance=ExtResource("7_5crlr")]
-visible = false
 
 [node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="SoilManager" unique_id=877263931]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
@@ -637,22 +632,16 @@ min_zoom = 2.0
 max_zoom = 20.0
 min_pitch = -70.0
 max_pitch = -25.0
-enable_idle_mode = false
 opening_zoom = 100.0
 opening_duration = 3.0
 idle_zoom = 15.945
 idle_height_offset = 2.095
 idle_rotation_speed = 0.06
-focus_reticle_size = 0.4
-focus_speed = 30.0
-edge_slip_threshold = 1.0
-foreground_ignore_ratio = 0.2
+focus_speed = 40.0
 blur_start_curve = SubResource("Curve_4mcbk")
 blur_transition_curve = SubResource("Curve_mctxq")
 blur_amount_curve = SubResource("Curve_nm5af")
-blur_start_margin_range = Vector2(0.6, 20)
-blur_transition_range = Vector2(0.2, 4)
-blur_amount_range = Vector2(0.1, 0.1)
+blur_start_margin_range = Vector2(2.7, 20)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 20)
@@ -669,12 +658,13 @@ shadow_enabled = true
 [node name="MossSystem" type="Node" parent="." unique_id=146429818 node_paths=PackedStringArray("soil_manager")]
 script = ExtResource("12_yvb8b")
 soil_manager = NodePath("../SoilManager")
-density_multiplier = 1.8
+density_multiplier = 1.3
 brush_flow_curve = SubResource("Curve_8qg48")
 
 [node name="MossMultiMesh_0" type="MultiMeshInstance3D" parent="MossSystem" unique_id=1483739406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
 material_override = SubResource("ShaderMaterial_8s4c3")
+cast_shadow = 0
 multimesh = SubResource("MultiMesh_nm5af")
 
 [node name="MossMultiMesh_1" type="MultiMeshInstance3D" parent="MossSystem" unique_id=2064888337]
@@ -725,7 +715,7 @@ multimesh = SubResource("MultiMesh_nm5af")
 transform = Transform3D(1, 0, 0, 0, -0.6248476, 0.7807468, 0, -0.7807468, -0.6248476, -0.17756653, 6.4637904, -7.378854)
 visible = false
 light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 63.01
+light_energy = 27.34
 light_volumetric_fog_energy = 0.0
 light_size = 1.0
 shadow_enabled = true
@@ -768,18 +758,18 @@ spot_attenuation = 1.86
 
 [node name="OmniLight3D" type="SpotLight3D" parent="Node3D" unique_id=1300166911]
 transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 7.2626433, 0.02847656)
+visible = false
 light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 91.535
+light_energy = 42.42
 light_volumetric_fog_energy = 0.0
 light_size = 1.0
 shadow_enabled = true
-shadow_bias = 0.02
+shadow_bias = 0.303
 shadow_normal_bias = 0.0
-shadow_opacity = 0.35
-shadow_blur = 0.8
+shadow_opacity = 0.66
+shadow_blur = 0.5
 spot_range = 65.521
 spot_attenuation = 1.86
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Node3D" unique_id=1808286013]
 transform = Transform3D(0.8660254, -0.25751156, 0.42858815, 0, 0.8571763, 0.5150231, -0.5, -0.44602308, 0.74233645, 4, 4.87608, 3.1127992)
-visible = false

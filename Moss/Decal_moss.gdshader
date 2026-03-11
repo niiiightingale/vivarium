@@ -1,38 +1,52 @@
 shader_type spatial;
-render_mode cull_disabled, depth_draw_opaque;
+render_mode cull_back, depth_draw_opaque;
 
 // ==========================================
-// 1. 同步泥土的起伏参数
+// 🌸 基础色彩与明暗系统 (Color & Shading)
 // ==========================================
-uniform float min_top_height : hint_range(0.0, 2.0) = 0.6;    
-uniform sampler2D height_map : hint_default_black, filter_linear, repeat_disable;
-uniform float height_scale = 1.0;
-const float physical_size = 5.0;  
+// 决定具体颜色的贴图 (基于个体的随机差异采样)
+uniform sampler2D height_gradient : source_color, filter_linear; 
+uniform sampler2D dry_gradient : source_color, filter_linear;    
 
-uniform sampler2D moss_map : hint_default_black, filter_linear, repeat_disable;
-uniform vec4 moss_soil_bump = vec4(0.1, 0.1, 0.05, 0.0);
-uniform sampler2D clump_noise : hint_default_white, filter_linear, repeat_enable;
-uniform vec4 clump_noise_scales = vec4(15.0, 80.0, 40.0, 10.0);
+// ✨ 新增：专门控制纵向灰度/明暗的渐变图 (左边=底部伞柄，右边=顶部伞盖)
+uniform sampler2D vertical_shade_curve : hint_default_white, filter_linear; 
+// ✨ 新增：你在 Blender 里做这个模型时的大致高度，用于计算百分比
+uniform float mesh_original_height = 1.0; 
 
 // ==========================================
-// 2. 🌸 贴花参数
+// 📏 缩放与变形曲线
 // ==========================================
-uniform vec3 moss_color : source_color = vec3(1.0, 1.0, 1.0);
-uniform sampler2D moss_texture : source_color, filter_linear_mipmap;
+uniform sampler2D size_curve : hint_default_white, filter_linear; 
+uniform sampler2D offset_curve : hint_default_white, filter_linear; 
+uniform float terrain_align_strength : hint_range(0.0, 1.0) = 0.3;
 
-uniform float moss_scale : hint_range(0.1, 5.0) = 0.83; 
-uniform float layer_y_offset : hint_range(0.0, 0.5) = 0.02; 
-uniform float spawn_density : hint_range(0.0, 1.0) = 1.0; 
+uniform float moss_scale = 1.0;
+uniform float sway_speed = 2.0;
+uniform float sway_strength = 0.05;
 
-// ✨ 【新增核心】：悬崖剔除角度！(0度=只能长在纯平的地上，90度=垂直悬崖也能长)
+uniform float hydration : hint_range(0.0, 1.0) = 1.0; 
+uniform float puff_height : hint_range(0.0, 1.0) = 0.15; 
+
+// ==========================================
+// 🥞 千层厚涂与密度控制
+// ==========================================
+uniform float elevation_offset : hint_range(0.0, 2.0) = 0.8; 
+uniform float micro_y_variance : hint_range(0.0, 0.5) = 0.05; 
+uniform float spawn_density : hint_range(0.0, 1.0) = 1.0;     
 uniform float max_slope_degree : hint_range(0.0, 90.0) = 45.0; 
-uniform float steepness_scale_boost : hint_range(0.0, 2.0) = 0.0; // 缓坡膨胀补偿 (不需要可保持0)
-
-uniform float sway_speed : hint_range(0.0, 5.0) = 0.32;
-uniform float sway_strength : hint_range(0.0, 0.1) = 0.015;
 
 // ==========================================
-// 3. 核心高度读取与随机函数
+// ⛰️ 地形锚定
+// ==========================================
+uniform float physical_size = 5.0;
+uniform float height_scale = 1.0;
+uniform sampler2D height_map : hint_default_black, filter_linear, repeat_disable;
+uniform sampler2D moss_density_map : hint_default_black, filter_linear, repeat_disable;
+uniform vec4 channel_mask = vec4(1.0, 0.0, 0.0, 0.0);
+uniform float moss_thickness : hint_range(0.0, 0.5) = 0.15; 
+
+// ==========================================
+// 🛠️ 工具函数
 // ==========================================
 float hash(vec2 p) {
     return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
@@ -40,98 +54,123 @@ float hash(vec2 p) {
 
 float get_terrain_height(vec2 pos_xz) {
     vec2 global_uv = (pos_xz / physical_size) + 0.5;
-    vec4 m_data = textureLod(moss_map, global_uv, 0.0);
-    vec4 noises;
-    noises.r = textureLod(clump_noise, (pos_xz / clump_noise_scales.r) + 0.5, 0.0).r;
-    noises.g = textureLod(clump_noise, (pos_xz / clump_noise_scales.g) + 0.5, 0.0).r;
-    noises.b = textureLod(clump_noise, (pos_xz / clump_noise_scales.b) + 0.5, 0.0).r;
-    noises.a = textureLod(clump_noise, (pos_xz / clump_noise_scales.a) + 0.5, 0.0).r;
-    
-    float dynamic_soil_bump = dot(m_data, moss_soil_bump * noises);
-    float top_offset = textureLod(height_map, global_uv, 0.0).r * height_scale;
-    return min_top_height + top_offset + dynamic_soil_bump;
+    float soil_h = textureLod(height_map, global_uv, 0.0).r * height_scale;
+    float density = dot(textureLod(moss_density_map, global_uv, 0.0), channel_mask);
+    return soil_h + density * moss_thickness;
 }
+// ==========================================
+// 传递给片元的变量
+// ==========================================
+varying float v_instance_variance; // 植被个体差异
+varying float v_local_height_ratio; // ✨ 存起来传给下面采样 AO 灰度图
 
 void vertex() {
     vec3 instance_center = MODEL_MATRIX[3].xyz;
     
+    // 1. 浓度检测与秒退 (Early Out)
+    vec2 global_uv = (instance_center.xz / physical_size) + 0.5;
+    float current_density = dot(textureLod(moss_density_map, global_uv, 0.0), channel_mask);
+    float grow_factor = smoothstep(0.01, 0.5, current_density); 
+    
     float random_spawn = hash(instance_center.xz * 135.246);
-    if (random_spawn > spawn_density) {
+    
+    if (grow_factor <= 0.0 || random_spawn > spawn_density) {
         VERTEX = vec3(0.0);
     } else {
-        // 1. 获取中心点高度与精确法线
-        float center_h = get_terrain_height(instance_center.xz);
+        // 2. ✨ 计算变形前模型自身高度百分比 (0=底, 1=顶)
+        float current_height_ratio = clamp(VERTEX.y / mesh_original_height, 0.0, 1.0);
+        v_local_height_ratio = current_height_ratio; // 传给片元算颜色
         
+        // 提取顶点颜色 R 通道 (⚠️ 仅作为物理遮罩！)
+        float wind_puff_mask = COLOR.r; 
+        
+        float raw_linear_rand = hash(instance_center.xz * 77.77);
+        float curved_height_ratio = textureLod(offset_curve, vec2(raw_linear_rand, 0.5), 0.0).r;
+        v_instance_variance = curved_height_ratio; // 存起来传给下面采样随机颜色
+        
+        // 3. 基础缩放 (先缩放，这不会改变根部锚定)
+        float height_size_multiplier = textureLod(size_curve, vec2(curved_height_ratio, 0.5), 0.0).r;
+        float current_scale = moss_scale * mix(0.7, 1.0, hydration) * grow_factor * height_size_multiplier;
+        vec3 local_pos = VERTEX * current_scale;
+        
+        // ✨ 4. 彻底修正的拉伸魔法 (只拉伸伞柄！) ✨
+        // 我们利用 current_height_ratio (高度百分比)，不再用 R 通道！
+        
+        // 🚨 魔法前提：假设伞柄顶部高度百分比大概在 0.8。
+        // 用 smoothstep 算出只有伞柄在拉伸，伞盖整体平移！
+        float stalk_stretch_mask = smoothstep(0.0, 0.8, current_height_ratio);
+        // 让 smoothstep 的上边界彻底变成 1.0
+        stalk_stretch_mask = clamp(stalk_stretch_mask / 0.8, 0.0, 1.0);
+        // ✨ 伞盖锁定魔法：一旦高度超过伞柄尖端 (0.8)，拉伸系数强制回归 1.0 (整体平移，不飞离)
+        if (current_height_ratio >= 0.8) {
+            stalk_stretch_mask = 1.0; 
+        }
+        
+        // A. 个体高度随机差异 (只加在 `current_height_ratio > 0.0` 的部分，保持根部锚定)
+        float random_micro_offset = curved_height_ratio * micro_y_variance;
+        // 把拉伸加在 `current_height_ratio` 上 (根部 ratio=0，偏移永远是0！)
+        local_pos.y += current_height_ratio * random_micro_offset; 
+        
+        // B. 遇水膨胀 (复用 R 通道遮罩！只有顶上的伞盖鼓起来，伞柄不动！)
+        float current_puff = puff_height * mix(0.3, 1.0, hydration) * grow_factor;
+        // 🚨 极其重要：只让画了红色的顶点受到 puff 影响
+        local_pos.y += wind_puff_mask * current_puff; 
+        
+        // 5. 风吹摇摆 (仅复用 R 通道遮罩！)
+        vec3 world_pos_base = instance_center + local_pos;
+        float wind = sin(TIME * sway_speed + world_pos_base.x * 5.0 + world_pos_base.z * 5.0) * sway_strength;
+        local_pos.x += wind * wind_puff_mask * grow_factor; 
+        
+        vec3 world_offset = (MODEL_MATRIX * vec4(local_pos, 0.0)).xyz; 
+        
+        // B. 采样植物根部周围 4 个微小点的高度，求出当前斜坡的“坡面方向 (Normal)”
         vec2 e = vec2(0.05, 0.0);
         float h_L = get_terrain_height(instance_center.xz - e.xy);
         float h_R = get_terrain_height(instance_center.xz + e.xy);
         float h_D = get_terrain_height(instance_center.xz - e.yx);
         float h_U = get_terrain_height(instance_center.xz + e.yx);
-        vec3 center_normal = normalize(vec3(h_L - h_R, 2.0 * e.x, h_D - h_U));
+        vec3 terrain_normal = normalize(vec3(h_L - h_R, 2.0 * e.x, h_D - h_U));
         
-        // ==========================================
-        // ✨ 核心逻辑：悬崖角度剔除
-        // ==========================================
-        // 解析法线，算出当前地块的物理倾斜角度（度数）
-        float current_slope_degree = degrees(acos(center_normal.y));
+        // C. 算出“目标朝向”：在绝对垂直 (0,1,0) 和 坡面方向 之间混合
+        vec3 target_up = normalize(mix(vec3(0.0, 1.0, 0.0), terrain_normal, terrain_align_strength));
         
-        // 如果脚下的坡度，大于你设定的最大忍受角度，这根草当场死亡（剔除）
-        if (current_slope_degree > max_slope_degree) {
-            VERTEX = vec3(0.0);
-        } else {
-            // 2. 完美修复的旋转矩阵！
-            vec3 up_dir = vec3(0.0, 1.0, 0.0);
-            vec3 axis = cross(up_dir, center_normal);
-            mat3 tilt_mat = mat3(1.0); 
-            
-            if (length(axis) > 0.0001) {
-                axis = normalize(axis);
-                float s = length(cross(up_dir, center_normal));
-                float c = dot(up_dir, center_normal);
-                float oc = 1.0 - c;
-                float x = axis.x; float y = axis.y; float z = axis.z;
-                
-                tilt_mat = mat3(
-                    vec3(c + x*x*oc,     y*x*oc + z*s,   z*x*oc - y*s),
-                    vec3(x*y*oc - z*s,   c + y*y*oc,     z*y*oc + x*s),
-                    vec3(x*z*oc + y*s,   y*z*oc - x*s,   c + z*z*oc)
-                );
-            }
-            
-            // 3. 缓坡膨胀补偿 
-            float scale_boost = mix(1.0, 1.0 / max(center_normal.y, 0.3), steepness_scale_boost);
-            vec3 local_pos = VERTEX * moss_scale * scale_boost;
-            
-            // 4. 风吹动画
-            vec3 pseudo_world = instance_center + local_pos;
-            float wind = sin(TIME * sway_speed + pseudo_world.x * 5.0 + pseudo_world.z * 5.0) * sway_strength;
-            local_pos.x += wind;
-            local_pos.z += wind;
-            
-            // 5. 将坐标系交给矩阵并旋转贴合
-            vec3 world_offset = (MODEL_MATRIX * vec4(local_pos, 0.0)).xyz;
-            world_offset = tilt_mat * world_offset; 
-            
-            // 6. 最终高度定位 (带防闪烁层级)
-            vec3 final_world_pos = instance_center;
-            float random_micro_offset = hash(instance_center.xz) * 0.015;
-            final_world_pos.y = center_h + layer_y_offset + random_micro_offset;
-            final_world_pos += world_offset;
-            
-            // 7. 转回渲染管线！完美赋上地形的法线
-            VERTEX = (inverse(MODEL_MATRIX) * vec4(final_world_pos, 1.0)).xyz;
-            NORMAL = (inverse(MODEL_MATRIX) * vec4(center_normal, 0.0)).xyz;
+        // D. 罗德里格斯刚体旋转 (Rodrigues)：把原本向上的植物，整体掰向目标朝向！
+        // 这段数学公式保证了模型只做旋转，绝对不会像之前那样被扯成大饼！
+        vec3 axis = cross(vec3(0.0, 1.0, 0.0), target_up);
+        float s = length(axis);
+        if (s > 0.0001) {
+            axis /= s;
+            float c = dot(vec3(0.0, 1.0, 0.0), target_up);
+            world_offset = world_offset * c + cross(axis, world_offset) * s + axis * dot(axis, world_offset) * (1.0 - c);
         }
+        
+        // E. 重新组合：把旋转好的植物，插回泥土表面
+        vec3 final_world_pos = instance_center;
+        float terrain_h = get_terrain_height(instance_center.xz);
+        
+        // 根部死死钉在泥土高度
+        final_world_pos.y = terrain_h + elevation_offset; 
+        // 叠加上倾斜后的身体
+        final_world_pos += world_offset; 
+        
+        VERTEX = (inverse(MODEL_MATRIX) * vec4(final_world_pos, 1.0)).xyz;
     }
 }
 
 void fragment() {
-    vec4 tex = texture(moss_texture, UV);
+    // 🎨 1. 获取基础颜色 (由 HeightGradient 和 个体差异 决定)
+    vec3 gradient_color = texture(height_gradient, vec2(v_instance_variance, 0.5)).rgb;
+    vec3 dry_gradient_color = texture(dry_gradient, vec2(v_instance_variance, 0.5)).rgb;
+    vec3 base_color = mix(dry_gradient_color, gradient_color, hydration);
     
-    ALBEDO = tex.rgb * moss_color;
-    ALPHA = tex.a;
-    ALPHA_SCISSOR_THRESHOLD = 0.5; 
+    // 🎨 2. ✨ 获取纵向灰度 (由 VerticalShadeCurve 和 自身高度 决定)
+    float shade_multiplier = texture(vertical_shade_curve, vec2(v_local_height_ratio, 0.5)).r;
     
+    // 🎨 3. 混合！灰度压暗基础色
+    vec3 actual_color = base_color * shade_multiplier;
+    
+    ALBEDO = actual_color;
     ROUGHNESS = 0.95; 
-    SPECULAR = 0.0;   
+    SPECULAR = 0.1;   
+    BACKLIGHT = actual_color * 0.5; 
 }
