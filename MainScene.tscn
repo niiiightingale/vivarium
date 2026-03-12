@@ -3,10 +3,8 @@
 [ext_resource type="Shader" uid="uid://ch60cpg3uiu3l" path="res://生态缸/泥土/Soilshader.gdshader" id="1_3mqji"]
 [ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://生态缸/泥土/SoilManager.gd" id="1_rpqi1"]
 [ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://生态缸/泥土/底面高度图.png" id="3_rf2cd"]
-[ext_resource type="Texture2D" uid="uid://bvm05t04krx6y" path="res://生态缸/泥土/泥土层/coast_sand_rocks_02_nor_dx_4k.jpg" id="4_5crlr"]
 [ext_resource type="PackedScene" uid="uid://c80cl1jrc7nwv" path="res://BrushTool.tscn" id="4_p5x2j"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
-[ext_resource type="Texture2D" uid="uid://kymjss86qwdm" path="res://生态缸/泥土/泥土层/GroundDirtRocky020_NRM_2K.jpg" id="5_5crlr"]
 [ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/生态缸相关模型/缸体和环境.tscn" id="7_5crlr"]
 [ext_resource type="PackedScene" uid="uid://7d2bwa721gbp" path="res://BucketTool.tscn" id="8_torvr"]
 [ext_resource type="Script" uid="uid://dictt6f6ovtm8" path="res://ToolManager.gd" id="10_8xkvn"]
@@ -49,6 +47,7 @@ sky_material = SubResource("PanoramaSkyMaterial_5crlr")
 
 [sub_resource type="Environment" id="Environment_1305s"]
 background_mode = 2
+background_color = Color(0.5116537, 0.51165366, 0.51165366, 1)
 background_energy_multiplier = 0.8
 sky = SubResource("Sky_hbc2u")
 ambient_light_source = 2
@@ -84,6 +83,17 @@ adjustment_color_correction = SubResource("CurveXYZTexture_xtmsi")
 dof_blur_far_distance = 2.1
 dof_blur_amount = 0.09
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yvb8b"]
+noise_type = 0
+frequency = 0.0189
+fractal_lacunarity = 2.66
+fractal_gain = 1.115
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3hf6u"]
+noise = SubResource("FastNoiseLite_yvb8b")
+seamless = true
+in_3d_space = true
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uxrcv"]
 render_priority = 0
 shader = ExtResource("1_3mqji")
@@ -92,21 +102,17 @@ shader_parameter/min_bottom_height = -0.125999958485
 shader_parameter/height_scale = 1.0
 shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
 shader_parameter/bottom_scale = 0.5
-shader_parameter/moss_thickness = 0.0510000024225
+shader_parameter/moss_thickness = 0.050000002375
 shader_parameter/moss_moisture_retention = 0.0
-shader_parameter/moss_ao_color = Color(0.19784528, 0.6917016, 0.99999994, 1)
+shader_parameter/moss_ao_color = Color(0.28608328, 0.5996988, 0.56472236, 1)
 shader_parameter/moss_ao_threshold = 0.50000002305148
-shader_parameter/global_moisture = 0.50000002375
-shader_parameter/color_dry_earth = Color(0.4088592, 0.21223393, 0.08892784, 1)
-shader_parameter/color_wet_mud = Color(0.15419325, 0.122384615, 0.11178077, 1)
-shader_parameter/roughness_dry_earth = 1.0
-shader_parameter/roughness_wet_mud = 0.5
-shader_parameter/top_normal_map = ExtResource("4_5crlr")
-shader_parameter/top_normal_scale = -0.29199925386999936
-shader_parameter/top_uv_scale = Vector2(0.5, 0.5)
-shader_parameter/side_normal_map = ExtResource("5_5crlr")
-shader_parameter/side_normal_scale = -0.5829992676925002
-shader_parameter/side_uv_scale = Vector2(0.1, 0.1)
+shader_parameter/color_dirt_light = Color(0.30688637, 0.23219141, 0.16017488, 1)
+shader_parameter/color_dirt_dark = Color(0.34160167, 0.2508298, 0.17289042, 1)
+shader_parameter/wet_color_multiplier = Color(0.4, 0.35, 0.3, 1)
+shader_parameter/dirt_noise = SubResource("NoiseTexture2D_3hf6u")
+shader_parameter/noise_scale = 0.1
+shader_parameter/bump_intensity = 1.79600008531
+shader_parameter/global_moisture = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_rpqi1"]
 material = SubResource("ShaderMaterial_uxrcv")
@@ -149,7 +155,7 @@ gradient = SubResource("Gradient_3slyh")
 
 [sub_resource type="Gradient" id="Gradient_8s4c3"]
 offsets = PackedFloat32Array(0, 0.18394886, 0.53053975, 0.89985794, 1)
-colors = PackedColorArray(7.52043e-08, 0.07692353, 0.09001305, 1, 0.111217625, 0.2360579, 0.1983265, 1, 0.14593077, 0.2457115, 0.18693143, 1, 0.14854556, 0.31104615, 0.177802, 1, 0.20847917, 0.34674472, 0.15219468, 1)
+colors = PackedColorArray(7.52043e-08, 0.07692353, 0.09001305, 1, 0.111217625, 0.2360579, 0.1983265, 1, 0.13095197, 0.24801743, 0.19520268, 1, 0.14854556, 0.31104615, 0.177802, 1, 0.20630497, 0.3434469, 0.1504764, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_3slyh"]
 gradient = SubResource("Gradient_8s4c3")
@@ -193,7 +199,7 @@ shader_parameter/sway_strength = 0.03
 shader_parameter/hydration = 1.0
 shader_parameter/puff_height = 0.0
 shader_parameter/elevation_offset = 0.7650000363375
-shader_parameter/micro_y_variance = 0.070000003325
+shader_parameter/micro_y_variance = 0.130000006175
 shader_parameter/spawn_density = 1.0
 shader_parameter/max_slope_degree = 45.0
 shader_parameter/physical_size = 5.0
@@ -612,7 +618,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0
 shape = SubResource("BoxShape3D_5crlr")
 
 [node name="缸体和环境" parent="SoilManager" unique_id=1719478435 instance=ExtResource("7_5crlr")]
-visible = false
 
 [node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="SoilManager" unique_id=877263931]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
@@ -638,11 +643,11 @@ max_zoom = 20.0
 min_pitch = -70.0
 max_pitch = -25.0
 enable_idle_mode = false
+idle_time_threshold = 1.0
 opening_zoom = 100.0
 opening_duration = 3.0
 idle_zoom = 15.945
 idle_height_offset = 2.095
-idle_rotation_speed = 0.06
 focus_reticle_size = 0.4
 focus_speed = 30.0
 edge_slip_threshold = 1.0
@@ -661,7 +666,6 @@ fov = 35.0
 near = 0.001
 
 [node name="OmniLight3D" type="SpotLight3D" parent="CameraPivot/Camera3D" unique_id=1996772941]
-visible = false
 light_energy = 3.978
 light_indirect_energy = 1.957
 shadow_enabled = true
@@ -755,7 +759,7 @@ spot_attenuation = 1.86
 transform = Transform3D(-0.50018144, 0.6760648, 0.54106843, -7.4469764e-11, -0.6248476, 0.7807468, 0.8659207, 0.39051503, 0.31253713, 6.281741, 6.4637904, 4.3948064)
 visible = false
 light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 151.965
+light_energy = 17.42
 light_volumetric_fog_energy = 0.0
 light_size = 1.0
 shadow_enabled = true
@@ -767,17 +771,15 @@ spot_range = 210.853
 spot_attenuation = 1.86
 
 [node name="OmniLight3D" type="SpotLight3D" parent="Node3D" unique_id=1300166911]
-transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 7.2626433, 0.02847656)
+transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 6.341278, 0.02847656)
 light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 91.535
+light_energy = 100.0
 light_volumetric_fog_energy = 0.0
 light_size = 1.0
 shadow_enabled = true
-shadow_bias = 0.02
 shadow_normal_bias = 0.0
-shadow_opacity = 0.35
-shadow_blur = 0.8
-spot_range = 65.521
+shadow_opacity = 0.59
+spot_range = 40.011
 spot_attenuation = 1.86
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Node3D" unique_id=1808286013]
