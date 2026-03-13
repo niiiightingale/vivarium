@@ -1,7 +1,6 @@
 [gd_resource type="ArrayMesh" format=4 uid="uid://ds73gjxjfqcks"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ngvjq"]
-vertex_color_use_as_albedo = true
+[ext_resource type="Material" uid="uid://c3b2bc6kdnwxk" path="res://Moss/moss_0_shadermaterial.tres" id="1_pfnkj"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_8esw7"]
 _surfaces = [{
@@ -26,7 +25,7 @@ _surfaces = [{
 "index_count": 162,
 "index_data": PackedByteArray("CgALAAwACgANAAsADgALAA8ACwAOABAACwAQABEAEQASAAsAEwALABIAEwASABQAEgARABUAEgAVABYAFwAYABkAFwAaABgAGwAcABoAHAAbAB0AHAAdAB4AHwAcACAAHwAgACEAIgAgABwAIAAiACMAIAAjACQAJQAmACcAJQAoACYAKQAqACsAKQAsACoAKgAtAC4AKgAvAC0ALwAqADAAMAAxAC8AMAAyADEAMgAwADMANAAHAAkANAA1AAcANQAFAAcANgA1ADQANQA3AAUANgA4ADUAOAA3ADUACAA4ADYANwACAAUACAAGADgABgA5ADgAOAA5ADcABgAEADkANwA6AAIAOQA6ADcAOgABAAIAOgA7AAEAOQA8ADoAPAA7ADoABAA8ADkAPAA9ADsABAAAADwAAAA9ADwAAAADAD0A"),
 "lods": [0.99117875, PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABgAEAAUABgAFAAcACAAGAAcACAAHAAkA")],
-"material": SubResource("StandardMaterial3D_ngvjq"),
+"material": ExtResource("1_pfnkj"),
 "primitive": 3,
 "uv_scale": Vector4(2.0000002, 2, 0, 0),
 "vertex_count": 62,

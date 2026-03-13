@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://mdijd1kpo02q"]
+
+[ext_resource type="Texture2D" uid="uid://c66js0o65cm5b" path="res://生态缸/生态缸相关模型/底座/桌板_木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg" id="1_bkf1j"]
+
+[resource]
+resource_name = "wood"
+cull_mode = 2
+albedo_texture = ExtResource("1_bkf1j")
+roughness = 0.5

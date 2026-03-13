@@ -7,11 +7,15 @@
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
 [ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/生态缸相关模型/缸体和环境.tscn" id="7_5crlr"]
 [ext_resource type="PackedScene" uid="uid://7d2bwa721gbp" path="res://BucketTool.tscn" id="8_torvr"]
+[ext_resource type="PackedScene" uid="uid://cgoxc5vfw6k5w" path="res://生态缸/生态缸相关模型/玻璃缸体和底座.tscn" id="9_4mcbk"]
 [ext_resource type="Script" uid="uid://dictt6f6ovtm8" path="res://ToolManager.gd" id="10_8xkvn"]
+[ext_resource type="PackedScene" uid="uid://731rmbj1ky27" path="res://生态缸/生态缸相关模型/底座/桌板和背景填充物.tscn" id="10_mctxq"]
 [ext_resource type="Script" uid="uid://daf8ksceo6av3" path="res://PlayerInput.gd" id="11_p5x2j"]
 [ext_resource type="Script" uid="uid://0x72u6oar6kg" path="res://Moss/MossSystem.gd" id="12_yvb8b"]
-[ext_resource type="Shader" uid="uid://62cvp38kksd6" path="res://Moss/Decal_moss.gdshader" id="13_8s4c3"]
+[ext_resource type="Script" uid="uid://cevui7av2n30n" path="res://ChunkManager.gd" id="13_3hf6u"]
+[ext_resource type="MultiMesh" uid="uid://dpfcjln7lhpsv" path="res://Moss/三叶草.tres" id="14_4mcbk"]
 [ext_resource type="ArrayMesh" uid="uid://ds73gjxjfqcks" path="res://Moss/moss_mesh.tres" id="14_8s4c3"]
+[ext_resource type="LightmapGIData" uid="uid://7ca68o6phlpr" path="res://MainScene.lmbake" id="16_nm5af"]
 
 [sub_resource type="Curve" id="Curve_x0cd2"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0.97558385), 0.0, 0.0, 0, 0]
@@ -30,30 +34,33 @@ curve_x = SubResource("Curve_x0cd2")
 curve_y = SubResource("Curve_8s4c3")
 curve_z = SubResource("Curve_3slyh")
 
-[sub_resource type="Gradient" id="Gradient_rf2cd"]
-offsets = PackedFloat32Array(0.14839181, 0.3121345, 1)
-colors = PackedColorArray(0.16, 0.16, 0.16, 1, 0.16901729, 0.2177749, 0.1690343, 1, 0.8571295, 0.99999934, 0.8878352, 1)
+[sub_resource type="Gradient" id="Gradient_4mcbk"]
+offsets = PackedFloat32Array(0, 0.73318714, 1)
+colors = PackedColorArray(0.113480605, 0.17895341, 0.22836491, 1, 0.44567776, 0.60015506, 0.5325708, 1, 0.7318289, 0.94332415, 0.71392626, 1)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_a814b"]
-gradient = SubResource("Gradient_rf2cd")
-fill_from = Vector2(0.5194223, 1)
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_mctxq"]
+gradient = SubResource("Gradient_4mcbk")
+fill_from = Vector2(0.51145416, 1)
 fill_to = Vector2(0.499502, 0)
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_5crlr"]
-panorama = SubResource("GradientTexture2D_a814b")
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nm5af"]
+panorama = SubResource("GradientTexture2D_mctxq")
+energy_multiplier = 0.5
 
-[sub_resource type="Sky" id="Sky_hbc2u"]
-sky_material = SubResource("PanoramaSkyMaterial_5crlr")
+[sub_resource type="Sky" id="Sky_x0cd2"]
+sky_material = SubResource("PanoramaSkyMaterial_nm5af")
 
 [sub_resource type="Environment" id="Environment_1305s"]
 background_mode = 2
-background_color = Color(0.5116537, 0.51165366, 0.51165366, 1)
-background_energy_multiplier = 0.8
-sky = SubResource("Sky_hbc2u")
-ambient_light_source = 2
-ambient_light_color = Color(0, 0.12788624, 0.25375974, 1)
-ambient_light_energy = 16.0
-tonemap_mode = 3
+background_color = Color(0.11263416, 0.17569956, 0.24776903, 1)
+background_energy_multiplier = 0.6
+sky = SubResource("Sky_x0cd2")
+ambient_light_source = 3
+ambient_light_color = Color(0.11887965, 0.30266005, 0.2694507, 1)
+ambient_light_sky_contribution = 0.5
+ambient_light_energy = 4.0
+tonemap_mode = 4
+tonemap_agx_contrast = 1.3
 ssr_fade_in = 0.18467155
 ssao_enabled = true
 ssao_radius = 0.5
@@ -62,21 +69,19 @@ ssao_power = 0.47795933
 ssao_detail = 0.0
 ssao_horizon = 0.2
 ssao_sharpness = 0.0
-ssil_radius = 4.93
+ssil_enabled = true
+ssil_radius = 5.66
 ssil_intensity = 1.59
-sdfgi_enabled = true
 sdfgi_read_sky_light = false
-sdfgi_min_cell_size = 0.6
-glow_intensity = 7.26
+glow_intensity = 0.1
 fog_light_color = Color(0.30408016, 0.5353004, 0.5124433, 1)
 fog_light_energy = 2.35
-volumetric_fog_density = 0.0602
-volumetric_fog_emission = Color(0.7225112, 0.7568791, 0.5672453, 1)
+volumetric_fog_emission = Color(0.07018832, 0.2513341, 0.44272795, 1)
 volumetric_fog_emission_energy = 0.1
 adjustment_enabled = true
-adjustment_brightness = 1.19
+adjustment_brightness = 1.2
 adjustment_contrast = 0.8
-adjustment_saturation = 0.62
+adjustment_saturation = 0.6
 adjustment_color_correction = SubResource("CurveXYZTexture_xtmsi")
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_3mqji"]
@@ -85,14 +90,17 @@ dof_blur_amount = 0.09
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_yvb8b"]
 noise_type = 0
-frequency = 0.0189
-fractal_lacunarity = 2.66
-fractal_gain = 1.115
+frequency = 0.0088
+fractal_lacunarity = 2.85
+fractal_gain = 0.97
+fractal_weighted_strength = 0.22
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_3hf6u"]
 noise = SubResource("FastNoiseLite_yvb8b")
 seamless = true
+invert = true
 in_3d_space = true
+seamless_blend_skirt = 0.423
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uxrcv"]
 render_priority = 0
@@ -104,14 +112,14 @@ shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
 shader_parameter/bottom_scale = 0.5
 shader_parameter/moss_thickness = 0.050000002375
 shader_parameter/moss_moisture_retention = 0.0
-shader_parameter/moss_ao_color = Color(0.28608328, 0.5996988, 0.56472236, 1)
-shader_parameter/moss_ao_threshold = 0.50000002305148
-shader_parameter/color_dirt_light = Color(0.30688637, 0.23219141, 0.16017488, 1)
-shader_parameter/color_dirt_dark = Color(0.34160167, 0.2508298, 0.17289042, 1)
+shader_parameter/moss_ao_color = Color(0.2116996, 0.45837915, 0.6288776, 1)
+shader_parameter/moss_ao_threshold = 0.39100001787398
+shader_parameter/color_dirt_light = Color(0.43679622, 0.22371885, 0.10343241, 1)
+shader_parameter/color_dirt_dark = Color(0.43498626, 0.27392477, 0.12883273, 1)
 shader_parameter/wet_color_multiplier = Color(0.4, 0.35, 0.3, 1)
 shader_parameter/dirt_noise = SubResource("NoiseTexture2D_3hf6u")
-shader_parameter/noise_scale = 0.1
-shader_parameter/bump_intensity = 1.79600008531
+shader_parameter/noise_scale = 0.145
+shader_parameter/bump_intensity = 1.50000007125
 shader_parameter/global_moisture = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_rpqi1"]
@@ -136,443 +144,41 @@ point_count = 2
 
 [sub_resource type="Curve" id="Curve_nm5af"]
 _limits = [0.0, 0.01, 0.0, 0.2]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.2, 0.01), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.1981915, 0.01), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_4mcbk"]
 dof_blur_far_enabled = true
+dof_blur_near_distance = 2.72
 
 [sub_resource type="Curve" id="Curve_8qg48"]
 _limits = [0.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 1.4707491), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Gradient" id="Gradient_3slyh"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_xtmsi"]
-gradient = SubResource("Gradient_3slyh")
-
-[sub_resource type="Gradient" id="Gradient_8s4c3"]
-offsets = PackedFloat32Array(0, 0.18394886, 0.53053975, 0.89985794, 1)
-colors = PackedColorArray(7.52043e-08, 0.07692353, 0.09001305, 1, 0.111217625, 0.2360579, 0.1983265, 1, 0.13095197, 0.24801743, 0.19520268, 1, 0.14854556, 0.31104615, 0.177802, 1, 0.20630497, 0.3434469, 0.1504764, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_3slyh"]
-gradient = SubResource("Gradient_8s4c3")
-
-[sub_resource type="Curve" id="Curve_anuui"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0.17728245), 0.0, 0.0, 0, 0, Vector2(0.27489534, 0.36411893), 0.19424473, 0.19424473, 0, 0, Vector2(0.39294186, 0.5764331), 0.0, 0.0, 0, 0, Vector2(0.54159296, 0.38959664), -0.31621236, -0.31621236, 0, 0, Vector2(0.7252209, 0.42356688), 1.2802507, 1.2802507, 0, 0, Vector2(0.84763956, 0.71231425), 0.0, 0.0, 0, 0, Vector2(0.92633724, 0.77176225), 0.0, 0.0, 0, 0, Vector2(0.94, 1), 0.0, 0.0, 0, 0]
-point_count = 8
-
-[sub_resource type="CurveTexture" id="CurveTexture_8qg48"]
-curve = SubResource("Curve_anuui")
-
-[sub_resource type="Curve" id="Curve_xtmsi"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.29140127), 0.0, 0.0, 0, 0, Vector2(0.15755814, 0.58439493), -0.22357988, -0.22357988, 0, 0, Vector2(0.3622093, 0.6480892), 0.0, 0.0, 0, 0, Vector2(0.552907, 0.95382166), 1.1126595, 1.1126595, 0, 0, Vector2(0.752907, 1.0302548), 0.0, 0.0, 0, 0, Vector2(0.8598837, 1.5), 0.91295093, 0.0, 0, 0, Vector2(1, 1.5), 0.0, 0.0, 0, 0]
-point_count = 7
-
-[sub_resource type="CurveTexture" id="CurveTexture_anuui"]
-curve = SubResource("Curve_xtmsi")
-
-[sub_resource type="Gradient" id="Gradient_xtmsi"]
-offsets = PackedFloat32Array(0, 0.24076705, 1)
-colors = PackedColorArray(0.45, 0.45, 0.45, 1, 0.55, 0.55, 0.55, 1, 1, 1, 1, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_anuui"]
-gradient = SubResource("Gradient_xtmsi")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_8s4c3"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_3slyh")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_xtmsi")
-shader_parameter/vertical_shade_curve = SubResource("GradientTexture1D_anuui")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_anuui")
-shader_parameter/offset_curve = SubResource("CurveTexture_8qg48")
-shader_parameter/terrain_align_strength = 0.330000015675
-shader_parameter/moss_scale = 0.026
-shader_parameter/sway_speed = 0.6
-shader_parameter/sway_strength = 0.03
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.7650000363375
-shader_parameter/micro_y_variance = 0.130000006175
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="MultiMesh" id="MultiMesh_nm5af"]
+[sub_resource type="MultiMesh" id="MultiMesh_mctxq"]
 transform_format = 1
 mesh = ExtResource("14_8s4c3")
 
-[sub_resource type="Gradient" id="Gradient_mctxq"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
+[sub_resource type="MultiMesh" id="MultiMesh_x0cd2"]
+transform_format = 1
+mesh = ExtResource("14_8s4c3")
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_nm5af"]
-gradient = SubResource("Gradient_mctxq")
+[sub_resource type="MultiMesh" id="MultiMesh_8s4c3"]
+transform_format = 1
+mesh = ExtResource("14_8s4c3")
 
-[sub_resource type="Gradient" id="Gradient_x0cd2"]
-offsets = PackedFloat32Array(0, 0.1669034, 0.39985797, 0.72372156, 0.8941761, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.100410275, 0.20585999, 0.17822608, 1, 0.17664173, 0.26031622, 0.1608071, 1, 0.23821285, 0.32542887, 0.18597332, 1, 0.123180754, 0.25870422, 0.1338009, 1, 0.8228225, 0.78552455, 0.13963574, 1)
+[sub_resource type="MultiMesh" id="MultiMesh_3slyh"]
+transform_format = 1
+mesh = ExtResource("14_8s4c3")
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_8s4c3"]
-gradient = SubResource("Gradient_x0cd2")
+[sub_resource type="MultiMesh" id="MultiMesh_xtmsi"]
+transform_format = 1
+mesh = ExtResource("14_8s4c3")
 
-[sub_resource type="Curve" id="Curve_1ms6g"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9394535, 0.8651805), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_h86nx"]
-curve = SubResource("Curve_1ms6g")
-
-[sub_resource type="Curve" id="Curve_7jkkr"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.4087209, 0.72452235), -0.22357988, -0.22357988, 0, 0, Vector2(0.7482558, 0.54617834), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.36783445), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_amtbh"]
-curve = SubResource("Curve_7jkkr")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_obg7t"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_8s4c3")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_nm5af")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_amtbh")
-shader_parameter/offset_curve = SubResource("CurveTexture_h86nx")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.035
-shader_parameter/sway_speed = 0.275
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.15
-shader_parameter/elevation_offset = 0.0
-shader_parameter/micro_y_variance = 0.1370000065075
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="Gradient" id="Gradient_v3bin"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_6dw4c"]
-gradient = SubResource("Gradient_v3bin")
-
-[sub_resource type="Gradient" id="Gradient_cxdnd"]
-offsets = PackedFloat32Array(0, 0.21803977, 0.46803978, 0.7691761, 0.92258525, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.039737266, 0.13219106, 0.13839063, 1, 0.21875337, 0.22132206, 0.54180974, 1, 0.23252845, 0.2784673, 0.44702393, 1, 0.18361941, 0.36424997, 0.1977185, 1, 0.8228225, 0.78552455, 0.13963574, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ro037"]
-gradient = SubResource("Gradient_cxdnd")
-
-[sub_resource type="Curve" id="Curve_lppff"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9203489, 0.9331211), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_5o6vq"]
-curve = SubResource("Curve_lppff")
-
-[sub_resource type="Curve" id="Curve_5i0cj"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.8009554), 0.0, 0.0, 0, 0, Vector2(0.39011627, 0.8901274), -0.22357988, -0.22357988, 0, 0, Vector2(0.7110465, 0.6480892), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.06210196), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_f3pw5"]
-curve = SubResource("Curve_5i0cj")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_nlw8m"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_ro037")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_6dw4c")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_f3pw5")
-shader_parameter/offset_curve = SubResource("CurveTexture_5o6vq")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.185
-shader_parameter/sway_speed = 0.36
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.1550000073625
-shader_parameter/micro_y_variance = 0.070000003325
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="Gradient" id="Gradient_4mcbk"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_mctxq"]
-gradient = SubResource("Gradient_4mcbk")
-
-[sub_resource type="Gradient" id="Gradient_nm5af"]
-offsets = PackedFloat32Array(0, 0.1669034, 0.45667613, 0.7691761, 0.92258525, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.039737266, 0.13219106, 0.13839063, 1, 0.45351863, 0.38498867, 0.05369638, 1, 0.6389617, 0.5008044, 0.115822576, 1, 0.18361941, 0.36424997, 0.1977185, 1, 0.8228225, 0.78552455, 0.13963574, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_x0cd2"]
-gradient = SubResource("Gradient_nm5af")
-
-[sub_resource type="Curve" id="Curve_h86nx"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9203489, 0.9331211), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_7jkkr"]
-curve = SubResource("Curve_h86nx")
-
-[sub_resource type="Curve" id="Curve_amtbh"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.8009554), 0.0, 0.0, 0, 0, Vector2(0.39011627, 0.8901274), -0.22357988, -0.22357988, 0, 0, Vector2(0.7110465, 0.6480892), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.06210196), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_obg7t"]
-curve = SubResource("Curve_amtbh")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_v3bin"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_x0cd2")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_mctxq")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_obg7t")
-shader_parameter/offset_curve = SubResource("CurveTexture_7jkkr")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.065
-shader_parameter/sway_speed = 0.36
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.1550000073625
-shader_parameter/micro_y_variance = 0.070000003325
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="Gradient" id="Gradient_hku0m"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_k2m8n"]
-gradient = SubResource("Gradient_hku0m")
-
-[sub_resource type="Gradient" id="Gradient_viv21"]
-offsets = PackedFloat32Array(0, 0.1669034, 0.45667613, 0.7691761, 0.92258525, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.039737266, 0.13219106, 0.13839063, 1, 0, 0.32531425, 0.22515759, 1, 1.4439226e-07, 0.34960082, 0.19313598, 1, 0.18361941, 0.36424997, 0.1977185, 1, 0.8228225, 0.78552455, 0.13963574, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_gdhla"]
-gradient = SubResource("Gradient_viv21")
-
-[sub_resource type="Curve" id="Curve_h8rcm"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9203489, 0.9331211), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_8y33c"]
-curve = SubResource("Curve_h8rcm")
-
-[sub_resource type="Curve" id="Curve_slrkm"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.8009554), 0.0, 0.0, 0, 0, Vector2(0.39011627, 0.8901274), -0.22357988, -0.22357988, 0, 0, Vector2(0.7110465, 0.6480892), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.06210196), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_0ww21"]
-curve = SubResource("Curve_slrkm")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_j6s8t"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_gdhla")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_k2m8n")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_0ww21")
-shader_parameter/offset_curve = SubResource("CurveTexture_8y33c")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.19
-shader_parameter/sway_speed = 0.36
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.1550000073625
-shader_parameter/micro_y_variance = 0.070000003325
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="Gradient" id="Gradient_faklv"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_3yk8d"]
-gradient = SubResource("Gradient_faklv")
-
-[sub_resource type="Gradient" id="Gradient_uvpfp"]
-offsets = PackedFloat32Array(0, 0.1669034, 0.45667613, 0.7691761, 0.92258525, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.039737266, 0.13219106, 0.13839063, 1, 0.25603053, 0.20246932, 0.5461965, 1, 0.4917915, 0.1553863, 0.18866414, 1, 0.18361941, 0.36424997, 0.1977185, 1, 0.8228225, 0.78552455, 0.13963574, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_0ikq1"]
-gradient = SubResource("Gradient_uvpfp")
-
-[sub_resource type="Curve" id="Curve_nno2f"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9203489, 0.9331211), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_gukr6"]
-curve = SubResource("Curve_nno2f")
-
-[sub_resource type="Curve" id="Curve_3cu87"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.8009554), 0.0, 0.0, 0, 0, Vector2(0.39011627, 0.8901274), -0.22357988, -0.22357988, 0, 0, Vector2(0.7110465, 0.6480892), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.06210196), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_hfyop"]
-curve = SubResource("Curve_3cu87")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_0p4dw"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_0ikq1")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_3yk8d")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_hfyop")
-shader_parameter/offset_curve = SubResource("CurveTexture_gukr6")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.185
-shader_parameter/sway_speed = 0.36
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.1550000073625
-shader_parameter/micro_y_variance = 0.070000003325
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="Gradient" id="Gradient_78ikg"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_nlxy1"]
-gradient = SubResource("Gradient_78ikg")
-
-[sub_resource type="Gradient" id="Gradient_r53wc"]
-offsets = PackedFloat32Array(0, 0.1669034, 0.45667613, 0.7691761, 0.92258525, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.039737266, 0.13219106, 0.13839063, 1, 0.34889287, 0.09306345, 0.1183641, 1, 0.14915329, 0.067945026, 0.07087181, 1, 0.18361941, 0.36424997, 0.1977185, 1, 0.8228225, 0.78552455, 0.13963574, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_pebpy"]
-gradient = SubResource("Gradient_r53wc")
-
-[sub_resource type="Curve" id="Curve_qgsi0"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9203489, 0.9331211), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_mf6xi"]
-curve = SubResource("Curve_qgsi0")
-
-[sub_resource type="Curve" id="Curve_bqt71"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.8009554), 0.0, 0.0, 0, 0, Vector2(0.39011627, 0.8901274), -0.22357988, -0.22357988, 0, 0, Vector2(0.7110465, 0.6480892), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.06210196), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_sdsqc"]
-curve = SubResource("Curve_bqt71")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_at0my"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_pebpy")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_nlxy1")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_sdsqc")
-shader_parameter/offset_curve = SubResource("CurveTexture_mf6xi")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.17
-shader_parameter/sway_speed = 0.36
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.1550000073625
-shader_parameter/micro_y_variance = 0.070000003325
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
-
-[sub_resource type="Gradient" id="Gradient_v5035"]
-colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_odjjr"]
-gradient = SubResource("Gradient_v5035")
-
-[sub_resource type="Gradient" id="Gradient_nq8ss"]
-offsets = PackedFloat32Array(0, 0.1669034, 0.45667613, 0.7691761, 0.92258525, 0.9964489)
-colors = PackedColorArray(6.617978e-08, 0.057616882, 0.06879082, 1, 0.039737266, 0.13219106, 0.13839063, 1, 0.41671127, 0.20933184, 0, 1, 0.44656062, 0.21969998, 1.92523e-07, 1, 0.18361941, 0.36424997, 0.1977185, 1, 0.8228225, 0.78552455, 0.13963574, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_bwtku"]
-gradient = SubResource("Gradient_nq8ss")
-
-[sub_resource type="Curve" id="Curve_vys6h"]
-_limits = [0.0, 1.0, 0.0, 0.94]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.33610463, 0.37261146), 0.19424473, 0.19424473, 0, 0, Vector2(0.65089536, 0.70382166), 1.2802507, 1.2802507, 0, 0, Vector2(0.9203489, 0.9331211), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_q1wur"]
-curve = SubResource("Curve_vys6h")
-
-[sub_resource type="Curve" id="Curve_4lfhb"]
-_limits = [0.0, 1.5, 0.0, 1.0]
-_data = [Vector2(0, 0.8009554), 0.0, 0.0, 0, 0, Vector2(0.39011627, 0.8901274), -0.22357988, -0.22357988, 0, 0, Vector2(0.7110465, 0.6480892), -0.7303608, -0.7303608, 0, 0, Vector2(1, 0.06210196), 0.0, 0.0, 0, 0]
-point_count = 4
-
-[sub_resource type="CurveTexture" id="CurveTexture_0srh0"]
-curve = SubResource("Curve_4lfhb")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_p76eb"]
-render_priority = 0
-shader = ExtResource("13_8s4c3")
-shader_parameter/height_gradient = SubResource("GradientTexture1D_bwtku")
-shader_parameter/dry_gradient = SubResource("GradientTexture1D_odjjr")
-shader_parameter/mesh_original_height = 1.0
-shader_parameter/size_curve = SubResource("CurveTexture_0srh0")
-shader_parameter/offset_curve = SubResource("CurveTexture_q1wur")
-shader_parameter/terrain_align_strength = 0.3
-shader_parameter/moss_scale = 0.17
-shader_parameter/sway_speed = 0.36
-shader_parameter/sway_strength = 0.015
-shader_parameter/hydration = 1.0
-shader_parameter/puff_height = 0.0
-shader_parameter/elevation_offset = 0.1550000073625
-shader_parameter/micro_y_variance = 0.070000003325
-shader_parameter/spawn_density = 1.0
-shader_parameter/max_slope_degree = 45.0
-shader_parameter/physical_size = 5.0
-shader_parameter/height_scale = 1.0
-shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
-shader_parameter/moss_thickness = 0.050000002375
+[sub_resource type="MultiMesh" id="MultiMesh_anuui"]
+transform_format = 1
+mesh = ExtResource("14_8s4c3")
 
 [node name="Terrarium" type="Node3D" unique_id=1910372508]
 
@@ -582,8 +188,8 @@ camera_attributes = SubResource("CameraAttributesPractical_3mqji")
 
 [node name="SoilManager" type="Node3D" parent="." unique_id=1573332195]
 script = ExtResource("1_rpqi1")
-brush_strength = 0.1
-max_slope = 0.1
+brush_strength = 0.2
+max_slope = 0.35
 flow_rate = 2.0
 physics_update_interval = 0.3
 
@@ -618,6 +224,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0
 shape = SubResource("BoxShape3D_5crlr")
 
 [node name="缸体和环境" parent="SoilManager" unique_id=1719478435 instance=ExtResource("7_5crlr")]
+visible = false
 
 [node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="SoilManager" unique_id=877263931]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
@@ -634,16 +241,22 @@ bucket_tool = NodePath("../BucketTool")
 brush_strength = 0.02
 brush_tool = NodePath("../BrushTool")
 
+[node name="玻璃缸体和底座" parent="SoilManager" unique_id=1277438531 instance=ExtResource("9_4mcbk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6858661, 0)
+
+[node name="桌板和背景填充物" parent="SoilManager" unique_id=22927075 instance=ExtResource("10_mctxq")]
+transform = Transform3D(0.5841933, 0, 0, 0, 0.5841933, 0, 0, 0, 0.5841933, 0, 0.11336875, 0)
+
 [node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
 script = ExtResource("4_uxrcv")
-pan_speed = 0.005
-zoom_speed = 1.0
+pan_speed = 0.01
+zoom_speed = 1.5
 min_zoom = 2.0
-max_zoom = 20.0
-min_pitch = -70.0
-max_pitch = -25.0
+max_zoom = 30.0
+min_pitch = -90.0
+max_pitch = -15.0
 enable_idle_mode = false
-idle_time_threshold = 1.0
+idle_time_threshold = 5.0
 opening_zoom = 100.0
 opening_duration = 3.0
 idle_zoom = 15.945
@@ -655,133 +268,133 @@ foreground_ignore_ratio = 0.2
 blur_start_curve = SubResource("Curve_4mcbk")
 blur_transition_curve = SubResource("Curve_mctxq")
 blur_amount_curve = SubResource("Curve_nm5af")
-blur_start_margin_range = Vector2(0.6, 20)
-blur_transition_range = Vector2(0.2, 4)
-blur_amount_range = Vector2(0.1, 0.1)
+blur_start_margin_range = Vector2(0.6, 1)
+blur_transition_range = Vector2(0.2, 22.81)
+blur_amount_range = Vector2(0.1, 20)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=102118200]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 20)
 attributes = SubResource("CameraAttributesPractical_4mcbk")
+current = true
 fov = 35.0
 near = 0.001
 
 [node name="OmniLight3D" type="SpotLight3D" parent="CameraPivot/Camera3D" unique_id=1996772941]
-light_energy = 3.978
+visible = false
 light_indirect_energy = 1.957
+light_volumetric_fog_energy = 10.0
 shadow_enabled = true
 
-[node name="MossSystem" type="Node" parent="." unique_id=146429818 node_paths=PackedStringArray("soil_manager")]
+[node name="MossSystem" type="Node" parent="." unique_id=146429818 node_paths=PackedStringArray("soil_manager", "chunk_manager")]
 script = ExtResource("12_yvb8b")
 soil_manager = NodePath("../SoilManager")
-density_multiplier = 1.8
+chunk_manager = NodePath("../ChunkManager")
 brush_flow_curve = SubResource("Curve_8qg48")
-
-[node name="MossMultiMesh_0" type="MultiMeshInstance3D" parent="MossSystem" unique_id=1483739406]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_8s4c3")
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_1" type="MultiMeshInstance3D" parent="MossSystem" unique_id=2064888337]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_obg7t")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_2" type="MultiMeshInstance3D" parent="MossSystem" unique_id=1437154702]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_nlw8m")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_3" type="MultiMeshInstance3D" parent="MossSystem" unique_id=882200200]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_v3bin")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_4" type="MultiMeshInstance3D" parent="MossSystem" unique_id=2121316123]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_j6s8t")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_5" type="MultiMeshInstance3D" parent="MossSystem" unique_id=1967861109]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_0p4dw")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_6" type="MultiMeshInstance3D" parent="MossSystem" unique_id=1310592774]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_at0my")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
-
-[node name="MossMultiMesh_7" type="MultiMeshInstance3D" parent="MossSystem" unique_id=1508392423]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6191795, 0)
-material_override = SubResource("ShaderMaterial_p76eb")
-cast_shadow = 0
-multimesh = SubResource("MultiMesh_nm5af")
 
 [node name="Node3D" type="Node3D" parent="." unique_id=652993930]
 
-[node name="OmniLight3D2" type="SpotLight3D" parent="Node3D" unique_id=928983147]
-transform = Transform3D(1, 0, 0, 0, -0.6248476, 0.7807468, 0, -0.7807468, -0.6248476, -0.17756653, 6.4637904, -7.378854)
-visible = false
-light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 63.01
-light_volumetric_fog_energy = 0.0
-light_size = 1.0
+[node name="生态箱大灯" type="SpotLight3D" parent="Node3D" unique_id=1300166911]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10.988576, 0)
+light_color = Color(0.8340882, 0.9363895, 0.5904389, 1)
+light_energy = 130.0
+light_indirect_energy = 0.1
+light_volumetric_fog_energy = 0.1
 shadow_enabled = true
-shadow_bias = 0.1
-shadow_normal_bias = 0.0
-shadow_opacity = 0.61
-shadow_blur = 0.5
-spot_range = 65.521
-spot_attenuation = 1.86
+shadow_bias = 0.08
+shadow_transmittance_bias = -9.607
+shadow_opacity = 0.5
+shadow_blur = 0.2
+spot_range = 11.0
+spot_attenuation = 0.5
+spot_angle = 28.938824
 
-[node name="OmniLight3D3" type="SpotLight3D" parent="Node3D" unique_id=1195007024]
-transform = Transform3D(-0.43271527, -0.7038672, -0.5633192, -1.1703188e-10, -0.6248476, 0.7807468, -0.9015307, 0.33784106, 0.27038106, -7.1769543, 6.4637904, 4.2003784)
-visible = false
-light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 16.0
-light_volumetric_fog_energy = 0.0
-light_size = 1.0
+[node name="顶部光线大亮桌子" type="SpotLight3D" parent="Node3D" unique_id=1978896465]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 21.30709, 0)
+light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
+light_energy = 200.0
+light_indirect_energy = 0.1
+light_volumetric_fog_energy = 0.1
+light_bake_mode = 1
 shadow_enabled = true
-shadow_bias = 0.1
-shadow_normal_bias = 0.0
-shadow_opacity = 0.61
-shadow_blur = 0.5
-spot_range = 199.098
-spot_attenuation = 1.86
+shadow_bias = 0.241
+shadow_transmittance_bias = -9.607
+shadow_opacity = 0.8
+shadow_blur = 0.1
+spot_range = 30.0
+spot_attenuation = 1.52
+spot_angle = 65.0
 
-[node name="OmniLight3D4" type="SpotLight3D" parent="Node3D" unique_id=1278753451]
-transform = Transform3D(-0.50018144, 0.6760648, 0.54106843, -7.4469764e-11, -0.6248476, 0.7807468, 0.8659207, 0.39051503, 0.31253713, 6.281741, 6.4637904, 4.3948064)
+[node name="OmniLight3D3" type="SpotLight3D" parent="Node3D" unique_id=2033895776]
+transform = Transform3D(-4.371139e-08, -0.70710677, -0.70710677, 0, -0.70710677, 0.70710677, -1, 3.090862e-08, 3.090862e-08, -10, 10, 0)
 visible = false
-light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 17.42
-light_volumetric_fog_energy = 0.0
-light_size = 1.0
+light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
+light_energy = 300.0
+light_indirect_energy = 0.1
+light_volumetric_fog_energy = 0.1
+light_bake_mode = 1
 shadow_enabled = true
-shadow_bias = 0.1
-shadow_normal_bias = 0.0
-shadow_opacity = 0.42
-shadow_blur = 0.5
-spot_range = 210.853
-spot_attenuation = 1.86
+shadow_bias = 0.241
+shadow_transmittance_bias = -9.607
+shadow_opacity = 0.5
+shadow_blur = 0.2
+spot_range = 30.0
+spot_attenuation = 1.52
+spot_angle = 65.0
 
-[node name="OmniLight3D" type="SpotLight3D" parent="Node3D" unique_id=1300166911]
-transform = Transform3D(1, 0, 0, 0, 0.035527457, 0.9993687, 0, -0.9993687, 0.035527457, 0, 6.341278, 0.02847656)
-light_color = Color(1, 0.8875, 0.73, 1)
-light_energy = 100.0
-light_volumetric_fog_energy = 0.0
-light_size = 1.0
-shadow_enabled = true
-shadow_normal_bias = 0.0
-shadow_opacity = 0.59
-spot_range = 40.011
-spot_attenuation = 1.86
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Node3D" unique_id=1808286013]
-transform = Transform3D(0.8660254, -0.25751156, 0.42858815, 0, 0.8571763, 0.5150231, -0.5, -0.44602308, 0.74233645, 4, 4.87608, 3.1127992)
+[node name="OmniLight3D4" type="SpotLight3D" parent="Node3D" unique_id=616874277]
+transform = Transform3D(-4.371139e-08, -0.70710677, 0.70710677, 0, 0.70710677, 0.70710677, -1, 3.090862e-08, -3.090862e-08, 10, 10, 0)
 visible = false
+light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
+light_energy = 300.0
+light_indirect_energy = 0.1
+light_volumetric_fog_energy = 0.1
+light_bake_mode = 1
+shadow_bias = 0.241
+shadow_transmittance_bias = -9.607
+shadow_opacity = 0.5
+shadow_blur = 0.2
+spot_range = 30.0
+spot_attenuation = 1.52
+spot_angle = 65.0
+
+[node name="OmniLight3D5" type="SpotLight3D" parent="Node3D" unique_id=263917661]
+transform = Transform3D(-0.99999815, 0.0014068919, 0.0014069538, 4.379836e-08, -0.70710677, 0.7071069, 0.0019896892, 0.70710546, 0.70710534, 0.019896455, 10, 9.99998)
+visible = false
+light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
+light_energy = 300.0
+light_indirect_energy = 0.1
+light_volumetric_fog_energy = 0.1
+light_bake_mode = 1
+shadow_enabled = true
+shadow_bias = 0.241
+shadow_transmittance_bias = -9.607
+shadow_opacity = 0.5
+shadow_blur = 0.2
+spot_range = 30.0
+spot_attenuation = 1.52
+spot_angle = 65.0
+
+[node name="OmniLight3D6" type="SpotLight3D" parent="Node3D" unique_id=353782802]
+transform = Transform3D(-0.99999815, 0.0014069538, -0.0014068919, 4.379836e-08, 0.7071069, 0.70710677, 0.0019896892, 0.70710534, -0.70710546, -0.019896455, 10, -9.99998)
+visible = false
+light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
+light_energy = 300.0
+light_indirect_energy = 0.1
+light_volumetric_fog_energy = 0.1
+light_bake_mode = 1
+shadow_bias = 0.241
+shadow_transmittance_bias = -9.607
+shadow_opacity = 0.5
+shadow_blur = 0.2
+spot_range = 30.0
+spot_attenuation = 1.52
+spot_angle = 65.0
+
+[node name="ChunkManager" type="Node3D" parent="." unique_id=1849677871]
+script = ExtResource("13_3hf6u")
+plant_multimeshes = Array[MultiMesh]([ExtResource("14_4mcbk"), SubResource("MultiMesh_mctxq"), SubResource("MultiMesh_x0cd2"), SubResource("MultiMesh_8s4c3"), SubResource("MultiMesh_3slyh"), SubResource("MultiMesh_xtmsi"), SubResource("MultiMesh_anuui")])
+
+[node name="LightmapGI" type="LightmapGI" parent="." unique_id=4696294]
+supersampling = true
+generate_probes_subdiv = 1
+light_data = ExtResource("16_nm5af")
