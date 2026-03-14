@@ -44,6 +44,7 @@ func initialize_chunks():
 					shared_materials[plant_type] = mat
 
 	# ==========================================
+	# ==========================================
 	# ✨ 第二步：把总司令材质分发给 16 个区块
 	# ==========================================
 	for cx in range(CHUNKS_PER_AXIS):
@@ -57,22 +58,39 @@ func initialize_chunks():
 			chunk_root.name = "Chunk_%d_%d" % [cx, cz]
 			add_child(chunk_root)
 
+			# ==========================================
+			# ✨ 核心修复：计算当前区块的真实物理边界 (AABB)
+			# ==========================================
+			var chunk_min_x = -TERRAIN_SIZE / 2.0 + cx * chunk_size
+			var chunk_min_z = -TERRAIN_SIZE / 2.0 + cz * chunk_size
+			
+			# 给出 0.5 的外扩安全边距 (Padding)，防止植物缩放、旋转或倾斜后超出边界被误剔除
+			var padding = 0.5 
+			var aabb_pos = Vector3(chunk_min_x - padding, -1.0, chunk_min_z - padding)
+			
+			# 高度给个足够大的值（比如 3.0），覆盖地形的高低起伏和你的顶点 Shader 膨胀高度
+			var aabb_size = Vector3(chunk_size + padding * 2, 3.0, chunk_size + padding * 2)
+			var chunk_aabb = AABB(aabb_pos, aabb_size)
+			# ==========================================
+
 			for plant_type in range(8):
 				var mm_instance = MultiMeshInstance3D.new()
+				
+				# ✨ 关键：强制指定视锥剔除的边界框！
+				mm_instance.custom_aabb = chunk_aabb 
 				
 				if mm_instance.has_method("set_physics_interpolation_mode"):
 					mm_instance.set_physics_interpolation_mode(Node.PHYSICS_INTERPOLATION_MODE_OFF)
 
 				if plant_type < plant_multimeshes.size() and plant_multimeshes[plant_type] != null:
 					var template_mm = plant_multimeshes[plant_type]
-					var multimesh = template_mm.duplicate() # MultiMesh 还是必须每个区块独立的
+					var multimesh = template_mm.duplicate()
 					
 					multimesh.instance_count = MAX_INSTANCES_PER_CHUNK
 					multimesh.visible_instance_count = 0
 					mm_instance.multimesh = multimesh
 					mm_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
-					# ✨ 直接引用总司令材质！不再 duplicate！
 					if shared_materials[plant_type] != null:
 						mm_instance.material_override = shared_materials[plant_type]
 				else:

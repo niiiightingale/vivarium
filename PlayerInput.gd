@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 	
 	# 3. 物理射线探测 (缸内)
 	var main_query = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_dir * 100.0)
-	main_query.collision_mask = 2 # 只测泥土层
+	main_query.collision_mask = 18 # 只测泥土层
 	var main_result = space_state.intersect_ray(main_query)
 	
 	if main_result:
@@ -68,7 +68,7 @@ func _process(_delta: float) -> void:
 						Vector3(entry_pt.x, drop_height + 5.0, entry_pt.z),
 						Vector3(entry_pt.x, -10.0, entry_pt.z)
 					)
-					query_near.collision_mask = 2 
+					query_near.collision_mask = 18
 					var result_near = space_state.intersect_ray(query_near)
 					
 					var soil_h_near = soil_body.global_position.y
@@ -93,7 +93,7 @@ func _process(_delta: float) -> void:
 		
 		var query_origin = Vector3(safe_x, drop_height + 5.0, safe_z) 
 		var height_query = PhysicsRayQueryParameters3D.create(query_origin, query_origin + Vector3.DOWN * 20.0)
-		height_query.collision_mask = 2
+		height_query.collision_mask = 18
 		
 		var height_result = space_state.intersect_ray(height_query)
 		var surface_y = soil_body.global_position.y

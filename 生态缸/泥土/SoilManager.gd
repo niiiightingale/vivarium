@@ -114,14 +114,48 @@ func apply_soil_brush(world_position: Vector3, radius: float, strength: float, i
 	var pixel_radius = int((radius / PHYSICAL_SIZE) * GRID_SIZE)
 	
 	var changed = false
+	
+	# 【新增】获取当前物理空间的射线检测器
+	var space_state = get_world_3d().direct_space_state
+	# 【新增】设定射线起点的绝对高度 (假设缸体顶部高度为 5.0，你可以根据实际情况调整)
+	var drop_start_height = 5.0 
+	
 	for x in range(center_x - pixel_radius, center_x + pixel_radius):
 		for y in range(center_y - pixel_radius, center_y + pixel_radius):
 			if x >= 0 and x < GRID_SIZE and y >= 0 and y < GRID_SIZE:
 				var dist = Vector2(x, y).distance_to(Vector2(center_x, center_y))
 				
 				if dist <= pixel_radius:
-					var weight = smoothstep(1.0, 0.0, dist / float(pixel_radius))
 					var current_h = height_map_image.get_pixel(x, y).r
+					
+					# ==========================================
+					# ✨【新增：物理射线遮挡检测】✨
+					# ==========================================
+					# 1. 把像素网格坐标 (x, y) 反推回真实世界坐标 (world_x, world_z)
+					# 1. 算出绝对的全局坐标 (加上自身的 global_position)
+					var world_x = (float(x) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.x
+					var world_z = (float(y) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.z
+					
+					# 2. 超长射线：起点在头上 10 米，终点在脚下 2 米，保证绝对贯穿！
+					var start_pos = Vector3(world_x, global_position.y + 10.0, world_z)
+					var end_pos = Vector3(world_x, global_position.y - 2.0, world_z)
+					
+					var query = PhysicsRayQueryParameters3D.create(start_pos, end_pos)
+					query.collision_mask = 16 # 请确保石头的碰撞层在 Layer 4！
+					
+					# 开启这个选项：如果射线起点不小心卡在别的碰撞体里面，也能检测到！
+					query.hit_from_inside = true 
+					
+					var result = space_state.intersect_ray(query)
+					if result:
+						# 打中了！再加个保险判定：
+						# 如果打中的位置比当前的泥土还要低（说明石头已经被土彻底埋起来了）
+						# 那我们就允许继续在它上面堆土。否则就跳过！
+						if result.position.y > (current_h + global_position.y):
+							continue # 被外露的石头遮挡，跳过加土！
+					# ==========================================
+					
+					var weight = smoothstep(1.0, 0.0, dist / float(pixel_radius))
 					var new_h = 0.0
 					
 					if is_adding:

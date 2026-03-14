@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://生态缸/泥土/底面高度图.png" id="3_rf2cd"]
 [ext_resource type="PackedScene" uid="uid://c80cl1jrc7nwv" path="res://BrushTool.tscn" id="4_p5x2j"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
+[ext_resource type="Script" uid="uid://bxnw7b0qcl1ym" path="res://PlacementTool.gd" id="5_anuui"]
 [ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/生态缸相关模型/tscn/缸体和环境.tscn" id="7_5crlr"]
 [ext_resource type="PackedScene" uid="uid://7d2bwa721gbp" path="res://BucketTool.tscn" id="8_torvr"]
 [ext_resource type="PackedScene" uid="uid://cgoxc5vfw6k5w" path="res://生态缸/生态缸相关模型/tscn/玻璃缸体和底座.tscn" id="9_4mcbk"]
@@ -19,6 +20,7 @@
 [ext_resource type="MultiMesh" uid="uid://d3befknt1tiii" path="res://Moss/MossInstance/白发藓.tres" id="16_8s4c3"]
 [ext_resource type="LightmapGIData" uid="uid://7ca68o6phlpr" path="res://MainScene.lmbake" id="16_nm5af"]
 [ext_resource type="MultiMesh" uid="uid://cxyejaj0cw3p7" path="res://Moss/MossInstance/牛毛藓.tres" id="17_3slyh"]
+[ext_resource type="PackedScene" uid="uid://bkj402wnumr44" path="res://放置系统/PlaceableBranch.tscn" id="20_xtmsi"]
 
 [sub_resource type="Curve" id="Curve_x0cd2"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0.97558385), 0.0, 0.0, 0, 0]
@@ -73,8 +75,9 @@ ssao_detail = 0.0
 ssao_horizon = 0.2
 ssao_sharpness = 0.0
 ssil_enabled = true
-ssil_radius = 5.66
-ssil_intensity = 1.59
+ssil_radius = 3.0
+ssil_intensity = 16.0
+ssil_sharpness = 0.18
 sdfgi_read_sky_light = false
 glow_intensity = 0.1
 fog_light_color = Color(0.30408016, 0.5353004, 0.5124433, 1)
@@ -83,8 +86,8 @@ volumetric_fog_emission = Color(0.07018832, 0.2513341, 0.44272795, 1)
 volumetric_fog_emission_energy = 0.1
 adjustment_enabled = true
 adjustment_brightness = 1.2
-adjustment_contrast = 0.8
-adjustment_saturation = 0.6
+adjustment_contrast = 0.75
+adjustment_saturation = 0.5
 adjustment_color_correction = SubResource("CurveXYZTexture_xtmsi")
 
 [sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_3mqji"]
@@ -115,10 +118,10 @@ shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
 shader_parameter/bottom_scale = 0.5
 shader_parameter/moss_thickness = 0.050000002375
 shader_parameter/moss_moisture_retention = 0.0
-shader_parameter/moss_ao_color = Color(0.2116996, 0.45837915, 0.6288776, 1)
+shader_parameter/moss_ao_color = Color(0.5897742, 0.69905555, 0.58557934, 1)
 shader_parameter/moss_ao_threshold = 0.39100001787398
-shader_parameter/color_dirt_light = Color(0.43679622, 0.22371885, 0.10343241, 1)
-shader_parameter/color_dirt_dark = Color(0.43498626, 0.27392477, 0.12883273, 1)
+shader_parameter/color_dirt_light = Color(0.15646216, 0.11540129, 0.05600594, 1)
+shader_parameter/color_dirt_dark = Color(0.17695457, 0.12856475, 0.080191575, 1)
 shader_parameter/wet_color_multiplier = Color(0.4, 0.35, 0.3, 1)
 shader_parameter/dirt_noise = SubResource("NoiseTexture2D_3hf6u")
 shader_parameter/noise_scale = 0.145
@@ -179,23 +182,37 @@ camera_attributes = SubResource("CameraAttributesPractical_3mqji")
 
 [node name="SoilManager" type="Node3D" parent="." unique_id=1573332195]
 script = ExtResource("1_rpqi1")
-brush_strength = 0.2
+brush_strength = 0.1
 max_slope = 0.2
 flow_rate = 2.0
-physics_update_interval = 0.5
+physics_update_interval = 0.3
+
+[node name="ToolManager" type="Node3D" parent="SoilManager" unique_id=949014252 node_paths=PackedStringArray("player_input", "soil_manager", "moss_system", "bucket_tool", "brush_tool", "placement_tool")]
+script = ExtResource("10_8xkvn")
+player_input = NodePath("../PlayerInput")
+soil_manager = NodePath("..")
+moss_system = NodePath("../../MossSystem")
+bucket_tool = NodePath("BucketTool")
+brush_strength = 0.02
+brush_tool = NodePath("BrushTool")
+placement_tool = NodePath("PlacementTool")
+
+[node name="BucketTool" parent="SoilManager/ToolManager" unique_id=515833520 node_paths=PackedStringArray("player_input", "soil_manager") instance=ExtResource("8_torvr")]
+visible = false
+player_input = NodePath("../../PlayerInput")
+soil_manager = NodePath("../..")
+
+[node name="BrushTool" parent="SoilManager/ToolManager" unique_id=899230605 instance=ExtResource("4_p5x2j")]
+visible = false
+
+[node name="PlacementTool" type="Node3D" parent="SoilManager/ToolManager" unique_id=1989854413]
+script = ExtResource("5_anuui")
+item_scene = ExtResource("20_xtmsi")
 
 [node name="PlayerInput" type="Node3D" parent="SoilManager" unique_id=1489955409 node_paths=PackedStringArray("soil_body")]
 script = ExtResource("11_p5x2j")
 soil_body = NodePath("../SoilBody")
 buffer_zone = 3.0
-
-[node name="BucketTool" parent="SoilManager" unique_id=515833520 node_paths=PackedStringArray("player_input", "soil_manager") instance=ExtResource("8_torvr")]
-visible = false
-player_input = NodePath("../PlayerInput")
-soil_manager = NodePath("..")
-
-[node name="BrushTool" parent="SoilManager" unique_id=899230605 instance=ExtResource("4_p5x2j")]
-visible = false
 
 [node name="PlaneMesh" type="MeshInstance3D" parent="SoilManager" unique_id=1349472380]
 physics_interpolation_mode = 1
@@ -223,17 +240,8 @@ size = Vector3(5, 4.3721924, 5)
 resolution = 3
 update_mode = 1
 
-[node name="ToolManager" type="Node3D" parent="SoilManager" unique_id=949014252 node_paths=PackedStringArray("player_input", "soil_manager", "moss_system", "bucket_tool", "brush_tool")]
-script = ExtResource("10_8xkvn")
-player_input = NodePath("../PlayerInput")
-soil_manager = NodePath("..")
-moss_system = NodePath("../../MossSystem")
-bucket_tool = NodePath("../BucketTool")
-brush_strength = 0.02
-brush_tool = NodePath("../BrushTool")
-
 [node name="玻璃缸体和底座" parent="SoilManager" unique_id=444162269 instance=ExtResource("9_4mcbk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6858661, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
 [node name="桌板和背景填充物" parent="SoilManager" unique_id=461477104 instance=ExtResource("10_mctxq")]
 transform = Transform3D(0.5841933, 0, 0, 0, 0.5841933, 0, 0, 0, 0.5841933, 0, 0.11336875, 0)
@@ -282,9 +290,9 @@ soil_manager = NodePath("../SoilManager")
 chunk_manager = NodePath("../ChunkManager")
 brush_flow_curve = SubResource("Curve_8qg48")
 
-[node name="Node3D" type="Node3D" parent="." unique_id=652993930]
+[node name="灯光" type="Node3D" parent="." unique_id=652993930]
 
-[node name="生态箱大灯" type="SpotLight3D" parent="Node3D" unique_id=1300166911]
+[node name="生态箱大灯" type="SpotLight3D" parent="灯光" unique_id=1300166911]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10.389, 0)
 light_color = Color(0.8340882, 0.9363895, 0.5904389, 1)
 light_energy = 100.0
@@ -299,7 +307,7 @@ spot_range = 11.0
 spot_attenuation = 0.5
 spot_angle = 28.938824
 
-[node name="顶部光线大亮桌子" type="SpotLight3D" parent="Node3D" unique_id=1978896465]
+[node name="顶部光线大亮桌子" type="SpotLight3D" parent="灯光" unique_id=1978896465]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 22.367, 0)
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
 light_energy = 200.0
@@ -315,7 +323,7 @@ spot_range = 30.0
 spot_attenuation = 1.52
 spot_angle = 65.0
 
-[node name="OmniLight3D3" type="SpotLight3D" parent="Node3D" unique_id=2033895776]
+[node name="OmniLight3D3" type="SpotLight3D" parent="灯光" unique_id=2033895776]
 transform = Transform3D(-4.371139e-08, -0.70710677, -0.70710677, 0, -0.70710677, 0.70710677, -1, 3.090862e-08, 3.090862e-08, -10, 10, 0)
 visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
@@ -332,7 +340,7 @@ spot_range = 30.0
 spot_attenuation = 1.52
 spot_angle = 65.0
 
-[node name="OmniLight3D4" type="SpotLight3D" parent="Node3D" unique_id=616874277]
+[node name="OmniLight3D4" type="SpotLight3D" parent="灯光" unique_id=616874277]
 transform = Transform3D(-4.371139e-08, -0.70710677, 0.70710677, 0, 0.70710677, 0.70710677, -1, 3.090862e-08, -3.090862e-08, 10, 10, 0)
 visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
@@ -348,7 +356,7 @@ spot_range = 30.0
 spot_attenuation = 1.52
 spot_angle = 65.0
 
-[node name="OmniLight3D5" type="SpotLight3D" parent="Node3D" unique_id=263917661]
+[node name="OmniLight3D5" type="SpotLight3D" parent="灯光" unique_id=263917661]
 transform = Transform3D(-0.99999815, 0.0014068919, 0.0014069538, 4.379836e-08, -0.70710677, 0.7071069, 0.0019896892, 0.70710546, 0.70710534, 0.019896455, 10, 9.99998)
 visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
@@ -365,7 +373,7 @@ spot_range = 30.0
 spot_attenuation = 1.52
 spot_angle = 65.0
 
-[node name="OmniLight3D6" type="SpotLight3D" parent="Node3D" unique_id=353782802]
+[node name="OmniLight3D6" type="SpotLight3D" parent="灯光" unique_id=353782802]
 transform = Transform3D(-0.99999815, 0.0014069538, -0.0014068919, 4.379836e-08, 0.7071069, 0.70710677, 0.0019896892, 0.70710534, -0.70710546, -0.019896455, 10, -9.99998)
 visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
@@ -384,6 +392,10 @@ spot_angle = 65.0
 [node name="ChunkManager" type="Node3D" parent="." unique_id=1849677871]
 script = ExtResource("13_3hf6u")
 plant_multimeshes = Array[MultiMesh]([ExtResource("14_4mcbk"), ExtResource("15_x0cd2"), ExtResource("16_8s4c3"), ExtResource("17_3slyh"), SubResource("MultiMesh_3slyh"), SubResource("MultiMesh_xtmsi"), SubResource("MultiMesh_anuui")])
+
+[node name="PlaceableBranch" parent="." unique_id=1171384917 instance=ExtResource("20_xtmsi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.077876, 2.2076864, 0)
+visible = false
 
 [node name="LightmapGI" type="LightmapGI" parent="." unique_id=4696294]
 supersampling = true

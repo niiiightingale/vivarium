@@ -62,6 +62,8 @@ toggle_tool={
 
 3d_physics/layer_1="Default"
 3d_physics/layer_2="Soil"
+3d_physics/layer_3="Glass"
+3d_physics/layer_4="Props"
 
 [physics]
 

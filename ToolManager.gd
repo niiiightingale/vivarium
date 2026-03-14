@@ -4,7 +4,7 @@ extends Node3D
 # ==========================================
 # 1. 状态定义
 # ==========================================
-enum ToolMode { BUCKET, BRUSH , MOSS }
+enum ToolMode { BUCKET, BRUSH , MOSS ,PLACE}
 var current_mode: ToolMode = ToolMode.BUCKET
 
 # 苔藓系统子状态：现在支持 0 到 7 了！
@@ -20,6 +20,7 @@ var current_moss_brush: int = 0
 @export var drop_radius:float = 0.5
 @export var brush_strength:float = 0.05
 @export var brush_tool: Node3D
+@export var placement_tool: PlacementTool # ✨ 新增：在编辑器里把你的 PlacementTool 拖给它
 
 var is_using_tool: bool = false
 
@@ -32,8 +33,15 @@ func _unhandled_input(event):
 		match current_mode:
 			ToolMode.BUCKET: _apply_tool_switch(ToolMode.BRUSH)
 			ToolMode.BRUSH: _apply_tool_switch(ToolMode.MOSS)
-			ToolMode.MOSS: _apply_tool_switch(ToolMode.BUCKET)
-
+			ToolMode.MOSS: _apply_tool_switch(ToolMode.PLACE) # ✨
+			ToolMode.PLACE: _apply_tool_switch(ToolMode.BUCKET) # ✨
+	# ✨ 新增：放置模式下的鼠标滚轮旋转功能
+	# ==========================================
+	if current_mode == ToolMode.PLACE and event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			placement_tool.rotate_preview(1.0)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			placement_tool.rotate_preview(-1.0)
 	# ==========================================
 	# B. ✨ 苔藓画笔快捷切换 (数字键 1-8 扩充！)
 	# ==========================================
@@ -63,7 +71,16 @@ func _unhandled_input(event):
 			if "is_pouring" in bucket_tool: bucket_tool.is_pouring = is_using_tool
 		elif current_mode == ToolMode.BRUSH:
 			if "is_brushing" in brush_tool: brush_tool.is_brushing = is_using_tool
-
+			
+			
+		# C. 使用工具逻辑
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		is_using_tool = event.is_pressed()
+		
+		# ✨ 新增：放置工具是一次性触发的，点一下放一个
+		if current_mode == ToolMode.PLACE and is_using_tool and player_input.is_valid_location:
+			placement_tool.attempt_place(player_input.target_position)
+			
 func _process(delta):
 	if not player_input or not soil_manager: return
 	
@@ -74,6 +91,8 @@ func _process(delta):
 			bucket_tool.global_position = Vector3(target_pos.x, target_pos.y + 1.5, target_pos.z)
 		elif current_mode == ToolMode.BRUSH and brush_tool:
 			brush_tool.global_position = Vector3(target_pos.x, target_pos.y + 0.15, target_pos.z)
+		elif current_mode == ToolMode.PLACE and placement_tool:
+			placement_tool.update_preview(target_pos) # ✨ 更新幻影位置
 			
 		if is_using_tool:
 			if current_mode == ToolMode.BRUSH:
@@ -94,7 +113,11 @@ func _apply_tool_switch(new_mode: ToolMode, play_animation: bool = true):
 	if brush_tool:
 		brush_tool.visible = (current_mode == ToolMode.BRUSH)
 		brush_tool.set_process(current_mode == ToolMode.BRUSH)
-
+	
+	if placement_tool:
+		placement_tool.visible = (current_mode == ToolMode.PLACE)
+		placement_tool.set_process(current_mode == ToolMode.PLACE)
+		
 	if play_animation:
 		var active_tool = bucket_tool if current_mode == ToolMode.BUCKET else brush_tool
 		if active_tool:
