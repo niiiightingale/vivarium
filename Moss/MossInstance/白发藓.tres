@@ -1,0 +1,7 @@
+[gd_resource type="MultiMesh" format=3 uid="uid://d3befknt1tiii"]
+
+[ext_resource type="ArrayMesh" uid="uid://ctij4u41jfxnn" path="res://Moss/MossInstance/mesh_白发藓.tres" id="1_6s3ca"]
+
+[resource]
+transform_format = 1
+mesh = ExtResource("1_6s3ca")

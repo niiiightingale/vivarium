@@ -1,0 +1,62 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://c3b2bc6kdnwxk"]
+
+[ext_resource type="Shader" uid="uid://62cvp38kksd6" path="res://Moss/Scripts/Default_Moss.gdshader" id="1_3ar7m"]
+
+[sub_resource type="Gradient" id="Gradient_ubdvh"]
+colors = PackedColorArray(0.30804202, 0.21412724, 0.1387766, 1, 0.3945335, 0.34840146, 0.15304741, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_gri50"]
+gradient = SubResource("Gradient_ubdvh")
+
+[sub_resource type="Gradient" id="Gradient_lmcx3"]
+offsets = PackedFloat32Array(0.021766169, 0.25062189, 0.534204, 0.72372156, 0.95708954, 0.9964489)
+colors = PackedColorArray(0.09532308, 0.16075689, 0.04845602, 1, 0.009392779, 0.10183545, 0.10659463, 1, 0.22993049, 0.36660415, 0.19550675, 1, 0.20346689, 0.32642075, 0.26869708, 1, 0.13811412, 0.2552516, 0.14192072, 1, 0.26200625, 0.4373993, 0.27234554, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_irubp"]
+gradient = SubResource("Gradient_lmcx3")
+
+[sub_resource type="Curve" id="Curve_jutob"]
+_data = [Vector2(0.0034270808, 0), 0.0, 0.0, 0, 0, Vector2(0.11701041, 0.42356688), 0.19424473, 0.19424473, 0, 0, Vector2(0.3363437, 0.42356688), 0.0, 0.0, 0, 0, Vector2(0.41076037, 0.41507435), 0.55597824, 0.55597824, 0, 0, Vector2(0.485177, 0.5169852), 0.0, 0.0, 0, 0, Vector2(0.5870104, 0.5254777), 0.0, 0.0, 0, 0, Vector2(0.79531246, 0.48301488), 0.0, 0.0, 0, 0, Vector2(0.9286458, 0.8481953), -0.44478267, -0.44478267, 0, 0, Vector2(1, 1), -0.25977367, 0.0, 0, 0]
+point_count = 9
+
+[sub_resource type="CurveTexture" id="CurveTexture_temcs"]
+curve = SubResource("Curve_jutob")
+
+[sub_resource type="Curve" id="Curve_31v78"]
+_data = [Vector2(0, 0.15180469), 0.0, 0.0, 0, 0, Vector2(0.18281248, 0.24522299), -0.22357988, -0.22357988, 0, 0, Vector2(0.34531248, 0.49150747), 1.7076943, 1.7076943, 0, 0, Vector2(0.7369791, 0.8397027), 0.67940545, 0.67940545, 0, 0, Vector2(1, 0.94161355), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_hlenf"]
+curve = SubResource("Curve_31v78")
+
+[sub_resource type="Curve" id="Curve_pfnkj"]
+_limits = [0.0, 1.0, 0.0, 1.5]
+_data = [Vector2(0, 0.049893856), 0.0, 0.0, 0, 0, Vector2(1.3617187, 0.8821656), 0.0, 0.0, 0, 0, Vector2(1.5, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ubdvh"]
+curve = SubResource("Curve_pfnkj")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_3ar7m")
+shader_parameter/height_gradient = SubResource("GradientTexture1D_irubp")
+shader_parameter/dry_gradient = SubResource("GradientTexture1D_gri50")
+shader_parameter/vertical_shade_curve = SubResource("CurveTexture_ubdvh")
+shader_parameter/mesh_original_height = 1.0
+shader_parameter/size_curve = SubResource("CurveTexture_hlenf")
+shader_parameter/offset_curve = SubResource("CurveTexture_temcs")
+shader_parameter/terrain_align_strength = 0.3
+shader_parameter/moss_scale = 0.05
+shader_parameter/sway_speed = 0.275
+shader_parameter/sway_strength = 0.015
+shader_parameter/hydration = 1.0
+shader_parameter/puff_height = 0.0
+shader_parameter/elevation_offset = 0.800000038
+shader_parameter/micro_y_variance = 0.2000000095
+shader_parameter/spawn_density = 1.0
+shader_parameter/max_slope_degree = 45.0
+shader_parameter/physical_size = 5.0
+shader_parameter/height_scale = 1.0
+shader_parameter/channel_mask = Vector4(1, 0, 0, 0)
+shader_parameter/moss_thickness = 0.050000002375

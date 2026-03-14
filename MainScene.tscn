@@ -5,17 +5,20 @@
 [ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://生态缸/泥土/底面高度图.png" id="3_rf2cd"]
 [ext_resource type="PackedScene" uid="uid://c80cl1jrc7nwv" path="res://BrushTool.tscn" id="4_p5x2j"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
-[ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/生态缸相关模型/缸体和环境.tscn" id="7_5crlr"]
+[ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/生态缸相关模型/tscn/缸体和环境.tscn" id="7_5crlr"]
 [ext_resource type="PackedScene" uid="uid://7d2bwa721gbp" path="res://BucketTool.tscn" id="8_torvr"]
-[ext_resource type="PackedScene" uid="uid://cgoxc5vfw6k5w" path="res://生态缸/生态缸相关模型/玻璃缸体和底座.tscn" id="9_4mcbk"]
+[ext_resource type="PackedScene" uid="uid://cgoxc5vfw6k5w" path="res://生态缸/生态缸相关模型/tscn/玻璃缸体和底座.tscn" id="9_4mcbk"]
 [ext_resource type="Script" uid="uid://dictt6f6ovtm8" path="res://ToolManager.gd" id="10_8xkvn"]
-[ext_resource type="PackedScene" uid="uid://731rmbj1ky27" path="res://生态缸/生态缸相关模型/底座/桌板和背景填充物.tscn" id="10_mctxq"]
+[ext_resource type="PackedScene" uid="uid://731rmbj1ky27" path="res://生态缸/生态缸相关模型/tscn/桌板和背景填充物.tscn" id="10_mctxq"]
 [ext_resource type="Script" uid="uid://daf8ksceo6av3" path="res://PlayerInput.gd" id="11_p5x2j"]
-[ext_resource type="Script" uid="uid://0x72u6oar6kg" path="res://Moss/MossSystem.gd" id="12_yvb8b"]
+[ext_resource type="Script" uid="uid://0x72u6oar6kg" path="res://Moss/Scripts/MossSystem.gd" id="12_yvb8b"]
 [ext_resource type="Script" uid="uid://cevui7av2n30n" path="res://ChunkManager.gd" id="13_3hf6u"]
-[ext_resource type="MultiMesh" uid="uid://dpfcjln7lhpsv" path="res://Moss/三叶草.tres" id="14_4mcbk"]
-[ext_resource type="ArrayMesh" uid="uid://ds73gjxjfqcks" path="res://Moss/moss_mesh.tres" id="14_8s4c3"]
+[ext_resource type="MultiMesh" uid="uid://dpfcjln7lhpsv" path="res://Moss/MossInstance/三叶草.tres" id="14_4mcbk"]
+[ext_resource type="ArrayMesh" uid="uid://ds73gjxjfqcks" path="res://Moss/MossInstance/mesh_三叶草.tres" id="14_8s4c3"]
+[ext_resource type="MultiMesh" uid="uid://ckjby2o8f432g" path="res://Moss/MossInstance/朵朵藓.tres" id="15_x0cd2"]
+[ext_resource type="MultiMesh" uid="uid://d3befknt1tiii" path="res://Moss/MossInstance/白发藓.tres" id="16_8s4c3"]
 [ext_resource type="LightmapGIData" uid="uid://7ca68o6phlpr" path="res://MainScene.lmbake" id="16_nm5af"]
+[ext_resource type="MultiMesh" uid="uid://cxyejaj0cw3p7" path="res://Moss/MossInstance/牛毛藓.tres" id="17_3slyh"]
 
 [sub_resource type="Curve" id="Curve_x0cd2"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0.97558385), 0.0, 0.0, 0, 0]
@@ -156,18 +159,6 @@ _limits = [0.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 1.4707491), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="MultiMesh" id="MultiMesh_mctxq"]
-transform_format = 1
-mesh = ExtResource("14_8s4c3")
-
-[sub_resource type="MultiMesh" id="MultiMesh_x0cd2"]
-transform_format = 1
-mesh = ExtResource("14_8s4c3")
-
-[sub_resource type="MultiMesh" id="MultiMesh_8s4c3"]
-transform_format = 1
-mesh = ExtResource("14_8s4c3")
-
 [sub_resource type="MultiMesh" id="MultiMesh_3slyh"]
 transform_format = 1
 mesh = ExtResource("14_8s4c3")
@@ -189,9 +180,9 @@ camera_attributes = SubResource("CameraAttributesPractical_3mqji")
 [node name="SoilManager" type="Node3D" parent="." unique_id=1573332195]
 script = ExtResource("1_rpqi1")
 brush_strength = 0.2
-max_slope = 0.35
+max_slope = 0.2
 flow_rate = 2.0
-physics_update_interval = 0.3
+physics_update_interval = 0.5
 
 [node name="PlayerInput" type="Node3D" parent="SoilManager" unique_id=1489955409 node_paths=PackedStringArray("soil_body")]
 script = ExtResource("11_p5x2j")
@@ -241,10 +232,10 @@ bucket_tool = NodePath("../BucketTool")
 brush_strength = 0.02
 brush_tool = NodePath("../BrushTool")
 
-[node name="玻璃缸体和底座" parent="SoilManager" unique_id=1277438531 instance=ExtResource("9_4mcbk")]
+[node name="玻璃缸体和底座" parent="SoilManager" unique_id=444162269 instance=ExtResource("9_4mcbk")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6858661, 0)
 
-[node name="桌板和背景填充物" parent="SoilManager" unique_id=22927075 instance=ExtResource("10_mctxq")]
+[node name="桌板和背景填充物" parent="SoilManager" unique_id=461477104 instance=ExtResource("10_mctxq")]
 transform = Transform3D(0.5841933, 0, 0, 0, 0.5841933, 0, 0, 0, 0.5841933, 0, 0.11336875, 0)
 
 [node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
@@ -294,9 +285,9 @@ brush_flow_curve = SubResource("Curve_8qg48")
 [node name="Node3D" type="Node3D" parent="." unique_id=652993930]
 
 [node name="生态箱大灯" type="SpotLight3D" parent="Node3D" unique_id=1300166911]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10.988576, 0)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 10.389, 0)
 light_color = Color(0.8340882, 0.9363895, 0.5904389, 1)
-light_energy = 130.0
+light_energy = 100.0
 light_indirect_energy = 0.1
 light_volumetric_fog_energy = 0.1
 shadow_enabled = true
@@ -309,7 +300,7 @@ spot_attenuation = 0.5
 spot_angle = 28.938824
 
 [node name="顶部光线大亮桌子" type="SpotLight3D" parent="Node3D" unique_id=1978896465]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 21.30709, 0)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 22.367, 0)
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
 light_energy = 200.0
 light_indirect_energy = 0.1
@@ -392,7 +383,7 @@ spot_angle = 65.0
 
 [node name="ChunkManager" type="Node3D" parent="." unique_id=1849677871]
 script = ExtResource("13_3hf6u")
-plant_multimeshes = Array[MultiMesh]([ExtResource("14_4mcbk"), SubResource("MultiMesh_mctxq"), SubResource("MultiMesh_x0cd2"), SubResource("MultiMesh_8s4c3"), SubResource("MultiMesh_3slyh"), SubResource("MultiMesh_xtmsi"), SubResource("MultiMesh_anuui")])
+plant_multimeshes = Array[MultiMesh]([ExtResource("14_4mcbk"), ExtResource("15_x0cd2"), ExtResource("16_8s4c3"), ExtResource("17_3slyh"), SubResource("MultiMesh_3slyh"), SubResource("MultiMesh_xtmsi"), SubResource("MultiMesh_anuui")])
 
 [node name="LightmapGI" type="LightmapGI" parent="." unique_id=4696294]
 supersampling = true
