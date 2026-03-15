@@ -11,6 +11,12 @@ var height_map_texture : ImageTexture
 # 沙堆塌陷算法控制参数
 
 # ==========================================
+
+@export var initial_soil_thickness: float = 1.5
+# ✨ 新增：用于生成初始地形起伏的噪波
+@export var base_noise: FastNoiseLite 
+# ✨ 新增：起伏的最大落差（比如 0.2 代表土坑最高和最低相差 0.2 米）
+@export var base_noise_amplitude: float = 0.2
 @export var brush_strength:float = 0.05
 @export var max_slope: float = 0.05   
 @export var flow_rate: float = 0.5    
@@ -44,7 +50,27 @@ var pending_drops: Array[Dictionary] = []
 
 func _ready():
 	height_map_image = Image.create(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RF)
-	height_map_image.fill(Color(0.0, 0.0, 0.0, 1.0)) 
+	
+	# ==========================================
+	# ✨ 核心魔法：用噪波刷出极其自然的高低起伏！
+	# ==========================================
+	if base_noise != null:
+		for x in range(GRID_SIZE):
+			for y in range(GRID_SIZE):
+				# 获取当前坐标的噪波值（返回值在 -1.0 到 1.0 之间）
+				var noise_val = base_noise.get_noise_2d(float(x), float(y))
+				# 将噪波值乘上起伏强度，叠加到基础厚度上
+				var final_h = initial_soil_thickness + (noise_val * base_noise_amplitude)
+				# 确保高度绝不能低于 0 (不能穿透缸底)
+				final_h = max(0.0, final_h)
+				
+				height_map_image.set_pixel(x, y, Color(final_h, 0.0, 0.0, 1.0))
+	else:
+		# 如果没有配置噪波，就保底使用完美的纯平面
+		height_map_image.fill(Color(initial_soil_thickness, 0.0, 0.0, 1.0))
+		
+	# ==========================================
+	
 	height_map_texture = ImageTexture.create_from_image(height_map_image)
 	
 	var material = $PlaneMesh.get_active_material(0)
@@ -107,92 +133,213 @@ func add_pending_drop(world_pos: Vector3, radius: float, fall_time: float):
 		"time": current_time + fall_time 
 	})
 
-# 2. 供 ToolManager/BrushTool 调用的：即时修改高度图 (支持加法/减法)
-func apply_soil_brush(world_position: Vector3, radius: float, strength: float, is_adding: bool):
+# 核心 API：施加泥土笔刷（支持贴图、容量限制与绝对印章切除）
+# ==========================================
+func apply_soil_brush(world_position: Vector3, radius: float, strength: float, is_adding: bool, available_volume: float = 9999.0, brush_image: Image = null, brush_rotation: float = 0.0) -> float:
 	var center_x = int((world_position.x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
 	var center_y = int((world_position.z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
 	var pixel_radius = int((radius / PHYSICAL_SIZE) * GRID_SIZE)
 	
-	var changed = false
-	
-	# 【新增】获取当前物理空间的射线检测器
 	var space_state = get_world_3d().direct_space_state
-	# 【新增】设定射线起点的绝对高度 (假设缸体顶部高度为 5.0，你可以根据实际情况调整)
-	var drop_start_height = 5.0 
+	var total_desired_volume: float = 0.0
+	var valid_pixels = [] 
 	
-	for x in range(center_x - pixel_radius, center_x + pixel_radius):
-		for y in range(center_y - pixel_radius, center_y + pixel_radius):
-			if x >= 0 and x < GRID_SIZE and y >= 0 and y < GRID_SIZE:
-				var dist = Vector2(x, y).distance_to(Vector2(center_x, center_y))
-				
-				if dist <= pixel_radius:
-					var current_h = height_map_image.get_pixel(x, y).r
-					
-					# ==========================================
-					# ✨【新增：物理射线遮挡检测】✨
-					# ==========================================
-					# 1. 把像素网格坐标 (x, y) 反推回真实世界坐标 (world_x, world_z)
-					# 1. 算出绝对的全局坐标 (加上自身的 global_position)
-					var world_x = (float(x) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.x
-					var world_z = (float(y) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.z
-					
-					# 2. 超长射线：起点在头上 10 米，终点在脚下 2 米，保证绝对贯穿！
-					var start_pos = Vector3(world_x, global_position.y + 10.0, world_z)
-					var end_pos = Vector3(world_x, global_position.y - 2.0, world_z)
-					
-					var query = PhysicsRayQueryParameters3D.create(start_pos, end_pos)
-					query.collision_mask = 16 # 请确保石头的碰撞层在 Layer 4！
-					
-					# 开启这个选项：如果射线起点不小心卡在别的碰撞体里面，也能检测到！
-					query.hit_from_inside = true 
-					
-					var result = space_state.intersect_ray(query)
-					if result:
-						# 打中了！再加个保险判定：
-						# 如果打中的位置比当前的泥土还要低（说明石头已经被土彻底埋起来了）
-						# 那我们就允许继续在它上面堆土。否则就跳过！
-						if result.position.y > (current_h + global_position.y):
-							continue # 被外露的石头遮挡，跳过加土！
-					# ==========================================
-					
-					var weight = smoothstep(1.0, 0.0, dist / float(pixel_radius))
-					var new_h = 0.0
-					
-					if is_adding:
-						new_h = current_h + (strength * weight)
-					else:
-						# 减法逻辑：确保不低于 0.0 限制
-						new_h = max(0.0, current_h - (strength * weight))
-					
-					# 只有发生实质改变才更新，节约性能
-					if abs(current_h - new_h) > 0.0001:
-						height_map_image.set_pixel(x, y, Color(new_h, 0, 0, 1))
-						changed = true
-	
-	if changed:
-		# 1. 计算当前这一笔刷的范围边界，并往外扩张1格作为安全区
-		var b_min_x = max(0, center_x - pixel_radius - 1)
-		var b_max_x = min(GRID_SIZE, center_x + pixel_radius + 2)
-		var b_min_y = max(0, center_y - pixel_radius - 1)
-		var b_max_y = min(GRID_SIZE, center_y + pixel_radius + 2)
+	# 如果有贴图，获取尺寸并预计算旋转
+	var img_w = 0; var img_h = 0
+	if brush_image and not brush_image.is_empty():
+		img_w = brush_image.get_width() - 1
+		img_h = brush_image.get_height() - 1
+		
+	var cos_r = cos(brush_rotation)
+	var sin_r = sin(brush_rotation)
 
-		# 2. 动态更新活跃区块 (脏矩形)
+	# ✨ 获取玩家点击正中心的初始高度，作为挖坑/填土的绝对基准高度！
+	var safe_cx = clamp(center_x, 0, GRID_SIZE - 1)
+	var safe_cy = clamp(center_y, 0, GRID_SIZE - 1)
+	var center_h = height_map_image.get_pixel(safe_cx, safe_cy).r
+
+	# ==========================================
+	# 阶段一：打草稿！计算每个像素的改变需求
+	# ==========================================
+	for x in range(center_x - pixel_radius, center_x + pixel_radius + 1):
+		for y in range(center_y - pixel_radius, center_y + pixel_radius + 1):
+			if x >= 0 and x < GRID_SIZE and y >= 0 and y < GRID_SIZE:
+				
+				var current_h = height_map_image.get_pixel(x, y).r
+				
+				# --- 物理射线遮挡检测（保护大型物体底下的泥土） ---
+				var world_x = (float(x) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.x
+				var world_z = (float(y) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.z
+				var start_pos = Vector3(world_x, global_position.y + 10.0, world_z)
+				var end_pos = Vector3(world_x, global_position.y - 2.0, world_z)
+				var query = PhysicsRayQueryParameters3D.create(start_pos, end_pos)
+				query.collision_mask = 16 
+				query.hit_from_inside = true 
+				var result = space_state.intersect_ray(query)
+				if result and result.position.y > (current_h + global_position.y):
+					continue 
+				# ----------------------------------------
+				
+				var weight = 0.0
+				
+				# 读取 Alpha 笔刷贴图数据
+				if brush_image and not brush_image.is_empty():
+					var nx = (x - center_x) / float(pixel_radius)
+					var ny = (y - center_y) / float(pixel_radius)
+					var rx = nx * cos_r - ny * sin_r
+					var ry = nx * sin_r + ny * cos_r
+					var u = rx * 0.5 + 0.5
+					var v = ry * 0.5 + 0.5
+					
+					if u >= 0.0 and u <= 1.0 and v >= 0.0 and v <= 1.0:
+						weight = brush_image.get_pixel(int(u * img_w), int(v * img_h)).r
+				else:
+					# 没有贴图时的后备数学方案 (余弦平滑)
+					var dist = Vector2(x, y).distance_to(Vector2(center_x, center_y))
+					if dist <= pixel_radius:
+						var normalized_dist = dist / float(pixel_radius)
+						weight = pow(cos(normalized_dist * PI * 0.5), 1.5)
+				
+				# 忽略极小的改动，形成硬朗的边缘
+				if weight <= 0.05: continue
+					
+				var actual_change = 0.0
+				
+				# ✨ 绝对的布尔切除/印章逻辑
+				if is_adding:
+					# 填土：建造平顶斜坡土台
+					var target_top_h = center_h + strength 
+					actual_change = max(0.0, (target_top_h - current_h) * weight)
+				else:
+					# 挖土：挖出平底斜坡深坑（并且不能挖穿地面 0.0）
+					var target_bottom_h = max(0.0, center_h - strength)
+					actual_change = max(0.0, (current_h - target_bottom_h) * weight)
+					
+				if actual_change > 0.0001:
+					total_desired_volume += actual_change
+					valid_pixels.append({"x": x, "y": y, "change": actual_change, "current_h": current_h})
+
+	# ==========================================
+	# 阶段二：正式下笔！(容量不足时整体等比例缩小)
+	# ==========================================
+	if valid_pixels.size() == 0: 
+		return 0.0
+		
+	var scale_factor = 1.0
+	if total_desired_volume > available_volume:
+		scale_factor = available_volume / total_desired_volume
+		
+	var actual_volume_changed = 0.0
+	var changed = false
+	var b_min_x = GRID_SIZE; var b_max_x = 0
+	var b_min_y = GRID_SIZE; var b_max_y = 0
+
+	# 遍历草稿本，正式修改图片
+	for p in valid_pixels:
+		var final_change = p.change * scale_factor
+		var new_h = p.current_h + final_change if is_adding else p.current_h - final_change
+		height_map_image.set_pixel(p.x, p.y, Color(new_h, 0, 0, 1))
+		
+		actual_volume_changed += final_change
+		changed = true
+		
+		# 更新脏矩形范围
+		if p.x < b_min_x: b_min_x = p.x
+		if p.x > b_max_x: b_max_x = p.x
+		if p.y < b_min_y: b_min_y = p.y
+		if p.y > b_max_y: b_max_y = p.y
+
+	if changed:
 		if not is_terrain_settling:
-			active_min_x = b_min_x
-			active_max_x = b_max_x
-			active_min_y = b_min_y
-			active_max_y = b_max_y
+			active_min_x = b_min_x; active_max_x = b_max_x; active_min_y = b_min_y; active_max_y = b_max_y
 		else:
-			# 如果已经在塌陷了，就把新刷的区域和旧区域合并
-			active_min_x = min(active_min_x, b_min_x)
-			active_max_x = max(active_max_x, b_max_x)
-			active_min_y = min(active_min_y, b_min_y)
-			active_max_y = max(active_max_y, b_max_y)
+			active_min_x = min(active_min_x, b_min_x); active_max_x = max(active_max_x, b_max_x)
+			active_min_y = min(active_min_y, b_min_y); active_max_y = max(active_max_y, b_max_y)
 
 		height_map_texture.update(height_map_image)
 		needs_physics_update = true
-		is_terrain_settling = true # 唤醒塌陷
+		is_terrain_settling = true 
+		
+	return actual_volume_changed
+# 核心 API：施加平滑笔刷（抹平棱角，不增减总体积）
+# ==========================================
+func apply_smooth_brush(world_position: Vector3, radius: float, strength: float) -> void:
+	var center_x = int((world_position.x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+	var center_y = int((world_position.z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+	var pixel_radius = int((radius / PHYSICAL_SIZE) * GRID_SIZE)
+	
+	var space_state = get_world_3d().direct_space_state
+	
+	var total_height = 0.0
+	var count = 0
+	var valid_pixels = []
+	
+	# ==========================================
+	# 阶段一：扫描范围，算出“平均高度”
+	# ==========================================
+	for x in range(center_x - pixel_radius, center_x + pixel_radius + 1):
+		for y in range(center_y - pixel_radius, center_y + pixel_radius + 1):
+			if x >= 0 and x < GRID_SIZE and y >= 0 and y < GRID_SIZE:
+				var dist = Vector2(x, y).distance_to(Vector2(center_x, center_y))
+				if dist <= pixel_radius:
+					var current_h = height_map_image.get_pixel(x, y).r
+					
+					# --- 物理射线遮挡检测（保护基石） ---
+					var world_x = (float(x) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.x
+					var world_z = (float(y) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.z
+					var start_pos = Vector3(world_x, global_position.y + 10.0, world_z)
+					var end_pos = Vector3(world_x, global_position.y - 2.0, world_z)
+					var query = PhysicsRayQueryParameters3D.create(start_pos, end_pos)
+					query.collision_mask = 16 
+					query.hit_from_inside = true 
+					var result = space_state.intersect_ray(query)
+					if result and result.position.y > (current_h + global_position.y):
+						continue 
+					# ----------------------------------------
+					
+					# 边缘柔和过渡权重
+					var weight = pow(cos((dist / float(pixel_radius)) * PI * 0.5), 1.5)
+					if weight <= 0.05: continue
+					
+					total_height += current_h
+					count += 1
+					valid_pixels.append({"x": x, "y": y, "h": current_h, "w": weight})
+					
+	if count == 0: return
+	
+	# 算出这片区域的平均海平面
+	var average_height = total_height / float(count)
+	
+	# ==========================================
+	# 阶段二：把高低不平的像素，向平均值拉平 (Lerp)
+	# ==========================================
+	var changed = false
+	var b_min_x = GRID_SIZE; var b_max_x = 0
+	var b_min_y = GRID_SIZE; var b_max_y = 0
+	
+	for p in valid_pixels:
+		# 核心：使用 lerp 向平均值插值。strength 决定了抹平的速度，weight 决定了边缘不那么生硬
+		var new_h = lerp(p.h, average_height, strength * p.w)
+		
+		if abs(new_h - p.h) > 0.0001:
+			height_map_image.set_pixel(p.x, p.y, Color(new_h, 0, 0, 1))
+			changed = true
+			
+			if p.x < b_min_x: b_min_x = p.x
+			if p.x > b_max_x: b_max_x = p.x
+			if p.y < b_min_y: b_min_y = p.y
+			if p.y > b_max_y: b_max_y = p.y
+			
+	if changed:
+		if not is_terrain_settling:
+			active_min_x = b_min_x; active_max_x = b_max_x; active_min_y = b_min_y; active_max_y = b_max_y
+		else:
+			active_min_x = min(active_min_x, b_min_x); active_max_x = max(active_max_x, b_max_x)
+			active_min_y = min(active_min_y, b_min_y); active_max_y = max(active_max_y, b_max_y)
 
+		height_map_texture.update(height_map_image)
+		needs_physics_update = true
+		is_terrain_settling = true
 # 3. 【新增】供 MossSystem 调用的：安全查询高度
 func get_soil_height_at(world_pos: Vector3) -> float:
 	var x = int((world_pos.x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
@@ -286,3 +433,68 @@ func simulate_soil_avalanche() -> bool:
 		height_map_texture.update(height_map_image)
 		
 	return is_unstable
+# ==========================================
+# 🧩 移植专用接口：精确拼接不规则泥土块
+# ==========================================
+# 🧩 移植专用接口：绝对质量守恒的高度加法
+# ==========================================
+func paste_soil_chunk(hit_pos: Vector3, clipboard_data: Dictionary) -> void:
+	if not clipboard_data.has("island_height_map"): return
+	
+	var island_height_map: Image = clipboard_data["island_height_map"]
+	var shape_mask: Image = clipboard_data["shape_mask"]
+	var base_depth: float = clipboard_data["base_depth"]
+	var pixel_size = clipboard_data["pixel_physical_size"]
+	
+	var mask_w = island_height_map.get_width()
+	var mask_h = island_height_map.get_height()
+	var mask_offset_x = clipboard_data["mask_offset_x"]
+	var mask_offset_y = clipboard_data["mask_offset_y"]
+	
+	var changed = false
+	var b_min_x = GRID_SIZE; var b_max_x = 0
+	var b_min_y = GRID_SIZE; var b_max_y = 0
+	
+	for mx in range(mask_w):
+		for my in range(mask_h):
+			# 读取遮罩，确认这个像素是有泥土的
+			if shape_mask.get_pixel(mx, my).r > 0.5:
+				var island_h = island_height_map.get_pixel(mx, my).r 
+				var thickness = max(0.0, island_h - base_depth)
+				
+				if thickness > 0.001:
+					var dx = mask_offset_x + mx
+					var dy = mask_offset_y + my
+					var world_x = hit_pos.x + float(dx) * pixel_size
+					var world_z = hit_pos.z + float(dy) * pixel_size
+					
+					var grid_x = int((world_x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+					var grid_y = int((world_z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+					
+					if grid_x >= 0 and grid_x < GRID_SIZE and grid_y >= 0 and grid_y < GRID_SIZE:
+						var current_h = height_map_image.get_pixel(grid_x, grid_y).r
+						
+						# ✨ 终极相加：主缸高度 + 泥块厚度
+						var new_h = current_h + thickness 
+						height_map_image.set_pixel(grid_x, grid_y, Color(new_h, 0, 0, 1))
+						changed = true
+						
+						# 更新脏矩形
+						if grid_x < b_min_x: b_min_x = grid_x
+						if grid_x > b_max_x: b_max_x = grid_x
+						if grid_y < b_min_y: b_min_y = grid_y
+						if grid_y > b_max_y: b_max_y = grid_y
+					
+	if changed:
+		if not is_terrain_settling:
+			active_min_x = b_min_x; active_max_x = b_max_x; active_min_y = b_min_y; active_max_y = b_max_y
+		else:
+			active_min_x = min(active_min_x, b_min_x); active_max_x = max(active_max_x, b_max_x)
+			active_min_y = min(active_min_y, b_min_y); active_max_y = max(active_max_y, b_max_y)
+
+		height_map_texture.update(height_map_image)
+		needs_physics_update = true
+		
+		# 激活你的沙堆塌陷，让加高的土包自然融入主地形！
+		is_terrain_settling = true 
+		print("🕳️ 物理厚度图移植完成，质量守恒达成！")

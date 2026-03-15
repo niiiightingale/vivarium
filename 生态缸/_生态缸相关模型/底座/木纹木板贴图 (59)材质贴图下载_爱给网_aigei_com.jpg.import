@@ -2,20 +2,21 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ypca26rcogw7"
-path="res://.godot/imported/笔触纹理shader用.png-00e0087b9325683c9d9f86bc783a59cd.ctex"
+uid="uid://bitn72obmsu4w"
+path.s3tc="res://.godot/imported/木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg-f19ae9c6b52eadbdafe87dd82512ea95.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
-source_file="res://放置系统/笔触纹理shader用.png"
-dest_files=["res://.godot/imported/笔触纹理shader用.png-00e0087b9325683c9d9f86bc783a59cd.ctex"]
+source_file="res://生态缸/_生态缸相关模型/底座/木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg"
+dest_files=["res://.godot/imported/木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg-f19ae9c6b52eadbdafe87dd82512ea95.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0

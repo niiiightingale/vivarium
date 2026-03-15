@@ -11,7 +11,7 @@ extends Node3D
 @export var min_zoom: float = 4.0         
 @export var max_zoom: float = 15.0        
 
-@export var bounds_xz: float = 3.0        
+#@export var bounds_xz: float = 3.0        
 @export var bounds_y_min: float = -1.0    
 @export var bounds_y_max: float = 10.0    
 
@@ -178,9 +178,12 @@ func _unhandled_input(event):
 			clamp_target_position()
 
 func clamp_target_position():
-	target_position.x = clamp(target_position.x, -bounds_xz, bounds_xz)
+	# 彻底解除 X 和 Z 轴的封印，允许无限平移！
+	# target_position.x = clamp(target_position.x, -bounds_xz, bounds_xz)
+	# target_position.z = clamp(target_position.z, -bounds_xz, bounds_xz)
+	
+	# 仅保留 Y 轴高度锁，防止玩家钻进地底或飞出大气层
 	target_position.y = clamp(target_position.y, bounds_y_min, bounds_y_max)
-	target_position.z = clamp(target_position.z, -bounds_xz, bounds_xz)
 
 func _physics_process(delta: float) -> void:
 	if enable_idle_mode and not is_rotating and not is_panning:

@@ -1,0 +1,30 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://fuhe4l5ti3nk"]
+
+[ext_resource type="Shader" uid="uid://cj0jafdn175kl" path="res://生态缸/泥土/Soil_preview.gdshader" id="1_x10hx"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r6bch"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_10nma"]
+noise = SubResource("FastNoiseLite_r6bch")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_x10hx")
+shader_parameter/mesh_size = Vector2(0, 0)
+shader_parameter/dig_depth = 0.05
+shader_parameter/physical_size = 5.0
+shader_parameter/min_top_height = 0.6
+shader_parameter/min_bottom_height = 0.0
+shader_parameter/height_scale = 1.0
+shader_parameter/bottom_scale = 0.5
+shader_parameter/color_dirt_light = Color(0.45, 0.35, 0.25, 1)
+shader_parameter/color_dirt_dark = Color(0.3, 0.22, 0.15, 1)
+shader_parameter/color_dirt_deep = Color(0.12, 0.08, 0.05, 1)
+shader_parameter/wet_color_multiplier = Color(0.6, 0.5, 0.4, 1)
+shader_parameter/dirt_noise = SubResource("NoiseTexture2D_10nma")
+shader_parameter/noise_scale = 0.05
+shader_parameter/side_layer_stretch = 0.15
+shader_parameter/depth_gradient_scale = 1.0
+shader_parameter/macro_bump_intensity = 1.0
+shader_parameter/micro_bump_intensity = 1.5
+shader_parameter/global_moisture = 0.5

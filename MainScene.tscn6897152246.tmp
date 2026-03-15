@@ -20,10 +20,8 @@
 [ext_resource type="Script" uid="uid://d1qxotis62fel" path="res://GrabberTool.gd" id="12_6dw4c"]
 [ext_resource type="Script" uid="uid://0x72u6oar6kg" path="res://Moss/Scripts/MossSystem.gd" id="12_yvb8b"]
 [ext_resource type="Script" uid="uid://cevui7av2n30n" path="res://ChunkManager.gd" id="13_3hf6u"]
-[ext_resource type="Material" uid="uid://ckjh238pr7xlh" path="res://Moss/MossInstance/material_牛毛藓.tres" id="13_cxdnd"]
 [ext_resource type="MultiMesh" uid="uid://dpfcjln7lhpsv" path="res://Moss/MossInstance/三叶草.tres" id="14_4mcbk"]
 [ext_resource type="ArrayMesh" uid="uid://ds73gjxjfqcks" path="res://Moss/MossInstance/mesh_三叶草.tres" id="14_8s4c3"]
-[ext_resource type="Material" uid="uid://fuhe4l5ti3nk" path="res://生态缸/泥土/Soil_preview.tres" id="14_lppff"]
 [ext_resource type="MultiMesh" uid="uid://ckjby2o8f432g" path="res://Moss/MossInstance/朵朵藓.tres" id="15_x0cd2"]
 [ext_resource type="MultiMesh" uid="uid://d3befknt1tiii" path="res://Moss/MossInstance/白发藓.tres" id="16_8s4c3"]
 [ext_resource type="LightmapGIData" uid="uid://7ca68o6phlpr" path="res://MainScene.lmbake" id="16_nm5af"]
@@ -31,7 +29,6 @@
 [ext_resource type="PackedScene" uid="uid://bkj402wnumr44" path="res://放置系统/PlaceableBranch.tscn" id="20_xtmsi"]
 [ext_resource type="PackedScene" uid="uid://crcy2qluojpwi" path="res://生态缸/_生态缸相关模型/tscn/复古水壶.tscn" id="26_amtbh"]
 [ext_resource type="Script" uid="uid://dgidnistngnmr" path="res://CultivationBox.gd" id="29_6dw4c"]
-[ext_resource type="Material" uid="uid://bsh6hll3aq744" path="res://生态缸/苔藓培养盆/soil_shader_CultivationBox.tres" id="31_ro037"]
 
 [sub_resource type="Curve" id="Curve_x0cd2"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0.97558385), 0.0, 0.0, 0, 0]
@@ -147,7 +144,6 @@ seamless_blend_skirt = 0.423
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uxrcv"]
 render_priority = 0
 shader = ExtResource("1_3mqji")
-shader_parameter/physical_size = 5.0
 shader_parameter/min_top_height = 1.0000000475
 shader_parameter/min_bottom_height = -0.125999958485
 shader_parameter/height_scale = 1.0
@@ -175,7 +171,7 @@ subdivide_height = 3
 subdivide_depth = 100
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_5crlr"]
-size = Vector3(4.967285, 0.096, 3)
+size = Vector3(3, 0.096, 3)
 
 [sub_resource type="Curve" id="Curve_4mcbk"]
 _limits = [0.0, 10.0, 0.0, 0.20999299]
@@ -291,12 +287,34 @@ shadow_mesh = SubResource("ArrayMesh_vmcag")
 [sub_resource type="BoxShape3D" id="BoxShape3D_v3bin"]
 size = Vector3(3.2, 0.125, 3.2)
 
-[sub_resource type="BoxMesh" id="BoxMesh_lppff"]
-material = ExtResource("31_ro037")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v3bin"]
+render_priority = 0
+shader = ExtResource("1_3mqji")
+shader_parameter/min_top_height = 1.0000000475
+shader_parameter/min_bottom_height = 0.06400005054000002
+shader_parameter/height_scale = 1.0
+shader_parameter/bottom_shape_map = ExtResource("3_rf2cd")
+shader_parameter/bottom_scale = 0.5
+shader_parameter/moss_thickness = 0.050000002375
+shader_parameter/moss_moisture_retention = 0.0
+shader_parameter/color_dirt_light = Color(0.28755143, 0.1759113, 0.12835404, 1)
+shader_parameter/color_dirt_dark = Color(0.2296221, 0.16215205, 0.1284146, 1)
+shader_parameter/color_dirt_deep = Color(0.12, 0.08, 0.05, 1)
+shader_parameter/wet_color_multiplier = Color(0.6, 0.5, 0.4, 1)
+shader_parameter/dirt_noise = SubResource("NoiseTexture2D_3hf6u")
+shader_parameter/noise_scale = 0.3
+shader_parameter/side_layer_stretch = 1.0
+shader_parameter/depth_gradient_scale = 5.0
+shader_parameter/macro_bump_intensity = 0.800000038
+shader_parameter/micro_bump_intensity = 0.250000011875
+shader_parameter/global_moisture = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_v3bin"]
+material = SubResource("ShaderMaterial_v3bin")
 size = Vector3(3, 1, 3)
-subdivide_width = 60
+subdivide_width = 100
 subdivide_height = 3
-subdivide_depth = 60
+subdivide_depth = 100
 
 [node name="Terrarium" type="Node3D" unique_id=1910372508]
 
@@ -316,7 +334,7 @@ physics_update_interval = 0.3
 
 [node name="ToolManager" type="Node3D" parent="SoilManager" unique_id=949014252 node_paths=PackedStringArray("tools")]
 script = ExtResource("2_anuui")
-tools = [NodePath("ShovelTool"), NodePath("MossTool"), NodePath("KnifeTool"), NodePath("GrabberTool")]
+tools = [NodePath("ShovelTool"), NodePath("SmoothTool"), NodePath("MossTool"), NodePath("KnifeTool"), NodePath("PlacementTool")]
 
 [node name="BucketTool" parent="SoilManager/ToolManager" unique_id=515833520 node_paths=PackedStringArray("player_input", "soil_manager") instance=ExtResource("8_torvr")]
 visible = false
@@ -357,15 +375,13 @@ player_input = NodePath("../../PlayerInput")
 script = ExtResource("11_obg7t")
 moss_system = NodePath("../../MossSystem")
 player_input = NodePath("../../PlayerInput")
-knife_width = 0.02
+knife_width = 0.03
 cut_speed = 5.0
 
 [node name="GrabberTool" type="Node3D" parent="SoilManager/ToolManager" unique_id=818605595 node_paths=PackedStringArray("moss_system", "player_input")]
 script = ExtResource("12_6dw4c")
 moss_system = NodePath("../../MossSystem")
 player_input = NodePath("../../PlayerInput")
-main_moss_material = ExtResource("13_cxdnd")
-chunk_base_material = ExtResource("14_lppff")
 
 [node name="PlayerInput" type="Node3D" parent="SoilManager" unique_id=1489955409 node_paths=PackedStringArray("soil_body")]
 script = ExtResource("11_p5x2j")
@@ -395,8 +411,7 @@ collision_layer = 3
 physics_interpolation_mode = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="SoilManager/SoilBody" unique_id=373154117]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00579834, 0.19194937, 0.0029907227)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00018310547, -0.30878043, 0.0029907227)
 shape = SubResource("BoxShape3D_5crlr")
 
 [node name="缸体和环境" parent="SoilManager" unique_id=1719478435 instance=ExtResource("7_5crlr")]
@@ -487,7 +502,6 @@ spot_angle = 65.0
 
 [node name="OmniLight3D3" type="OmniLight3D" parent="灯光" unique_id=166148866]
 transform = Transform3D(-1.3731514e-07, -0.70710677, -0.7071068, -6.181724e-08, -0.7071068, 0.70710677, -1, 1.4080786e-07, 5.3385083e-08, -3.8926497, 0.4287634, 0)
-visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
 light_energy = 5.0
 light_indirect_energy = 0.1
@@ -503,7 +517,6 @@ omni_attenuation = 2.0
 
 [node name="OmniLight3D4" type="OmniLight3D" parent="灯光" unique_id=1343792048]
 transform = Transform3D(-4.371139e-08, -0.70710677, 0.7071068, 0, 0.7071068, 0.70710677, -1, 3.090862e-08, -3.090862e-08, 3.8926497, 0.4287634, 0)
-visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
 light_energy = 5.0
 light_indirect_energy = 0.1
@@ -519,7 +532,6 @@ omni_attenuation = 2.0
 
 [node name="OmniLight3D5" type="OmniLight3D" parent="灯光" unique_id=947368973]
 transform = Transform3D(-0.99999803, 0.0014068027, 0.0014069538, 1.06770166e-07, -0.7071068, 0.70710677, 0.001989626, 0.7071054, 0.70710546, 0.0077449884, 0.4287634, 3.8926413)
-visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
 light_energy = 5.0
 light_indirect_energy = 0.1
@@ -535,7 +547,6 @@ omni_attenuation = 2.0
 
 [node name="OmniLight3D6" type="OmniLight3D" parent="灯光" unique_id=1792515662]
 transform = Transform3D(-0.99999803, 0.0014070293, -0.0014069679, 4.3798355e-08, 0.7071069, 0.70710665, 0.0019897965, 0.7071053, -0.7071055, -0.0077449977, 0.4287634, -3.8926413)
-visible = false
 light_color = Color(0.9159924, 0.9106956, 0.5040374, 1)
 light_energy = 5.0
 light_indirect_energy = 0.1
@@ -562,13 +573,10 @@ light_data = ExtResource("16_nm5af")
 [node name="金属复古水壶" parent="." unique_id=407984419 instance=ExtResource("26_amtbh")]
 transform = Transform3D(-0.9084791, 0, 0.41793057, 0, 1, 0, -0.41793057, 0, -0.9084791, -5.103057, -0.72503674, 2.300212)
 
-[node name="CultivationBox" type="StaticBody3D" parent="." unique_id=1724397637 node_paths=PackedStringArray("soil_mesh_instance")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5913725, -1.065, 0.38587064)
+[node name="CultivationBox" type="StaticBody3D" parent="." unique_id=1724397637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6111603, -0.7851796, 1.8666608)
 collision_layer = 18
 script = ExtResource("29_6dw4c")
-soil_mesh_instance = NodePath("PlaneMesh")
-initial_soil_thickness = 0.3
-dig_depth = 0.1
 template_multimesh = ExtResource("17_3slyh")
 
 [node name="苔藓培养盆" type="MeshInstance3D" parent="CultivationBox" unique_id=1130359528]
@@ -583,7 +591,7 @@ shape = SubResource("BoxShape3D_v3bin")
 physics_interpolation_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.613, 0)
 layers = 3
-mesh = SubResource("BoxMesh_lppff")
+mesh = SubResource("BoxMesh_v3bin")
 
 [node name="MossMultiMesh" type="MultiMeshInstance3D" parent="CultivationBox" unique_id=183361713]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7140367, 0)

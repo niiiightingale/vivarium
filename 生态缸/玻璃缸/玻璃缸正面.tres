@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bid3jffyfn03r"]
+
+[ext_resource type="Shader" uid="uid://ce4b30m18kmcc" path="res://生态缸/_生态缸相关模型/glass.gdshader" id="1_si33s"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_si33s")
+shader_parameter/glass_color = Color(1, 1, 1, 0.14117648)
+shader_parameter/roughness = 0.15
+shader_parameter/metallic = 1.0
+shader_parameter/specular_strength = 0.0
+shader_parameter/base_refraction_strength = 0.0050000002375
+shader_parameter/edge_refraction_intensity = 0.0

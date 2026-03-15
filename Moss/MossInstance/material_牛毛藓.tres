@@ -9,8 +9,8 @@ colors = PackedColorArray(0, 0, 0, 1, 0.6816658, 0.6441531, 0.41020653, 1)
 gradient = SubResource("Gradient_puuqw")
 
 [sub_resource type="Gradient" id="Gradient_wiefp"]
-offsets = PackedFloat32Array(0.006840796, 0.22574627, 1)
-colors = PackedColorArray(0.043177456, 0.117221065, 0.055599086, 1, 0.2108176, 0.31495106, 0.153705, 1, 0.2011947, 0.285773, 0.08691978, 1)
+offsets = PackedFloat32Array(0, 0.62375623)
+colors = PackedColorArray(0.11295191, 0.029057214, 0.0013829229, 1, 0.100671254, 0.14930502, 0.016519437, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_k86x8"]
 gradient = SubResource("Gradient_wiefp")
@@ -45,9 +45,9 @@ shader_parameter/vertical_shade_curve = SubResource("CurveTexture_x6q6e")
 shader_parameter/mesh_original_height = 0.01
 shader_parameter/fuzz_color = Color(0.39562562, 0.3048378, 0.017245682, 1)
 shader_parameter/fuzz_intensity = 3.34800015903
-shader_parameter/fuzz_start = 0.0
+shader_parameter/fuzz_start = 0.838000039805
 shader_parameter/fuzz_smoothness = 1.0
-shader_parameter/fuzz_mask_bottom = 0.800000038
+shader_parameter/fuzz_mask_bottom = 0.66000003135
 shader_parameter/fuzz_mask_top = 1.0
 shader_parameter/size_curve = SubResource("CurveTexture_1mqpj")
 shader_parameter/offset_curve = SubResource("CurveTexture_goa7i")
