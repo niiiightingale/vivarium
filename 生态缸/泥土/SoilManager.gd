@@ -6,7 +6,6 @@ const PHYSICAL_SIZE = 5.0
 
 var height_map_image : Image
 var height_map_texture : ImageTexture
-
 # ==========================================
 # 沙堆塌陷算法控制参数
 
@@ -50,7 +49,6 @@ var pending_drops: Array[Dictionary] = []
 
 func _ready():
 	height_map_image = Image.create(GRID_SIZE, GRID_SIZE, false, Image.FORMAT_RF)
-	
 	# ==========================================
 	# ✨ 核心魔法：用噪波刷出极其自然的高低起伏！
 	# ==========================================
@@ -167,18 +165,7 @@ func apply_soil_brush(world_position: Vector3, radius: float, strength: float, i
 				
 				var current_h = height_map_image.get_pixel(x, y).r
 				
-				# --- 物理射线遮挡检测（保护大型物体底下的泥土） ---
-				var world_x = (float(x) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.x
-				var world_z = (float(y) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.z
-				var start_pos = Vector3(world_x, global_position.y + 10.0, world_z)
-				var end_pos = Vector3(world_x, global_position.y - 2.0, world_z)
-				var query = PhysicsRayQueryParameters3D.create(start_pos, end_pos)
-				query.collision_mask = 16 
-				query.hit_from_inside = true 
-				var result = space_state.intersect_ray(query)
-				if result and result.position.y > (current_h + global_position.y):
-					continue 
-				# ----------------------------------------
+				
 				
 				var weight = 0.0
 				
@@ -205,13 +192,14 @@ func apply_soil_brush(world_position: Vector3, radius: float, strength: float, i
 					
 				var actual_change = 0.0
 				
+			
 				# ✨ 绝对的布尔切除/印章逻辑
 				if is_adding:
 					# 填土：建造平顶斜坡土台
 					var target_top_h = center_h + strength 
 					actual_change = max(0.0, (target_top_h - current_h) * weight)
 				else:
-					# 挖土：挖出平底斜坡深坑（并且不能挖穿地面 0.0）
+					# 挖土：挖出平底斜坡深坑（并且绝不挖穿缸底 0.0）
 					var target_bottom_h = max(0.0, center_h - strength)
 					actual_change = max(0.0, (current_h - target_bottom_h) * weight)
 					
@@ -283,20 +271,6 @@ func apply_smooth_brush(world_position: Vector3, radius: float, strength: float)
 				var dist = Vector2(x, y).distance_to(Vector2(center_x, center_y))
 				if dist <= pixel_radius:
 					var current_h = height_map_image.get_pixel(x, y).r
-					
-					# --- 物理射线遮挡检测（保护基石） ---
-					var world_x = (float(x) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.x
-					var world_z = (float(y) / GRID_SIZE - 0.5) * PHYSICAL_SIZE + global_position.z
-					var start_pos = Vector3(world_x, global_position.y + 10.0, world_z)
-					var end_pos = Vector3(world_x, global_position.y - 2.0, world_z)
-					var query = PhysicsRayQueryParameters3D.create(start_pos, end_pos)
-					query.collision_mask = 16 
-					query.hit_from_inside = true 
-					var result = space_state.intersect_ray(query)
-					if result and result.position.y > (current_h + global_position.y):
-						continue 
-					# ----------------------------------------
-					
 					# 边缘柔和过渡权重
 					var weight = pow(cos((dist / float(pixel_radius)) * PI * 0.5), 1.5)
 					if weight <= 0.05: continue
@@ -433,68 +407,23 @@ func simulate_soil_avalanche() -> bool:
 		height_map_texture.update(height_map_image)
 		
 	return is_unstable
+# ✨ 新增接口 1：计算地表法线 (让物体贴合斜坡)
 # ==========================================
-# 🧩 移植专用接口：精确拼接不规则泥土块
-# ==========================================
-# 🧩 移植专用接口：绝对质量守恒的高度加法
-# ==========================================
-func paste_soil_chunk(hit_pos: Vector3, clipboard_data: Dictionary) -> void:
-	if not clipboard_data.has("island_height_map"): return
+func get_soil_normal_at(world_pos: Vector3) -> Vector3:
+	var cx = int((world_pos.x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
+	var cy = int((world_pos.z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
 	
-	var island_height_map: Image = clipboard_data["island_height_map"]
-	var shape_mask: Image = clipboard_data["shape_mask"]
-	var base_depth: float = clipboard_data["base_depth"]
-	var pixel_size = clipboard_data["pixel_physical_size"]
-	
-	var mask_w = island_height_map.get_width()
-	var mask_h = island_height_map.get_height()
-	var mask_offset_x = clipboard_data["mask_offset_x"]
-	var mask_offset_y = clipboard_data["mask_offset_y"]
-	
-	var changed = false
-	var b_min_x = GRID_SIZE; var b_max_x = 0
-	var b_min_y = GRID_SIZE; var b_max_y = 0
-	
-	for mx in range(mask_w):
-		for my in range(mask_h):
-			# 读取遮罩，确认这个像素是有泥土的
-			if shape_mask.get_pixel(mx, my).r > 0.5:
-				var island_h = island_height_map.get_pixel(mx, my).r 
-				var thickness = max(0.0, island_h - base_depth)
-				
-				if thickness > 0.001:
-					var dx = mask_offset_x + mx
-					var dy = mask_offset_y + my
-					var world_x = hit_pos.x + float(dx) * pixel_size
-					var world_z = hit_pos.z + float(dy) * pixel_size
-					
-					var grid_x = int((world_x / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
-					var grid_y = int((world_z / PHYSICAL_SIZE + 0.5) * GRID_SIZE)
-					
-					if grid_x >= 0 and grid_x < GRID_SIZE and grid_y >= 0 and grid_y < GRID_SIZE:
-						var current_h = height_map_image.get_pixel(grid_x, grid_y).r
-						
-						# ✨ 终极相加：主缸高度 + 泥块厚度
-						var new_h = current_h + thickness 
-						height_map_image.set_pixel(grid_x, grid_y, Color(new_h, 0, 0, 1))
-						changed = true
-						
-						# 更新脏矩形
-						if grid_x < b_min_x: b_min_x = grid_x
-						if grid_x > b_max_x: b_max_x = grid_x
-						if grid_y < b_min_y: b_min_y = grid_y
-						if grid_y > b_max_y: b_max_y = grid_y
-					
-	if changed:
-		if not is_terrain_settling:
-			active_min_x = b_min_x; active_max_x = b_max_x; active_min_y = b_min_y; active_max_y = b_max_y
-		else:
-			active_min_x = min(active_min_x, b_min_x); active_max_x = max(active_max_x, b_max_x)
-			active_min_y = min(active_min_y, b_min_y); active_max_y = max(active_max_y, b_max_y)
-
-		height_map_texture.update(height_map_image)
-		needs_physics_update = true
+	if cx < 1 or cx >= GRID_SIZE - 1 or cy < 1 or cy >= GRID_SIZE - 1:
+		return Vector3.UP
 		
-		# 激活你的沙堆塌陷，让加高的土包自然融入主地形！
-		is_terrain_settling = true 
-		print("🕳️ 物理厚度图移植完成，质量守恒达成！")
+	# 读取四周的高度，计算坡度差 (索贝尔算子原理)
+	var h_left = height_map_image.get_pixel(cx - 1, cy).r
+	var h_right = height_map_image.get_pixel(cx + 1, cy).r
+	var h_up = height_map_image.get_pixel(cx, cy - 1).r
+	var h_down = height_map_image.get_pixel(cx, cy + 1).r
+	
+	# 一个像素的物理真实宽度
+	var pixel_size = PHYSICAL_SIZE / float(GRID_SIZE)
+	
+	var normal = Vector3(h_left - h_right, 2.0 * pixel_size, h_up - h_down)
+	return normal.normalized()

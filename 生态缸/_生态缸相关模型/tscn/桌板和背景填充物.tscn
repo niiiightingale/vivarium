@@ -39,6 +39,7 @@ shadow_mesh = SubResource("ArrayMesh_60mj8")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mrygf"]
 albedo_color = Color(0.7787772, 0.46828306, 0.21229634, 1)
+metallic_specular = 0.0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_rj5ib"]
 _surfaces = [{

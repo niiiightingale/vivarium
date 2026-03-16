@@ -59,6 +59,7 @@ var opening_tween: Tween
 
 @onready var camera = $Camera3D
 
+
 var target_position: Vector3
 var target_zoom: float
 
@@ -75,6 +76,10 @@ var smooth_focus_distance: float = 5.0
 
 var debug_mesh: ImmediateMesh
 var debug_mesh_instance: MeshInstance3D
+
+signal idle_state_changed(is_idle: bool)
+# 我们加一个小变量，用来防止信号重复发送
+var _last_idle_state: bool = false
 
 func _ready():
 	is_idle_mode = true
@@ -112,11 +117,35 @@ func _ready():
 		add_child(debug_mesh_instance)
 		debug_mesh_instance.top_level = true 
 
+# ==========================================
+# 2. 新增一个专门负责发信号的小函数
+# ==========================================
+func _process_idle_signal():
+	if is_idle_mode != _last_idle_state:
+		_last_idle_state = is_idle_mode
+		idle_state_changed.emit(is_idle_mode) # 把最新状态广播出去！
+
+# ==========================================
+# 3. 在所有改变 is_idle_mode 的地方，调用这个小函数
+# ==========================================
 func reset_idle_timer():
 	idle_timer = 0.0
 	if is_idle_mode:
 		is_idle_mode = false
 		target_yaw = rotation.y
+		_process_idle_signal() # ✨ 我醒了！
+
+func toggle_manual_idle() -> void:
+	if is_idle_mode:
+		reset_idle_timer()
+		print("🎥 退出展示模式")
+	else:
+		is_idle_mode = true
+		idle_timer = 0.0 
+		print("🍿 进入展示模式")
+		_process_idle_signal() # ✨ 我睡了！
+
+
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
@@ -189,7 +218,9 @@ func _physics_process(delta: float) -> void:
 	if enable_idle_mode and not is_rotating and not is_panning:
 		idle_timer += delta
 		if idle_timer >= idle_time_threshold:
-			is_idle_mode = true
+			if not is_idle_mode:
+				is_idle_mode = true
+				_process_idle_signal() # ✨ 时间到了，自动挂机！
 
 	if is_idle_mode:
 		var perfect_center = Vector3(0.0, idle_height_offset, 0.0)

@@ -1,7 +1,6 @@
 class_name ToolManagerNew
 extends Node3D
 
-# 在检查器里，把你所有的工具节点（比如 PlacementTool）拖进这个数组里
 @export var tools: Array[Node3D] 
 var current_tool_index: int = -1
 
@@ -11,18 +10,19 @@ func _ready() -> void:
 		if tool.has_method("deactivate"):
 			tool.deactivate()
 			
-	# 默认给第一个工具“通电”
+	# 如果你想让玩家一进游戏手里就是空的，就把下面这两行注释掉
+	# 如果想默认拿着第一个工具，就保留
 	if tools.size() > 0:
-		_switch_to_tool(0)
+		switch_tool(0)
 
-func _unhandled_input(event: InputEvent) -> void:
-	# ToolManager 唯一需要监听的按键：切换工具
-	if event.is_action_pressed("toggle_tool"):
-		if tools.size() > 0:
-			var next_index = (current_tool_index + 1) % tools.size()
-			_switch_to_tool(next_index)
-
-func _switch_to_tool(index: int) -> void:
+# ==========================================
+# 开放给 UI 层调用的核心接口
+# ==========================================
+func switch_tool(index: int) -> void:
+	# 如果点的就是当前正拿着的工具，啥也不做
+	if index == current_tool_index:
+		return 
+		
 	# 1. 给当前工具断电
 	if current_tool_index >= 0 and current_tool_index < tools.size():
 		var old_tool = tools[current_tool_index]
@@ -31,9 +31,14 @@ func _switch_to_tool(index: int) -> void:
 			
 	# 2. 更新序号
 	current_tool_index = index
-	var new_tool = tools[current_tool_index]
+	
+	# 如果传入的序号越界或为 -1，代表玩家选择了“空手/取消装备”
+	if current_tool_index < 0 or current_tool_index >= tools.size():
+		print("🔧 当前手无寸铁")
+		return
 	
 	# 3. 给新工具通电
+	var new_tool = tools[current_tool_index]
 	if new_tool.has_method("activate"):
 		new_tool.activate()
 		

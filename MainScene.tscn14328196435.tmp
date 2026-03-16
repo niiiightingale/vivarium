@@ -4,11 +4,13 @@
 [ext_resource type="Script" uid="uid://c6qj81hvvtkxj" path="res://生态缸/泥土/SoilManager.gd" id="1_rpqi1"]
 [ext_resource type="Script" uid="uid://c2b16c66r4cr5" path="res://ToolManagerNew.gd" id="2_anuui"]
 [ext_resource type="Texture2D" uid="uid://u2blbwymsr2x" path="res://生态缸/泥土/底面高度图.png" id="3_rf2cd"]
+[ext_resource type="PackedScene" uid="uid://c80cl1jrc7nwv" path="res://BrushTool.tscn" id="4_p5x2j"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://camera_controller.gd" id="4_uxrcv"]
 [ext_resource type="Script" uid="uid://bxnw7b0qcl1ym" path="res://PlacementTool.gd" id="5_anuui"]
 [ext_resource type="PackedScene" uid="uid://d4fipam8t81" path="res://生态缸/_生态缸相关模型/tscn/缸体和环境.tscn" id="7_5crlr"]
 [ext_resource type="Script" uid="uid://dahuxw4drvx61" path="res://ShovelTool.gd" id="7_8qg48"]
 [ext_resource type="Texture2D" uid="uid://ypca26rcogw7" path="res://放置系统/笔触纹理shader用.png" id="8_1ms6g"]
+[ext_resource type="PackedScene" uid="uid://7d2bwa721gbp" path="res://BucketTool.tscn" id="8_torvr"]
 [ext_resource type="PackedScene" uid="uid://cgoxc5vfw6k5w" path="res://生态缸/_生态缸相关模型/tscn/玻璃缸体和底座.tscn" id="9_4mcbk"]
 [ext_resource type="Script" uid="uid://bxur3ogoo5mk6" path="res://SmoothTool.gd" id="9_h86nx"]
 [ext_resource type="Script" uid="uid://qo23otrgo3qx" path="res://MossTool.gd" id="10_7jkkr"]
@@ -23,7 +25,6 @@
 [ext_resource type="MultiMesh" uid="uid://cxyejaj0cw3p7" path="res://Moss/MossInstance/牛毛藓.tres" id="17_3slyh"]
 [ext_resource type="PackedScene" uid="uid://bkj402wnumr44" path="res://放置系统/PlaceableBranch.tscn" id="20_xtmsi"]
 [ext_resource type="PackedScene" uid="uid://crcy2qluojpwi" path="res://生态缸/_生态缸相关模型/tscn/复古水壶.tscn" id="26_amtbh"]
-[ext_resource type="Script" uid="uid://b3lvf13ucx6vo" path="res://BuildUI.gd" id="27_obg7t"]
 [ext_resource type="Texture2D" uid="uid://k5am8d24s2eb" path="res://生态缸/圆桌和吊灯/木圆桌_木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg" id="32_lppff"]
 
 [sub_resource type="Curve" id="Curve_x0cd2"]
@@ -96,6 +97,14 @@ adjustment_color_correction = SubResource("CurveXYZTexture_xtmsi")
 dof_blur_far_distance = 2.1
 dof_blur_amount = 0.09
 
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h86nx"]
+noise_type = 3
+frequency = 0.0612
+fractal_octaves = 4
+fractal_lacunarity = 1.415
+fractal_gain = 0.885
+fractal_weighted_strength = 0.22
+
 [sub_resource type="Curve" id="Curve_8qg48"]
 _limits = [0.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 1.4707491), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
@@ -112,14 +121,6 @@ mesh = ExtResource("14_8s4c3")
 [sub_resource type="MultiMesh" id="MultiMesh_anuui"]
 transform_format = 1
 mesh = ExtResource("14_8s4c3")
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_h86nx"]
-noise_type = 3
-frequency = 0.0612
-fractal_octaves = 4
-fractal_lacunarity = 1.415
-fractal_gain = 0.885
-fractal_weighted_strength = 0.22
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_yvb8b"]
 noise_type = 0
@@ -307,102 +308,6 @@ metallic_specular = 0.2
 environment = SubResource("Environment_1305s")
 camera_attributes = SubResource("CameraAttributesPractical_3mqji")
 
-[node name="PlayerInput" type="Node3D" parent="." unique_id=1489955409 node_paths=PackedStringArray("soil_body")]
-script = ExtResource("11_p5x2j")
-soil_body = NodePath("../SoilManager/SoilBody")
-
-[node name="ToolManager" type="Node3D" parent="." unique_id=949014252 node_paths=PackedStringArray("tools")]
-script = ExtResource("2_anuui")
-tools = [NodePath("PlacementTool"), NodePath("ShovelTool"), NodePath("SmoothTool"), NodePath("MossTool")]
-
-[node name="PlacementTool" type="Node3D" parent="ToolManager" unique_id=1989854413 node_paths=PackedStringArray("player_input", "soil_manager")]
-script = ExtResource("5_anuui")
-item_scene = ExtResource("20_xtmsi")
-player_input = NodePath("../../PlayerInput")
-soil_manager = NodePath("../../SoilManager")
-
-[node name="ShovelTool" type="Node3D" parent="ToolManager" unique_id=1669048287 node_paths=PackedStringArray("soil_manager", "player_input")]
-script = ExtResource("7_8qg48")
-soil_manager = NodePath("../../SoilManager")
-player_input = NodePath("../../PlayerInput")
-brush_texture = ExtResource("8_1ms6g")
-max_capacity = 100.0
-dig_volume_per_click = 25.0
-fill_volume_per_click = 25.0
-brush_strength = 1.0
-
-[node name="SmoothTool" type="Node3D" parent="ToolManager" unique_id=350865875 node_paths=PackedStringArray("soil_manager", "player_input")]
-script = ExtResource("9_h86nx")
-soil_manager = NodePath("../../SoilManager")
-player_input = NodePath("../../PlayerInput")
-brush_radius = 0.68
-brush_strength = 0.03
-
-[node name="MossTool" type="Node3D" parent="ToolManager" unique_id=658559937 node_paths=PackedStringArray("moss_system", "player_input")]
-script = ExtResource("10_7jkkr")
-moss_system = NodePath("../../MossSystem")
-player_input = NodePath("../../PlayerInput")
-
-[node name="BuildUI" type="CanvasLayer" parent="ToolManager" unique_id=925229498 node_paths=PackedStringArray("camera_controller")]
-script = ExtResource("27_obg7t")
-camera_controller = NodePath("../../CameraPivot")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ToolManager/BuildUI" unique_id=263713587]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 106.87
-offset_top = -174.5
-offset_right = 420.87
-offset_bottom = 174.5
-grow_vertical = 2
-theme_override_constants/separation = 38
-alignment = 1
-
-[node name="BtnEmpty" type="Button" parent="ToolManager/BuildUI/VBoxContainer" unique_id=1930447489]
-layout_mode = 2
-theme_override_font_sizes/font_size = 45
-text = "Empty"
-
-[node name="BtnPlacement" type="Button" parent="ToolManager/BuildUI/VBoxContainer" unique_id=1382997373]
-layout_mode = 2
-theme_override_font_sizes/font_size = 45
-text = "Placement"
-
-[node name="BtnShovel" type="Button" parent="ToolManager/BuildUI/VBoxContainer" unique_id=1756945996]
-layout_mode = 2
-theme_override_font_sizes/font_size = 45
-text = "Shovel"
-
-[node name="BtnSmoothTool" type="Button" parent="ToolManager/BuildUI/VBoxContainer" unique_id=44273179]
-layout_mode = 2
-theme_override_font_sizes/font_size = 45
-text = "SmoothTool"
-
-[node name="BtnMossPainter" type="Button" parent="ToolManager/BuildUI/VBoxContainer" unique_id=1973281118]
-layout_mode = 2
-theme_override_font_sizes/font_size = 45
-text = "MossPainter
-"
-
-[node name="BtnIdleToggle" type="Button" parent="ToolManager/BuildUI" unique_id=1518547226]
-offset_left = 2349.0
-offset_top = 28.0
-offset_right = 2530.0
-offset_bottom = 85.0
-theme_override_font_sizes/font_size = 35
-text = "IdleSwitch"
-
-[node name="MossSystem" type="Node" parent="." unique_id=146429818 node_paths=PackedStringArray("soil_manager", "chunk_manager")]
-script = ExtResource("12_yvb8b")
-soil_manager = NodePath("../SoilManager")
-chunk_manager = NodePath("ChunkManager")
-brush_flow_curve = SubResource("Curve_8qg48")
-
-[node name="ChunkManager" type="Node3D" parent="MossSystem" unique_id=1849677871]
-script = ExtResource("13_3hf6u")
-plant_multimeshes = Array[MultiMesh]([ExtResource("14_4mcbk"), ExtResource("15_x0cd2"), ExtResource("16_8s4c3"), ExtResource("17_3slyh"), SubResource("MultiMesh_3slyh"), SubResource("MultiMesh_xtmsi"), SubResource("MultiMesh_anuui"), SubResource("MultiMesh_anuui")])
-
 [node name="SoilManager" type="Node3D" parent="." unique_id=1573332195]
 script = ExtResource("1_rpqi1")
 initial_soil_thickness = 0.3
@@ -412,6 +317,60 @@ brush_strength = 0.1
 max_slope = 0.2
 flow_rate = 2.0
 physics_update_interval = 0.3
+
+[node name="ToolManager" type="Node3D" parent="SoilManager" unique_id=949014252 node_paths=PackedStringArray("tools")]
+script = ExtResource("2_anuui")
+tools = [NodePath("PlacementTool"), NodePath("ShovelTool"), NodePath("MossTool")]
+
+[node name="BucketTool" parent="SoilManager/ToolManager" unique_id=515833520 node_paths=PackedStringArray("player_input", "soil_manager") instance=ExtResource("8_torvr")]
+visible = false
+player_input = NodePath("../../PlayerInput")
+soil_manager = NodePath("../..")
+
+[node name="BrushTool" parent="SoilManager/ToolManager" unique_id=899230605 instance=ExtResource("4_p5x2j")]
+visible = false
+
+[node name="PlacementTool" type="Node3D" parent="SoilManager/ToolManager" unique_id=1989854413 node_paths=PackedStringArray("player_input", "soil_manager")]
+script = ExtResource("5_anuui")
+item_scene = ExtResource("20_xtmsi")
+player_input = NodePath("../../PlayerInput")
+soil_manager = NodePath("../..")
+
+[node name="ShovelTool" type="Node3D" parent="SoilManager/ToolManager" unique_id=1669048287 node_paths=PackedStringArray("soil_manager", "player_input")]
+script = ExtResource("7_8qg48")
+soil_manager = NodePath("../..")
+player_input = NodePath("../../PlayerInput")
+brush_texture = ExtResource("8_1ms6g")
+max_capacity = 100.0
+dig_volume_per_click = 25.0
+fill_volume_per_click = 25.0
+brush_strength = 1.0
+
+[node name="SmoothTool" type="Node3D" parent="SoilManager/ToolManager" unique_id=350865875 node_paths=PackedStringArray("soil_manager", "player_input")]
+script = ExtResource("9_h86nx")
+soil_manager = NodePath("../..")
+player_input = NodePath("../../PlayerInput")
+brush_radius = 0.68
+brush_strength = 0.03
+
+[node name="MossTool" type="Node3D" parent="SoilManager/ToolManager" unique_id=658559937 node_paths=PackedStringArray("moss_system", "player_input")]
+script = ExtResource("10_7jkkr")
+moss_system = NodePath("../../MossSystem")
+player_input = NodePath("../../PlayerInput")
+
+[node name="PlayerInput" type="Node3D" parent="SoilManager" unique_id=1489955409 node_paths=PackedStringArray("soil_body")]
+script = ExtResource("11_p5x2j")
+soil_body = NodePath("../SoilBody")
+
+[node name="MossSystem" type="Node" parent="SoilManager" unique_id=146429818 node_paths=PackedStringArray("soil_manager", "chunk_manager")]
+script = ExtResource("12_yvb8b")
+soil_manager = NodePath("..")
+chunk_manager = NodePath("ChunkManager")
+brush_flow_curve = SubResource("Curve_8qg48")
+
+[node name="ChunkManager" type="Node3D" parent="SoilManager/MossSystem" unique_id=1849677871]
+script = ExtResource("13_3hf6u")
+plant_multimeshes = Array[MultiMesh]([ExtResource("14_4mcbk"), ExtResource("15_x0cd2"), ExtResource("16_8s4c3"), ExtResource("17_3slyh"), SubResource("MultiMesh_3slyh"), SubResource("MultiMesh_xtmsi"), SubResource("MultiMesh_anuui"), SubResource("MultiMesh_anuui")])
 
 [node name="PlaneMesh" type="MeshInstance3D" parent="SoilManager" unique_id=1349472380]
 physics_interpolation_mode = 1
@@ -431,11 +390,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00579834, 0.19194937, 0.002
 visible = false
 shape = SubResource("BoxShape3D_5crlr")
 
+[node name="缸体和环境" parent="SoilManager" unique_id=1719478435 instance=ExtResource("7_5crlr")]
+visible = false
+
 [node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="SoilManager" unique_id=877263931]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 size = Vector3(5, 4.3721924, 5)
 resolution = 3
 update_mode = 1
+
+[node name="玻璃缸体和底座" parent="SoilManager" unique_id=1482169651 instance=ExtResource("9_4mcbk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
 [node name="CameraPivot" type="Node3D" parent="." unique_id=1525630517]
 script = ExtResource("4_uxrcv")
@@ -446,12 +411,11 @@ max_zoom = 30.0
 min_pitch = -90.0
 max_pitch = -15.0
 enable_idle_mode = false
-idle_time_threshold = 8.0
+idle_time_threshold = 5.0
 opening_zoom = 100.0
 opening_duration = 3.0
 idle_zoom = 15.945
 idle_height_offset = 2.095
-idle_rotation_speed = 0.15
 focus_reticle_size = 0.4
 focus_speed = 30.0
 edge_slip_threshold = 1.0
@@ -593,29 +557,18 @@ supersampling = true
 generate_probes_subdiv = 1
 light_data = ExtResource("16_nm5af")
 
-[node name="环境模型" type="Node3D" parent="." unique_id=647495670]
+[node name="金属复古水壶" parent="." unique_id=407984419 instance=ExtResource("26_amtbh")]
+transform = Transform3D(-0.9084791, 0, 0.41793057, 0, 1, 0, -0.41793057, 0, -0.9084791, -5.103057, -0.7978946, 2.300212)
 
-[node name="木圆桌" type="Node3D" parent="环境模型" unique_id=1017775863]
+[node name="木圆桌" type="Node3D" parent="." unique_id=1017775863]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.86383224, 0)
 
-[node name="柱体_005" type="MeshInstance3D" parent="环境模型/木圆桌" unique_id=701075777]
+[node name="柱体_005" type="MeshInstance3D" parent="木圆桌" unique_id=701075777]
 mesh = SubResource("ArrayMesh_lr705")
 
-[node name="吊灯" type="Node3D" parent="环境模型" unique_id=1740552413]
+[node name="吊灯" type="Node3D" parent="." unique_id=1740552413]
 
-[node name="圆环" type="MeshInstance3D" parent="环境模型/吊灯" unique_id=32526381]
+[node name="圆环" type="MeshInstance3D" parent="吊灯" unique_id=32526381]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.360656, 0)
 mesh = SubResource("ArrayMesh_tnrur")
 surface_material_override/0 = SubResource("StandardMaterial3D_lppff")
-
-[node name="金属复古水壶" parent="环境模型" unique_id=407984419 instance=ExtResource("26_amtbh")]
-transform = Transform3D(-0.9084791, 0, 0.41793057, 0, 1, 0, -0.41793057, 0, -0.9084791, -5.103057, -0.7978946, 2.300212)
-visible = false
-
-[node name="缸体和环境" parent="环境模型" unique_id=1719478435 instance=ExtResource("7_5crlr")]
-visible = false
-
-[node name="玻璃缸体和底座" parent="环境模型" unique_id=1482169651 instance=ExtResource("9_4mcbk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
-
-[connection signal="tool_selected" from="ToolManager/BuildUI" to="ToolManager" method="switch_tool"]
