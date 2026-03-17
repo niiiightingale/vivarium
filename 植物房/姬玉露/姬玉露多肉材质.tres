@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cby8x1ifpkoqw"]
+
+[sub_resource type="Gradient" id="Gradient_361al"]
+colors = PackedColorArray(0.21950102, 0.21950102, 0.21950093, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6ra5v"]
+gradient = SubResource("Gradient_361al")
+
+[resource]
+albedo_color = Color(0.5346852, 0.6316089, 0.41073897, 1)
+roughness = 0.3
+clearcoat_enabled = true
+clearcoat = 0.05
+subsurf_scatter_enabled = true
+subsurf_scatter_strength = 1.0
+subsurf_scatter_texture = SubResource("GradientTexture1D_6ra5v")
+subsurf_scatter_transmittance_enabled = true
+subsurf_scatter_transmittance_color = Color(0.73942363, 0.66627926, 3.85046e-07, 1)
+subsurf_scatter_transmittance_depth = 3.572
+subsurf_scatter_transmittance_boost = 1.0
+backlight_enabled = true
+backlight = Color(0.5654036, 0.7592464, 3.85046e-07, 1)
+refraction_scale = 0.18

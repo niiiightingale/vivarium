@@ -1,0 +1,61 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bsnp3mj4xhfsh"]
+
+[ext_resource type="Shader" uid="uid://62cvp38kksd6" path="res://GameSystems/MossSystem/Scripts/Default_Moss.gdshader" id="1_hylsj"]
+
+[sub_resource type="Gradient" id="Gradient_m86o2"]
+colors = PackedColorArray(0.24583477, 0.19683415, 0.12084504, 1, 0.36940134, 0.33373863, 0.24885377, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ub3y2"]
+gradient = SubResource("Gradient_m86o2")
+
+[sub_resource type="Gradient" id="Gradient_vb5rx"]
+offsets = PackedFloat32Array(0, 0.89241296, 0.97699004)
+colors = PackedColorArray(0.18075034, 0.25046298, 0.12027364, 1, 0.28320965, 0.33744583, 0.17432866, 1, 0.3074831, 0.38209844, 0.20111355, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_a7ok1"]
+gradient = SubResource("Gradient_vb5rx")
+
+[sub_resource type="Curve" id="Curve_vb4jc"]
+_data = [Vector2(0.17447916, 0.10084927), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_xmd1v"]
+curve = SubResource("Curve_vb4jc")
+
+[sub_resource type="Curve" id="Curve_jjnki"]
+_data = [Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="CurveTexture" id="CurveTexture_vfsr7"]
+curve = SubResource("Curve_jjnki")
+
+[sub_resource type="Curve" id="Curve_cs428"]
+_data = [Vector2(0, 0.066879034), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_q8doy"]
+curve = SubResource("Curve_cs428")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_hylsj")
+shader_parameter/height_gradient = SubResource("GradientTexture1D_a7ok1")
+shader_parameter/dry_gradient = SubResource("GradientTexture1D_ub3y2")
+shader_parameter/vertical_shade_curve = SubResource("CurveTexture_q8doy")
+shader_parameter/mesh_original_height = 0.14
+shader_parameter/size_curve = SubResource("CurveTexture_vfsr7")
+shader_parameter/offset_curve = SubResource("CurveTexture_xmd1v")
+shader_parameter/terrain_align_strength = 1.0
+shader_parameter/moss_scale = 0.6
+shader_parameter/sway_speed = 0.1
+shader_parameter/sway_strength = 0.02
+shader_parameter/hydration = 1.0
+shader_parameter/puff_height = 0.0
+shader_parameter/elevation_offset = 0.70000003325
+shader_parameter/micro_y_variance = 0.050000002375
+shader_parameter/spawn_density = 1.0
+shader_parameter/max_slope_degree = 45.0
+shader_parameter/physical_size = 5.0
+shader_parameter/height_scale = 1.0
+shader_parameter/channel_mask = Vector4(0, 0, 1, 0)
+shader_parameter/moss_thickness = 0.15
