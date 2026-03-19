@@ -1,18 +1,33 @@
 [gd_scene format=4 uid="uid://d3r8wywfsi446"]
 
 [ext_resource type="Script" uid="uid://daf8ksceo6av3" path="res://GameManagers/PlayerInput.gd" id="1_428tp"]
+[ext_resource type="PackedScene" uid="uid://n0skdie1jdud" path="res://植物房/InventoryPanel.tscn" id="1_fthdk"]
+[ext_resource type="Script" uid="uid://chu1xvcq5rnop" path="res://植物房/Scripts/InventoryManager.gd" id="1_sedri"]
 [ext_resource type="PackedScene" uid="uid://c1pyw1lx7ul5s" path="res://植物房/PlantEntity.tscn" id="1_yvbmx"]
-[ext_resource type="Script" uid="uid://ci8flctg4iijc" path="res://植物房/SeedInventoryUI.gd" id="2_hrlpd"]
-[ext_resource type="Script" uid="uid://b7foi061mxdy4" path="res://植物房/PlantItemResource.gd" id="3_uf7mk"]
+[ext_resource type="Script" uid="uid://ci8flctg4iijc" path="res://植物房/Scripts/RoomUI.gd" id="2_hrlpd"]
+[ext_resource type="PackedScene" uid="uid://dsfpy2771512h" path="res://植物房/InventorySlotUI.tscn" id="2_kbp32"]
+[ext_resource type="Script" uid="uid://bbjvynbnsvirj" path="res://植物房/Scripts/InventorySlotConfig.gd" id="2_mkbxh"]
+[ext_resource type="Script" uid="uid://c4225ihtn21m5" path="res://植物房/Scripts/ShopManager.gd" id="4_fthdk"]
+[ext_resource type="Script" uid="uid://c0lj2ucjourmi" path="res://植物房/Scripts/ResourceScripts/ItemResource.gd" id="5_rb3by"]
 [ext_resource type="Resource" uid="uid://bk2wqqwbv23s8" path="res://植物房/姬玉露/姬玉露.tres" id="5_yvbmx"]
 [ext_resource type="PackedScene" uid="uid://e7b6sbpkc2ke" path="res://植物房/多肉花盆1.tscn" id="6_428tp"]
-[ext_resource type="Script" uid="uid://cmqh4yc7hcwbg" path="res://植物房/UIManager.gd" id="6_ebj1r"]
+[ext_resource type="Script" uid="uid://cmqh4yc7hcwbg" path="res://植物房/Scripts/UIManager.gd" id="6_ebj1r"]
 [ext_resource type="Script" uid="uid://cf5ycp2om72fx" path="res://GameManagers/camera_controller.gd" id="7_428tp"]
-[ext_resource type="Script" uid="uid://bqiijqy8x7oht" path="res://植物房/PlayerActionManager.gd" id="7_xic0t"]
 [ext_resource type="Texture2D" uid="uid://k5am8d24s2eb" path="res://生态缸/圆桌和吊灯/木圆桌_木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg" id="8_xic0t"]
-[ext_resource type="Script" uid="uid://ctx8f5y28bfg3" path="res://植物房/RoomToolManager.gd" id="10_4xbo0"]
-[ext_resource type="Script" uid="uid://b3jjb3xq8210n" path="res://植物房/WateringTool.gd" id="11_8upo0"]
-[ext_resource type="Script" uid="uid://bnqx7rj3njhxq" path="res://植物房/SeedTool.gd" id="12_apobr"]
+[ext_resource type="Script" uid="uid://ctx8f5y28bfg3" path="res://植物房/Scripts/RoomToolManager.gd" id="10_4xbo0"]
+[ext_resource type="Script" uid="uid://b3jjb3xq8210n" path="res://植物房/Scripts/ToolScripts/WateringTool.gd" id="11_8upo0"]
+[ext_resource type="Script" uid="uid://bnqx7rj3njhxq" path="res://植物房/Scripts/ToolScripts/SeedTool.gd" id="12_apobr"]
+[ext_resource type="Script" uid="uid://dktxj5duc5jdc" path="res://植物房/Scripts/CatalogInteractable.gd" id="17_kbp32"]
+[ext_resource type="Script" uid="uid://dxhcmbdim0veo" path="res://植物房/CatalogUI.gd" id="18_q817x"]
+[ext_resource type="PackedScene" uid="uid://d311d3nnj8aci" path="res://植物房/CatalogItemUI.tscn" id="19_hosio"]
+[ext_resource type="Script" uid="uid://dw3hpnf6ff64a" path="res://植物房/FastScrollContainer.gd" id="21_4a52c"]
+[ext_resource type="PackedScene" uid="uid://bj4hxd2hod2xy" path="res://植物房/WeedEntity.tscn" id="22_kckv3"]
+
+[sub_resource type="Resource" id="Resource_fthdk"]
+script = ExtResource("2_mkbxh")
+item = ExtResource("5_yvbmx")
+amount = 10
+metadata/_custom_type_script = "uid://bbjvynbnsvirj"
 
 [sub_resource type="Curve" id="Curve_ebj1r"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 0.97558385), 0.0, 0.0, 0, 0]
@@ -143,14 +158,159 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_x6pfs")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_kbp32"]
+size = Vector3(3.9260254, 0.2543335, 3.928711)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gjf2r"]
+resource_name = "材质.013"
+cull_mode = 2
+albedo_color = Color(0.8542753, 0.8150115, 0.76732194, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mkn00"]
+resource_name = "材质.014"
+cull_mode = 2
+albedo_color = Color(0.55275935, 0.55275935, 0.55275935, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j2xh1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n3p5o"]
+resource_name = "材质.015"
+cull_mode = 2
+albedo_color = Color(0.6331636, 0.548036, 0.44866556, 1)
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_aj24t"]
+_surfaces = [{
+"aabb": AABB(-1.9684813, -0.26200837, -1.9684813, 3.9369626, 0.27782232, 3.9369626),
+"format": 34896613377,
+"index_count": 576,
+"index_data": PackedByteArray("igABAAIAigAAAAEAiwCKAAIAiwACAAMAjAAAAIoAjAAJAAAAjQCKAIsAjQCMAIoAjgCLAAMAjgADAAUAjwCNAIsAjwCLAI4AkAAJAIwAkAALAAkAEAALAJAAEAARAAsADwAQAJAAkQCQAIwADwCQAJEAkQCMAI0ADgAPAJEAkgCRAI0ADgCRAJIAkgCNAI8ADQAOAJIADQCSAJMAkwCSAI8ADAANAJMADACTAAoAkwCPAJQACgCTAJQAlACPAI4ACgCUAAgAlACOAJUACACUAJUAlQCOAAUACACVAAQAlQAFAAYABACVAAYABAAGAAcAEgAUAJYAEgATABQAlgAUABsAFQASAJYAlgAbAJcAFQCWAJgAmACWAJcAlwAbAB0AFgAVAJgAlwAdAJkAmQAdAB4AmQAeAB8AmgCXAJkAmACXAJoAmwCZAB8AmgCZAJsAmwAfACAAFgCYAJwAnACYAJoAFwAWAJwAnQCaAJsAnACaAJ0AngCbACAAnQCbAJ4AngAgACEAFwCcAJ8AnwCcAJ0AGQAXAJ8AGQCfABgAnwCdAKAAGACfAKAAoACdAJ4AGACgABoAoQCeACEAoACeAKEAGgCgAKEAoQAhACIAGgChABwAHAChACIAHAAiACMAJAAlACYAJACiACUAJwAlAKIAJAAqAKIAKgAnAKIAJAAsACoALAAkAC4AKgArACcALwAsAC4AKwAqAC0ALwAwACwAMQAwAC8AMQAyADAAMwArAC0AMwA0ACsAMwA1ADQANgAzADcAMwA2ADUAOAA1ADYAOQA1ADgANQA5ADoANQA6ADsAOgA5ADwAOwA6AD0AOwA9AD4APQA/AD4AOQBBADwAPwA9AEAAOQBCAEEAQgA5AEMAQQBCAEQAQQBEAEUAQQBFAEYARQBAAEYAQABFAEcAPwBAAKMAQABHAKMAowAoAD8ARwBIAKMAKACjAEgASABHAEkAKABIACkAJQAoACkAJQAnACgASABJAEoASQBLAEoASQBMAEsATABJAE0ATgBMAE0ATgBPAEwAUABPAE4AUABRAE8AUgBRAFAAUgBTAFEAVABVAFYAVQBUAFcAWABXAFQAVQBXAFkAVQBZAFoAVQBaAFsAWwBaAFwAWwBcAF0AXABeAF0AXgBcAF8AXgBfAGAAXwBcAGEAYQBiAF8AVwBYAGMAVwBjAGQAYwBYAGUAZABjAGYAZABmAGcAZwBmAGgAZwBoAGkAaABhAGkAagBlAFgAawBhAGgAYQBrAGIAYgBrAGwAawBtAGwAawBuAG0AbgBrAG8AcABuAG8AcABxAG4AcgBxAHAAcgBzAHEAZQBzAHIAZQBqAHMAcwBqAHQAdQB0AGoAdAB1AHYAdAB2AHcAdgB1AHgAdwB2AHkAegB4AHUAdwB5AHsAeAB6AHwAeAB8AH0AfQB8AH4AfQB+AH8AewB5AIAAewCAAIEAgACCAIEAfwB+AIMAfwCDAIQAggCAAIUAggCFAIYAhQCAAIcAgwCHAIQAhwCIAIUAhwCDAIgAiACDAIkA"),
+"lods": [0.018330403, PackedByteArray("AAABAAIAAAACAAMABAAAAAMABAADAAUABAAFAAYABAAGAAcACAAAAAQACAAJAAAACgAJAAgACgALAAkADAANAAoADQAOAAoADgALAAoADgAPAAsADwAQAAsAEAARAAsAEgATABQAFQASABQAFgAVABQAFwAWABQAFwAUABgAGQAXABgAGAAUABoAFAAbABoAGgAbABwAGwAdABwAHQAeAB8AHAAdAB8AHAAfACAAHAAgACEAHAAhACIAHAAiACMAJAAlACYAJAAnACUAJQAnACgAJQAoACkAJAAqACcAKgArACcAJAAsACoAKwAqAC0ALAAkAC4ALwAsAC4ALwAwACwAMQAwAC8AMQAyADAAMwArAC0AMwA0ACsAMwA1ADQANgAzADcAMwA2ADUAOAA1ADYAOQA1ADgANQA5ADoANQA6ADsAOgA5ADwAOwA6AD0AOwA9AD4APQA/AD4APwA9AEAAOQBBADwAOQBCAEEAQgA5AEMAQQBCAEQAQQBEAEUAQQBFAEYARQBAAEYAQABFAEcAQABHAD8ARwBIAD8AKAA/AEgAKABIACkASABHAEkASABJAEoASQBLAEoASQBMAEsATABJAE0ATgBMAE0ATgBPAEwAUABPAE4AUABRAE8AUgBRAFAAUgBTAFEAVABVAFYAVQBUAFcAWABXAFQAVQBXAFkAVQBZAFoAVQBaAFsAWwBaAFwAWwBcAF0AXABeAF0AXgBcAF8AXgBfAGAAXwBcAGEAYQBiAF8AVwBYAGMAVwBjAGQAYwBYAGUAZABjAGYAZABmAGcAZwBmAGgAZwBoAGkAaABhAGkAagBlAFgAawBhAGgAYQBrAGIAYgBrAGwAawBtAGwAawBuAG0AbgBrAG8AcABuAG8AcABxAG4AcgBxAHAAcgBzAHEAZQBzAHIAZQBqAHMAcwBqAHQAdQB0AGoAdAB1AHYAdAB2AHcAdgB1AHgAdwB2AHkAegB4AHUAdwB5AHsAeAB6AHwAeAB8AH0AfQB8AH4AfQB+AH8AewB5AIAAewCAAIEAgACCAIEAfwB+AIMAfwCDAIQAggCAAIUAggCFAIYAhQCAAIcAgwCHAIQAhwCIAIUAhwCDAIgAiACDAIkA")],
+"name": "材质.013",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 164,
+"vertex_data": PackedByteArray("/x9TV///AAAAAAAA//8AAAAAAADLzAAAAAAAAJmZAAD/H1NXAAAAAAAAAABlZgAAAAAAADIzAAAAAAAAAAAAAP8/bZkAAAAA/z9tmf//AAD/X5dtAAAAAP9fl23//wAAxn67IAAAAADGfrogMjMAAMZ+uiBlZgAAxn66IJmZAADGfrogy8wAAMZ+uyD//wAA//8AAMvMAAD//wAA//8AAP/fU1f//wAA//8AAJmZAAD//wAAZWYAAP//AAAyMwAA/99TVwAAAAD//wAAAAAAAP+/bZkAAAAA/79tmf//AAD/n5dtAAAAAP+fl23//wAAOIG7IP//AAA4gbogy8wAADiBuiCZmQAAOIG6IGVmAAA4gbogMjMAADiBuyAAAAAA/980vQAAAAD//+BlMjMAAP//4GUAAAAA/99FvkxiAAAY5IasZWYAAP//4GVlZgAAFsT//zIzAAD/v03/TGIAAP+/Tf8ZLwAA/79N/0w3AAD/v03/AAAAAP+fd9MAAAAA/5930xkvAAA4gZuGAAAAADiBmoYZLwAA/59300w3AAD/n4XTTGIAAOmbKM1lZgAAN4HEhmVmAAA4gZqGTDcAADqB3YW7lgAAFYQ8i5mZAAD/n3fTf5UAAP+fhdN/agAA6ZuIzZmZAAD/v03/f5UAAP+/Tf9/agAA/99Fvn9qAAAWxP//mZkAAP+fd9OynQAAOIGahrLIAAA6gd2FdpwAAP+fd9OyyAAA/79N/7LIAAD/v03/sp0AAP/fRb6yyAAA///gZZmZAAAY5Iasy8wAAP//4GXLzAAA///gZf//AAD/3zS9//8AAP/fRb7l0AAA/79N/+XQAAD/v03///8AAP+fd9Pl0AAA/5930///AAA4gZqG5dAAADiBm4b//wAAAADgZTIzAAD/HzO9AAAAAAAA4GUAAAAA5huGrDIzAAAAAOBlZWYAAP8fRb4ZLwAA/z9N/xkvAAD/P03/AAAAAP9fd9MZLwAA/1930wAAAADGfpuGAAAAAOl7PIsyMwAAxH7dhVUwAAAVZIjNMjMAAMR+3YUQNgAA/x9FvkxiAAD/H0W+TDcAAOYbhqxlZgAA/z9N/0xiAAD/P03/TDcAAP9fhNNMYgAA/19300w3AAAAAOBlmZkAABVkKM1lZgAAx37EhmVmAADGfpqGf5UAAP9fd9N/lQAA/1+E039qAAD/P03/f2oAAP8/Tf9/lQAA/x9Fvn9qAAD/H0W+f5UAAOYbhqyZmQAAAADgZcvMAAD/H0W+ssgAAP8fRb6ynQAA5huGrMvMAAD/P03/ssgAAAAA4GX//wAA/z9N/7KdAAD/HzO9//8AAP8fRb7l0AAA/z9N////AAD/P03/5dAAAP9fd9OyyAAA/19307KdAADGfpqGsp0AAP9fd9P//wAA/1930+XQAADpezyLy8wAAMR+3YXuyQAAFWSIzcvMAADEft2Fqc8AAMZ+m4b//wAA/x9TV8vMAAD/H1NXmZkAAP8/bZnLzAAA/z9tmZmZAAD/H1NXZWYAAP8/bZllZgAA/1+XbcvMAAD/X5dtmZkAAP9fl21lZgAA/1+XbTIzAAD/P22ZMjMAAP8fU1cyMwAA/99TV8vMAAD/v22Zy8wAAP/fU1eZmQAA/5+XbcvMAAD/v22ZmZkAAP+fl22ZmQAA/99TV2VmAAD/v22ZZWYAAP+fl21lZgAA/99TVzIzAAD/v22ZMjMAAP+fl20yMwAA/980vTIzAAD/3zS9mZkAAA==")
+}, {
+"aabb": AABB(-1.5393809, -0.11673079, -1.2441088, 3.0787618, 0.13254473, 2.4882176),
+"format": 34896613377,
+"index_count": 150,
+"index_data": PackedByteArray("EgATABQAFQASABQAFQAWABIAFwAWABUAFwAYABYAFwAZABgAGgAbABwAHQAaABwAHQAeABoAHwAeAB0AHwAgAB4AHwAhACAAAAABAAIAAwAAAAIAAwAEAAAABQAEAAMABQAGAAQABwAGAAUABwAIAAYAIgAjACQAJQAiACQAJQAmACIAJwAmACUAJwAoACYAJwApACgAKgArACwALQAqACwALQAuACoALwAuAC0ALwAwAC4ALwAxADAAMgAzADQANQAyADQANQA2ADIANQA3ADYAOAA5ADoAOAA6ADsAOAA7ADwAPAA7AD0APAA9AD4ACQAKAAsACQALAAwACQAMAA0ADQAMAA4ADQAOAA8ADwAOABAADwAQABEAPwBAAEEAQgBDAEQARQBGAEcA"),
+"lods": [0.5672213, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABQAEAAMABQAGAAQABwAGAAUABwAIAAYACQAKAAsACQALAAwACQAMAA0ADQAMAA4ADQAOAA8ADwAOABAADwAQABEA")],
+"name": "材质.014",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 72,
+"vertex_data": PackedByteArray("PQU8dgSiAAAAAAhRgKgAAD0FPHb8rgAAKC6K/vyuAAAoLor+BKIAABRXqaL8rgAAFFepogSiAABvfowB/K4AAG9+jAEEogAAwfo8dv//AAD//whRg/kAAMH6PHYH8wAA1tGK/gfzAADW0Yr+//8AAOqoqaIH8wAA6qipov//AACPgYwBB/MAAI+BjQH//wAAPQU8dgAAAAAAAAhRewYAAD0FPHb3DAAAKC6K/vcMAAAoLor+AAAAABRXqaL3DAAAFFepogAAAABOXDmWewYAAD0FPHYCUQAAAAAIUX5XAAA9BTx2+l0AACguiv76XQAAKC6K/gJRAAAUV8Wi+l0AABRXxaICUQAATlxvlX5XAAA9BTx2B/MAAAAACFGD+QAAPQU8dv//AAAoLor+//8AACguiv4H8wAAFFepov//AAAUV6miB/MAAE5cOZaD+QAA6qjFogJRAACwo2+VflcAAOqoxaL6XQAA1tGK/vpdAADW0Yr+AlEAAMH6PHb6XQAAwfo8dgJRAAD//whRflcAAOqoqaIEogAAsKM5loCoAADqqKmi/K4AANbRiv78rgAA1tGK/gSiAAAQ1///gKgAANbRiv73DAAAENf//3sGAADW0Yr+AAAAAOqoqaIAAAAA6qipovcMAACPgY0BAAAAAI+BjAH3DAAAbH4AAPMBAADFekILewYAAG1+AAAECwAAkYEAAAmtAAA5hUILgKgAAJGBAAD4owAAbX4AAPr0AADFekILg/kAAGx+AAAL/gAA")
+}, {
+"aabb": AABB(-0.018912377, -0.22648805, -1.9684813, 0.037815552, 0.110738404, 3.9369626),
+"format": 34896613377,
+"index_count": 78,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAADAAAABAAFAAMABgAFAAQABgAHAAUACAAHAAYACAAJAAcACgAJAAgACgALAAkADAANAA4ADgANAA8ADAAQAA0AEQAQAAwAEQASABAADgAPABMAEwAPABQAEwAUABUAFgAVABQAFgAXABUAFwAWABgAFwAYABkAGQAYABoAGQAaABsAGwAaABwAGwAcAB0A"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 30,
+"vertex_data": PackedByteArray("0AAAAMvMAABJ/wAA//8AAMUAAAD//wAAPv8AAMvMAADVAAAAmZkAADn/AACZmQAA1QAAAGVmAAA5/wAAZWYAANAAAAAyMwAAPv8AADIzAADFAAAAAAAAAEn/AAAAAAAAOP+W/xkvAAAKALr9EDYAAC7/lf9MNwAAHgH//2VmAAAAALv9VTAAAEf/lv8AAAAAxwCW/wAAAADw/v//ZWYAAOgAlP9/lQAA/f+6/buWAADmAJX/sp0AAP//uv12nAAACgC6/e7JAAAu/5X/ssgAAAAAu/2pzwAAOP+W/+XQAADHAJb///8AAEf/lv///wAA")
+}, {
+"aabb": AABB(-1.9684813, -0.26200837, -1.9684813, 3.9369626, 0.2770686, 3.9369626),
+"format": 34896613377,
+"index_count": 168,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIAAwAFAAEABAACAAYAAwAHAAUACAAEAAYABwAJAAUACAAGAAoABwALAAkADAAIAAoACwANAAkADAAKAA4ACwAPAA0AEAAMAA4ADwARAA0AEAAOABIADwATABEAFAAQABIAFQARABMAFAASABYAFQATABcAGAAUABYAFwAZABUAGAAWABoAFwAbABkAHAAYABoAGwAdABkAHAAaAB4AGwAfAB0AIAAcAB4AHwAhAB0AIAAeACIAHwAjACEAIgAkACAAIwAlACEAIgAmACQAIwAnACUAKAAkACYAJwApACUAKAAmACoAJwArACkALAAoACoAKwAtACkALAAqAC4AKwAvAC0AMAAsAC4ALwAxAC0AMAAuADIALwAzADEANAAwADIAMwA1ADEANAAyADYAMwA3ADUANwA0ADYANwA2ADUA"),
+"name": "材质.015",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 56,
+"vertex_data": PackedByteArray("AAAnZjIzAAAAAAAAAAAAAAAAAAAyMwAAAAAnZgAAAAAAACdmZWYAAP8fkFcAAAAAAAAAAGVmAAD/H7e9AAAAAAAAJ2aZmQAA/z/XmQAAAAAAAAAAmZkAAP8///8AAAAAAAAnZsvMAAD/X+RtAAAAAAAAAADLzAAA/18L1AAAAAAAACdm//8AAMZ+0iAAAAAAAAAAAP//AADGfviGAAAAAP8ft73//wAAOIHSIAAAAAD/H5BX//8AADiB+IYAAAAA/z//////AAD/n+RtAAAAAP8/15n//wAA/58L1AAAAAD/XwvU//8AAP+/15kAAAAA/1/kbf//AAD/v///AAAAAMZ++Ib//wAA/9+QVwAAAADGftIg//8AAP/ft70AAAAAOIH4hv//AAD//wAAAAAAADiB0iD//wAA//8nZgAAAAD/nwvU//8AAP//AAAyMwAA/5/kbf//AAD//ydmMjMAAP+//////wAA//8AAGVmAAD/v9eZ//8AAP//J2ZlZgAA/9+3vf//AAD//wAAmZkAAP/fkFf//wAA//8nZpmZAAD//ydm//8AAP//AADLzAAA//8AAP//AAD//ydmy8wAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ltasy"]
+resource_name = "购物目录_立方体_009"
+_surfaces = [{
+"aabb": AABB(-1.9684813, -0.26200837, -1.9684813, 3.9369626, 0.27782232, 3.9369626),
+"attribute_data": PackedByteArray("/9f/P//f/z//38xM/9+ZWf/X/3//32Vm/98yc//f/3//z/9//8//P//H/3//x/8/TcD/f03AMnNNwGVmTcCZWU3AzExNwP8//5/MTP+f/z//p/8//5+ZWf+fZWb/nzJz/6f/f/+f/3//r/9//6//P/+3/3//t/8/sb//P7G/zEyxv5lZsb9lZrG/MnOxv/9//1f/f/9fMnP/X/9//1dsZwVZZWb/X2VmBVEyc/9PbGf/Tzl0/08scv9P/3//R/9//0c5dE1A/39NQDl0/0cscv9HbGf6RmVmTUBlZk1ALHJOQFBaBUGZWf9Hn1r/R19l+kaZWf9Pn1r/T19l/1dfZQVRmVn/R5JYTUDSTU5A4Vj/R9JN/0/STf9Pklj/V9JN/1+ZWQVZzEz/X8xM/1//P/9X/z//V8ZL/0/GS/9P/z//R8ZL/0f/P01AxktNQP8//x8yc/8n/3//H/9/+SYyc/8fZWb/Jzl0/y85dP8v/3//Nzl0/zf/f7E//3/6PjJzsT/qcwU5MnOxP3ty/ydsZ/8nLHL5JmVm/y9sZ/8vLHL/N2xn/zcscv8fmVkFOWVmsT9lZrE/n1r/N59a/zdfZf8vX2X/L59a/ydfZf8nn1r5JplZ/x/MTP8n0k3/J5JY+SbMTP8v0k3/H/8//y+SWP8n/z//J8ZL/y//P/8vxkv/N9JN/zeSWLE/klj/N/8//zfGS/o+zEyxP4NNBTnMTLE/FUyxP/8//9fMTP/X/z//15lZ/9dlZv/XMnP/1/9//6f/P/+nzEz/p5lZ/6dlZv+nMnP/p/9//6fMTP+vzEz/p5lZ/6+ZWf+nZWb/r2Vm/6cyc/+vMnP/r8xM/7fMTP+v/z//r5lZ/7eZWf+vZWb/t2Vm/68yc/+3MnP/r/9//8fMTP/PzEz/x5lZ/8+ZWf/HZWb/z2Vm/8cyc//PMnP/z8xM/9fMTP/P/z//z5lZ/9eZWf/PZWb/12Vm/88yc//XMnP/z/9//1f/f/9XMnP/J/9//yc5dPkmMnP/HzJz/ydsZ/8nLHL/J59a/ydfZf8fzEz/J9JN+SbMTP8nklj/J/8//yfGS/8v/3//Lzl0/y8scv8vbGf/L19l/y+fWv8vklj/L9JN/y/GS/8v/z//Tzl0/0//fwVRMnP/VzJz/09sZ/9PLHL/VzJz/0+fWv9PX2X/V5lZ/0/STQVRmVn/T5JY/1eZWf9Pxkv/T/8//1dsZ/9fMnP/VzJzBVllZv9fZWb/V5lZ/1dfZf9X0k3/X5lZ/1eZWQVZzEz/X8xM/1f/P/9Xxkv/Rzl0/0f/f/83OXT/N/9//8cyc//H/3//x2Vm/8eZWf/HzEz/x/8//7f/f/+3MnP/t2Vm/7eZWf+3zEz/t/8//zf/P/83xkv/R/8//0fGS/9HLHL/R2xn/zdsZwU5MnP/NyxyBTllZrE/ZWb6PjJz/zefWv83X2X6RmVmTUBlZgVBmVn/R59a+kaZWf9HX2X/R5JY/0fSTf830k3/N5JY+j7MTAU5zEw="),
+"format": 34896613399,
+"index_count": 576,
+"index_data": PackedByteArray("igABAAIAigCLAAEAjACKAAIAjAACAAMAjQCMAAMAjQADAAUAjgCNAAUAjgAFAAYAjwCOAAYAjwAGAAcAEgCQAJEAEgATAJAAFQASAJEAFQCRAJIAFgAVAJIAFgCSAJMAFwAWAJMAFwCTAJQAGQAXAJQAGQCUAJUAlgAbAJcAlgAUABsAmACWAJcAmACXAJkAmgCYAJkAmgCZAJsAnACaAJsAnACbAJ0AGACcAJ0AGACdABoAngAdAJ8AngCgAB0AoQCeAJ8AoQCfAKIAowChAKIAowCiAKQApQCjAKQApQCkAKYApwClAKYApwCmABwAqAAJAKkAqAALAAkAqgCoAKkAqgCpAKsArACqAKsArACrAK0ArgCsAK0ArgCtAK8ACgCuAK8ACgCvAAgAsAAAALEAsACyAAAAswCwALEAswCxALQAtQCzALQAtQC0ALYAtwC1ALYAtwC2ALgAuQC3ALgAuQC4AAQAugAlACYAugC7ACUAVAC8AFYAvABUAFcAvABXAL0AVQBaAFsAVQBZAFoAWAC+AL8AvgBYAMAAvgDAAMEAwABYAGUAagBlAFgAZQBqAMIAZQDCAMMAwgBqAHQAxAB0AGoAdADEAMUAxQDEAMYAdADFAMcAZABmAGcAZABjAGYAcgBxAHAAcgBzAHEAdwB5AHsAdwB2AHkAfQB+AH8AfQB8AH4AegB4AHUAeAB6AMgAeADIAMkAygBcAF0AygDLAFwAzABoAGkAzADNAGgAzgBuAG8AzgDPAG4A0ACAAIEA0ADRAIAA0gCDAIQA0gDTAIMALwAsAC4ALwAwACwAMwArAC0AMwA0ACsAOwA9AD4AOwA6AD0AQQBFAEYAQQBEAEUAUABPAE4AUABRAE8A1AAkANUAJADUANYAJADWANcA2AAqANkAKgDYACcAKgAnANoA2wA/ANwAPwDbAEAAPwBAAN0A3gDfAOAA3wDeAEcA3wBHAOEA4gBMAE0A4gDjAEwA5ADlAOYA5QDkAOcA5QDnAOgA6QAoAOoAKADpAEgAKABIACkA6wDsAO0A7ADrAO4A7ADuAO8A8ABJAPEASQDwAEsASQBLAEoAMQDyAPMAMQAyAPIA9ABeAPUAXgD0AF8AXwD0AGEAXgBfAGAADAD2APcADAANAPYADQD4APYADQAOAPgADgD5APgADgAPAPkADwD6APkADwAQAPoAEAD7APoAEAARAPsA/AAiACMA/AD9ACIA/QAhACIA/QD+ACEA/gAgACEA/gD/ACAA/wAfACAA/wAAAR8AAAEeAB8AAAEBAR4AAgGHAAMBhwACAYgAiAACAYkAhwCIAIUAUgAEAQUBUgBTAAQBNgAGATcABgE2ADUABgE1AAcBCAEJAQoBCwEJAQgBCQELAWIAYgALAQwBCQFiAA0BDgFrAA8BawAOAW0AawBtAGwAOAAQAREBEgEQATgAEAESARMBEwESARQBEAETARUBQgA5AEMAOQBCABYBFgFCABcBOQAWATwAGAGCABkBggAYARoBGgEYARsBggAaAYYA"),
+"lods": [0.018330403, PackedByteArray("AAABAAIAAAACAAMABAAAAAMABAADAAUABAAFAAYABAAGAAcACAAAAAQACAAJAAAACgAJAAgACgALAAkADAANAAoADQAOAAoADgALAAoADgAPAAsADwAQAAsAEAARAAsAEgATABQAFQASABQAFgAVABQAFwAWABQAFwAUABgAGQAXABgAGAAUABoAFAAbABoAGgAbABwAGwAdABwAHQAeAB8AHAAdAB8AHAAfACAAHAAgACEAHAAhACIAHAAiACMAJAAlACYAJAAnACUAJQAnACgAJQAoACkAJAAqACcAKgArACcAJAAsACoAKwAqAC0ALAAkAC4ALwAsAC4ALwAwACwAMQAwAC8AMQAyADAAMwArAC0AMwA0ACsAMwA1ADQANgAzADcAMwA2ADUAOAA1ADYAOQA1ADgANQA5ADoANQA6ADsAOgA5ADwAOwA6AD0AOwA9AD4APQA/AD4APwA9AEAAOQBBADwAOQBCAEEAQgA5AEMAQQBCAEQAQQBEAEUAQQBFAEYARQBAAEYAQABFAEcAQABHAD8ARwBIAD8AKAA/AEgAKABIACkASABHAEkASABJAEoASQBLAEoASQBMAEsATABJAE0ATgBMAE0ATgBPAEwAUABPAE4AUABRAE8AUgBRAFAAUgBTAFEAVABVAFYAVQBUAFcAWABXAFQAVQBXAFkAVQBZAFoAVQBaAFsAWwBaAFwAWwBcAF0AXABeAF0AXgBcAF8AXgBfAGAAXwBcAGEAYQBiAF8AVwBYAGMAVwBjAGQAYwBYAGUAZABjAGYAZABmAGcAZwBmAGgAZwBoAGkAaABhAGkAagBlAFgAawBhAGgAYQBrAGIAYgBrAGwAawBtAGwAawBuAG0AbgBrAG8AcABuAG8AcABxAG4AcgBxAHAAcgBzAHEAZQBzAHIAZQBqAHMAcwBqAHQAdQB0AGoAdAB1AHYAdAB2AHcAdgB1AHgAdwB2AHkAegB4AHUAdwB5AHsAeAB6AHwAeAB8AH0AfQB8AH4AfQB+AH8AewB5AIAAewCAAIEAgACCAIEAfwB+AIMAfwCDAIQAggCAAIUAggCFAIYAhQCAAIcAgwCHAIQAhwCIAIUAhwCDAIgAiACDAIkA")],
+"material": SubResource("StandardMaterial3D_gjf2r"),
+"name": "材质.013",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 284,
+"vertex_data": PackedByteArray("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")
+}, {
+"aabb": AABB(-1.5393809, -0.11673079, -1.2441088, 3.0787618, 0.13254473, 2.4882176),
+"attribute_data": PackedByteArray("/yefWvkmmVn/J5JY/y+SWP8vn1r/N5JY/zefWrE/klixP59a/1fGSwVZzEz/V9JN/0/STf9Pxkv/R9JN/0fGS01A0k1NQMZL/yc5dPkmMnP/Jyxy/ydsZ/kmZWb/J19l/yefWv8nklj/J9JN+SbMTP8nxkv/NyxyBTkyc/83OXT/N19lBTllZv83bGf/N8ZLBTnMTP830k3/R2xn+kZlZv9HX2X/R59a+kaZWf9Hklj/TyxyBVEyc/9POXT/T5JYBVGZWf9Pn1r/V19lBVllZv9XbGf/V8ZL/1fSTf9XX2X/T2xn/09fZf9XbGf/T9JN/0/GS/9PLHL/Rzl0/0cscv9POXT/T19l/0dsZ/9HX2X/T2xn/0+SWP9Hn1r/R5JY/0+fWv83LHL/Lzl0/y8scv83OXT/N19l/y9sZ/8vX2X/N2xn/y+fWv8vklj/N8ZL/y/STf8vxkv/N9JN/y8scv8nOXT/Jyxy/y85dP8vX2X/J2xn/ydfZf8vbGf/L8ZL/yfSTf8nxkv/L9JNsT/qc/o+MnOxP3ty/0csck1AOXRNQCxy/0c5dE5A4VgFQZlZTkBQWv83n1r/N5JYsT+DTfo+zEyxPxVM/0fGS/9H0k0="),
+"format": 34896613399,
+"index_count": 150,
+"index_data": PackedByteArray("EgATABQAFQAWABcAGAABABkAGgAbABwAHQAeAB8AIAAhACIAIwAkACUAJgAnACgAKQAqACsALAAtAC4ALwAwADEAMgAzADQANQAKADYANwA4ADkANwA6ADgACQA7ADwACQALADsAPQA+AD8APQBAAD4AQQBCAEMAQQBEAEIARQBGAEcARQBIAEYADQAOAA8ADQAMAA4ASQBKAEsASQBMAEoATQBOAE8ATQBQAE4ABQBRAFIABQAGAFEAUwBUAFUAUwBWAFQAVwBYAFkAVwBaAFgAWwBcAF0AWwBeAFwAAwAAAAIAAwAEAAAAXwBgAGEAXwBiAGAAYwBkAGUAZgBnAGgAZgBpAGcAagBrAGwABwBtAG4ABwAIAG0AbwBwAHEAcgAQABEAcgBzABAA"),
+"lods": [0.5672213, PackedByteArray("AAABAAIAAwAAAAIAAwAEAAAABQAEAAMABQAGAAQABwAGAAUABwAIAAYACQAKAAsACQALAAwACQAMAA0ADQAMAA4ADQAOAA8ADwAOABAADwAQABEA")],
+"material": SubResource("StandardMaterial3D_mkn00"),
+"name": "材质.014",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 116,
+"vertex_data": PackedByteArray("PQU8dgSiNMAAAAhRgKjjwD0FPHb8rjTAKC6K/vyuNMAoLor+BKI0wBRXqaL8rhfAFFepogSiF8BvfowB/K5OwG9+jAEEok7Awfo8dv//NMD//whRg/njwMH6PHYH8zTA1tGK/gfzF8DW0Yr+//8XwOqoqaIH8xfA6qipov//F8CPgYwBB/NOwI+BjQH//07APQU8dgAA48AAAAhRewbjwD0FPHb3DOPAPQU8dgJR48AAAAhRflfjwD0FPHb6XePAPQU8dgSi48A9BTx2/K7jwD0FPHYH8+PAAAAIUYP548A9BTx2///jwBRXqaL3DBrATlw5lnsGGsAUV6miAAAawBRXxaL6XR7ATlxvlX5XHsAUV8WiAlEewBRXqaL//xrATlw5loP5GsAUV6miB/MawOqoxaICUR7AsKNvlX5XHsDqqMWi+l0ewOqoqaIEohrAsKM5loCoGsDqqKmi/K4awNbRiv73DP+/ENf//3sG/7/W0Yr+AAD/v9bRiv78rv+/ENf//4Co/7/W0Yr+BKL/v8H6PHb6XePA//8IUX5X48DB+jx2AlHjwMH6PHb//+PAwfo8dgfz48DB+jx2+l00wNbRiv4CUTTA1tGK/vpdNMDB+jx2AlE0wNbRiv4H8zTA1tGK/v//NMDW0Yr+9wwXwOqoqaIAABfA6qipovcMF8DW0Yr+AAAXwNbRiv76XRfA6qjFogJRF8DqqMWi+l0XwNbRiv4CURfA1tGK/vyuF8DqqKmiBKIXwOqoqaL8rhfA1tGK/gSiF8AUV6mi9wwXwCguiv4AABfAKC6K/vcMF8AUV6miAAAXwBRXxaL6XRfAKC6K/gJRF8AoLor++l0XwBRXxaICURfAKC6K/gSiF8AoLor+/K4XwBRXqaL//xfAKC6K/gfzF8AoLor+//8XwBRXqaIH8xfAKC6K/vcMNMA9BTx2AAA0wD0FPHb3DDTAKC6K/gAANMAoLor++l00wD0FPHYCUTTAPQU8dvpdNMAoLor+AlE0wCguiv7//zTAPQU8dgfzNMA9BTx2//80wCguiv4H8zTAbH4AAPMBLMDFekILewYswG1+AAAECyzA6qipovcMTsCPgY0BAABOwI+BjAH3DE7A6qipogAATsCRgQAACa0swDmFQguAqCzAkYEAAPijLMAUV6miBKJOwBRXqaL8rk7AbX4AAPr0LMDFekILg/kswGx+AAAL/izA6qipov//TsDqqKmiB/NOwP4HA3C5Doxi/gcDcP4HA3D+BwNwQQughUELoIUOE4aJDhOGifwP/YdzHbmO/A/9h6AFvXSgBb10oAW9dKAFvXSHCfBshwnwbLkOjGK5DoxiuQ6MYrkOjGK5DoxiuQ6MYrkOjGK5DoxiuQ6MYrkOjGK5Doxi3Qvthd0L7YXdC+2FogxQhqIMUIaiDFCG3Qvuhd0L7oXdC+6FUQZcc1EGXHNRBlxz7gUidO4FInTuBSJ0wgB6fsIAen7CAHp+wgB6fsIAen7CAHp+cx24jnMduI5zHbiOcx25jnMduY78D/2H/A/9h/wP/Yf8D/2H/A/9h/wP/YegBb10oAW9dKAFvXSgBb10nwXAdJ8FwHSfBcB0nwXAdKAFvXSgBb10oAW9dKAFvXRBC6CFQQughUELoIVBC6CFPguehT4LnoU+C56FPguehUELoIVBC6CFQQughUELoIVBC6CFQQughf4HA3D+BwNw/gcDcP4HA3D+BwNw/gcDcP4HA3D+BwNw/gcDcP4HA3D+BwNw/gcDcO4Od4fuDneH7g53h4cJ8GyHCfBshwnwbIcJ8Gx3BxBxdwcQcXcHEHEOE4aJDhOGie4Od4fuDneH7g53h4cJ8GyHCfBs")
+}, {
+"aabb": AABB(-0.018912377, -0.22648805, -1.9684813, 0.037815552, 0.110738404, 3.9369626),
+"attribute_data": PackedByteArray("TcDMTLG//z9NwP8/sb/MTE3AmVmxv5lZTcBlZrG/ZWZNwDJzsb8yc03A/3+xv/9/TUA5dLE/e3JNQCxysT/qc7E/klhOQFBasT+fWk5A4VhNQNJNsT8VTE1AxkuxP4NNTUD/f7E/6nNNQDl0sT//f01ALHKxP2VmTUBlZrE/e3JNQGVmsT+fWk5AUFqxP2VmTkDhWLE/g01NQNJNsT+SWE1AxkuxP/8/TUD/P7E/FUw="),
+"format": 34896613399,
+"index_count": 78,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAADAAAABAAFAAMABgAFAAQABgAHAAUACAAHAAYACAAJAAcACgAJAAgACgALAAkADAANAA4ADAAPAA0AEAARABIAEAATABEAFAAVABYAFAAXABUAGAAZABoAGAAbABkAHAAdAB4AHAAfAB0AIAAhACIAIAAjACEAJAAlACYAJAAnACUAKAApACoAKAArACkA"),
+"material": SubResource("StandardMaterial3D_j2xh1"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 44,
+"vertex_data": PackedByteArray("0AAAAMvM//9J/wAA/////8UAAAD/////Pv8AAMvM///VAAAAmZn//zn/AACZmf//1QAAAGVm//85/wAAZWb//9AAAAAyM///Pv8AADIz///FAAAAAAD//0n/AAAAAP//OP+W/xkvAMAKALr9EDYAwC7/lf9MNwDAAAC7/VUwAMDmAJX/sp0AwP3/uv27lgDA6ACU/3+VAMD//7r9dpwAwC7/lf+yyADAAAC7/anPAMA4/5b/5dAAwAoAuv3uyQDAR/+W/wAABMAAALv9VTAEwDj/lv8ZLwTAxwCW/wAABMAu/5X/TDf3vx4B//9lZve/8P7//2Vm978KALr9EDb3v/D+//9lZgfA6ACU/3+VB8D9/7r9u5YHwB4B//9lZgfA//+6/Xac/78KALr97sn/vy7/lf+yyP+/5gCV/7Kd/784/5b/5dD6v8cAlv////q/R/+W////+r8AALv9qc/6v/9//7//f/+//3//v/9//7//f/+//3//v/9//7//f/+//3//v/9//7//f/+//3//v1UBVH1VAVR9VQFUfVUBVH2rAlWBqwJVgasCVYGrAlWBVQFUfVUBVH1VAVR9VQFUfaoAq36qAKt+qgCrfqoAq36pAKp+qgCqfqoAqn6pAKp+VAGpgFQBqYBUAamAVAGpgAAA/38AAP9/AAD/fwAA/3+pAKp+qgCqfqoAqn6pAKp+")
+}, {
+"aabb": AABB(-1.9684813, -0.26200837, -1.9684813, 3.9369626, 0.2770686, 3.9369626),
+"attribute_data": PackedByteArray("/1/MzP+f/7//n8zM/1//v/9fmNn/n5jZ/19l5v+fZeb/XzLz/58y8/9f////n////1//h/+f/3//n/+H/1//f/9f/4//n/+P/1//l/+f/5f/X7Gf/5+xn/9fTaD/n02g/1//p/+f/6f/X/+v/5//r/9f/7f/n/+3/1//v/+f/7//X8xM/5//P/+fzEz/X/8//1+ZWf+fmVn/X2Vm/59lZv9fMnP/nzJz/1//f/+f/3//X/8H/58AAP+f/wf/XwAA/1//D/+f/w//X/8X/5//F/9fsR//n7Ef/19OIP+fTiD/X/8n/5//J/9f/y//n/8v/1//N/+f/zf/X/8//5//Pw=="),
+"format": 34896613399,
+"index_count": 168,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABgAEAAUABgAFAAcACAAGAAcACAAHAAkACgAIAAkACgAJAAsADAANAA4ADAAPAA0AEAAMAA4AEAAOABEAEgAQABEAEgARABMAFAASABMAFAATABUAFQAWABQAFQAXABYAGAAWABcAGAAXABkAGgAYABkAGgAZABsAHAAaABsAHAAbAB0AHgAcAB0AHgAdAB8AIAAhACIAIAAjACEAJAAgACIAJAAiACUAJgAkACUAJgAlACcAKAAmACcAKAAnACkAKgAoACkAKgApACsALAAtAC4ALAAvAC0AMAAsAC4AMAAuADEAMgAwADEAMgAxADMANAAyADMANAAzADUANQA2ADQANQA3ADYAOAA2ADcAOAA3ADkAOgA4ADkAOgA5ADsAPAA6ADsAPAA7AD0APgA8AD0APgA9AD8A"),
+"material": SubResource("StandardMaterial3D_n3p5o"),
+"name": "材质.015",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 64,
+"vertex_data": PackedByteArray("AAAnZjIzVNUAAAAAAABU1QAAAAAyM1TVAAAnZgAAVNUAACdmZWZU1QAAAABlZlTVAAAnZpmZVNUAAAAAmZlU1QAAJ2bLzFTVAAAAAMvMVNUAACdm//9U1QAAAAD//1TV/9+3vQAA/7///wAAAAD/v//fkFcAAP+///8nZgAA/7//v///AAD/v/+/15kAAP+//58L1AAA/7//n+RtAAD/vziB+IYAAP+/OIHSIAAA/7/GfviGAAD/v8Z+0iAAAP+//18L1AAA/7//X+RtAAD/v/8///8AAP+//z/XmQAA/7//H7e9AAD/v/8fkFcAAP+/AAAnZgAA/78AAAAAAAD/v///J2bLzFTV//8AAP//VNX//wAAy8xU1f//J2b//1TV//8nZpmZVNX//wAAmZlU1f//J2ZlZlTV//8AAGVmVNX//ydmMjNU1f//AAAyM1TV//8nZgAAVNX//wAAAABU1f8ft73/////AAAAAP//////H5BX/////wAAJ2b//////z//////////P9eZ//////9fC9T//////1/kbf/////GfviG/////8Z+0iD/////OIH4hv////84gdIg//////+fC9T//////5/kbf//////v/////////+/15n//////9+3vf//////35BX////////J2b///////8AAP////+qqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFX/f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f1VVqqpVVaqqVVWqqlRVqqpVVaqqVVWqqlVVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqv8//7//P/+//z//v/8//7//P/+//z//v/8//7//P/+//z//v/8//7//P/+//z//v/8//7//v/8//7//P/+//z//v/8//z//v/8//7//P/+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_aj24t")
+
 [node name="植物房" type="Node3D" unique_id=600995712]
 
-[node name="RoomToolManager2" type="CanvasLayer" parent="." unique_id=181688656 node_paths=PackedStringArray("tool_manager")]
-script = ExtResource("2_hrlpd")
-tool_manager = NodePath("../RoomToolManager")
-seed_resources = Array[ExtResource("3_uf7mk")]([ExtResource("5_yvbmx"), ExtResource("5_yvbmx")])
+[node name="InventoryManager" type="Node3D" parent="." unique_id=612305776 groups=["inventory_manager"]]
+script = ExtResource("1_sedri")
+initial_items = Array[ExtResource("2_mkbxh")]([SubResource("Resource_fthdk")])
 
-[node name="MarginContainer" type="MarginContainer" parent="RoomToolManager2" unique_id=1712972831]
+[node name="ShopManager" type="Node3D" parent="." unique_id=883377694 groups=["shop_manager"]]
+script = ExtResource("4_fthdk")
+permanent_stock = Array[ExtResource("5_rb3by")]([ExtResource("5_yvbmx"), ExtResource("5_yvbmx"), ExtResource("5_yvbmx"), ExtResource("5_yvbmx"), ExtResource("5_yvbmx")])
+rare_item_pool = Array[ExtResource("5_rb3by")]([ExtResource("5_yvbmx"), ExtResource("5_yvbmx"), ExtResource("5_yvbmx"), ExtResource("5_yvbmx"), ExtResource("5_yvbmx")])
+
+[node name="PlantingToolManager" type="Node3D" parent="." unique_id=565445337 node_paths=PackedStringArray("tools")]
+script = ExtResource("10_4xbo0")
+tools = [NodePath("SeedTool"), NodePath("WateringTool")]
+
+[node name="SeedTool" type="Node3D" parent="PlantingToolManager" unique_id=1839478056 node_paths=PackedStringArray("player_input", "inventory_manager")]
+script = ExtResource("12_apobr")
+player_input = NodePath("../../PlayerInput")
+inventory_manager = NodePath("../../InventoryManager")
+
+[node name="WateringTool" type="Node3D" parent="PlantingToolManager" unique_id=789632636 node_paths=PackedStringArray("player_input")]
+script = ExtResource("11_8upo0")
+player_input = NodePath("../../PlayerInput")
+
+[node name="RoomUI" type="CanvasLayer" parent="." unique_id=181688656 node_paths=PackedStringArray("tool_manager", "inventory_ui")]
+script = ExtResource("2_hrlpd")
+tool_manager = NodePath("../PlantingToolManager")
+inventory_ui = NodePath("InventoryUI")
+
+[node name="MarginContainer" type="MarginContainer" parent="RoomUI" unique_id=1712972831]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -163,59 +323,52 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/margin_bottom = 50
 
-[node name="VBoxContainer" type="VBoxContainer" parent="RoomToolManager2/MarginContainer" unique_id=1967850738]
+[node name="VBoxContainer" type="VBoxContainer" parent="RoomUI/MarginContainer" unique_id=1967850738]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="MainToolbar" type="HBoxContainer" parent="RoomToolManager2/MarginContainer/VBoxContainer" unique_id=2080828889]
+[node name="MainToolbar" type="HBoxContainer" parent="RoomUI/MarginContainer/VBoxContainer" unique_id=2080828889]
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
 
-[node name="BtnTool_Seed" type="Button" parent="RoomToolManager2/MarginContainer/VBoxContainer/MainToolbar" unique_id=857606397]
+[node name="BtnTool_Bag" type="Button" parent="RoomUI/MarginContainer/VBoxContainer/MainToolbar" unique_id=857606397]
 layout_mode = 2
 theme_override_font_sizes/font_size = 45
-text = "~种子库~"
+text = "~背包~"
 
-[node name="BtnTool_Water" type="Button" parent="RoomToolManager2/MarginContainer/VBoxContainer/MainToolbar" unique_id=1722529544]
+[node name="BtnTool_Water" type="Button" parent="RoomUI/MarginContainer/VBoxContainer/MainToolbar" unique_id=1722529544]
 layout_mode = 2
 theme_override_font_sizes/font_size = 45
 text = "~浇水~"
 
-[node name="Btn_Empty" type="Button" parent="RoomToolManager2/MarginContainer/VBoxContainer/MainToolbar" unique_id=586056137]
+[node name="Btn_Empty" type="Button" parent="RoomUI/MarginContainer/VBoxContainer/MainToolbar" unique_id=586056137]
 layout_mode = 2
 theme_override_font_sizes/font_size = 45
 text = "\"🖐️ 空手\")"
 
-[node name="SeedSubMenu" type="HBoxContainer" parent="RoomToolManager2/MarginContainer/VBoxContainer" unique_id=383351732]
-layout_mode = 2
+[node name="InventoryUI" parent="RoomUI" unique_id=1507194385 node_paths=PackedStringArray("inventory_manager") instance=ExtResource("1_fthdk")]
+offset_top = -160.75
+offset_bottom = 320.25
+inventory_manager = NodePath("../../InventoryManager")
+slot_prefab = ExtResource("2_kbp32")
 
-[node name="Btn_Seed1" type="Button" parent="RoomToolManager2/MarginContainer/VBoxContainer/SeedSubMenu" unique_id=17155533]
-layout_mode = 2
+[node name="PointsLabel" type="Label" parent="RoomUI" unique_id=1755016986]
+offset_left = 24.0
+offset_top = 23.0
+offset_right = 415.0
+offset_bottom = 86.0
 theme_override_font_sizes/font_size = 45
-text = "\"🌱 姬玉露种子\""
+text = "点数：0"
 
-[node name="Btn_Seed2" type="Button" parent="RoomToolManager2/MarginContainer/VBoxContainer/SeedSubMenu" unique_id=1775889651]
-layout_mode = 2
-theme_override_font_sizes/font_size = 45
-text = "\"🌿 龟背竹种子\")"
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2082513056]
+environment = SubResource("Environment_8upo0")
+camera_attributes = SubResource("CameraAttributesPractical_apobr")
 
-[node name="RoomToolManager" type="Node3D" parent="." unique_id=565445337 node_paths=PackedStringArray("tools")]
-script = ExtResource("10_4xbo0")
-tools = [NodePath("SeedTool"), NodePath("WateringTool")]
-
-[node name="SeedTool" type="Node3D" parent="RoomToolManager" unique_id=1839478056 node_paths=PackedStringArray("player_input")]
-script = ExtResource("12_apobr")
-player_input = NodePath("../../PlayerInput")
-
-[node name="WateringTool" type="Node3D" parent="RoomToolManager" unique_id=789632636 node_paths=PackedStringArray("player_input")]
-script = ExtResource("11_8upo0")
-player_input = NodePath("../../PlayerInput")
-
-[node name="UIManager" type="CanvasLayer" parent="." unique_id=1647858835]
+[node name="GlobalUIManager" type="CanvasLayer" parent="." unique_id=1647858835]
 script = ExtResource("6_ebj1r")
 
-[node name="GlobalTool" type="MarginContainer" parent="UIManager" unique_id=1243398750]
+[node name="GlobalTool" type="MarginContainer" parent="GlobalUIManager" unique_id=1243398750]
 anchors_preset = -1
 anchor_left = 0.94400007
 anchor_right = 1.0
@@ -226,27 +379,23 @@ offset_right = -75.82007
 offset_bottom = 67.85498
 grow_horizontal = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UIManager/GlobalTool" unique_id=1865077109]
+[node name="VBoxContainer" type="VBoxContainer" parent="GlobalUIManager/GlobalTool" unique_id=1865077109]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Label" type="Label" parent="UIManager/GlobalTool/VBoxContainer" unique_id=740432023]
+[node name="Label" type="Label" parent="GlobalUIManager/GlobalTool/VBoxContainer" unique_id=740432023]
 layout_mode = 2
 theme_override_font_sizes/font_size = 45
 
-[node name="NextDayButton" type="Button" parent="UIManager/GlobalTool/VBoxContainer" unique_id=432947454]
+[node name="NextDayButton" type="Button" parent="GlobalUIManager/GlobalTool/VBoxContainer" unique_id=432947454]
 layout_mode = 2
 theme_override_font_sizes/font_size = 45
 text = "下一天"
 
-[node name="WaterButton" type="Button" parent="UIManager/GlobalTool/VBoxContainer" unique_id=1375690396]
+[node name="WaterButton" type="Button" parent="GlobalUIManager/GlobalTool/VBoxContainer" unique_id=1375690396]
 layout_mode = 2
 theme_override_font_sizes/font_size = 45
 text = "浇水（water+50）"
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2082513056]
-environment = SubResource("Environment_8upo0")
-camera_attributes = SubResource("CameraAttributesPractical_apobr")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=1380995843]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95360446, 0.9289834, -1.0468094)
@@ -254,10 +403,6 @@ light_energy = 2.0
 
 [node name="PlayerInput" type="Node3D" parent="." unique_id=1422412122]
 script = ExtResource("1_428tp")
-
-[node name="PlayerActionManager" type="Node3D" parent="." unique_id=1510619922 node_paths=PackedStringArray("player_input")]
-script = ExtResource("7_xic0t")
-player_input = NodePath("../PlayerInput")
 
 [node name="PlantEntity" parent="." unique_id=1898593668 instance=ExtResource("1_yvbmx")]
 base_plant_resource = null
@@ -303,16 +448,87 @@ light_volumetric_fog_energy = 10.0
 shadow_enabled = true
 
 [node name="多肉花盆" parent="." unique_id=1305140977 instance=ExtResource("6_428tp")]
-transform = Transform3D(0.9576166, 0, 0.28804585, 0, 1, 0, -0.28804585, 0, 0.9576166, -0.9943613, 0, 0.3980073)
-
-[node name="多肉花盆2" parent="." unique_id=347244000 instance=ExtResource("6_428tp")]
-transform = Transform3D(0.9576166, 0, 0.28804585, 0, 1, 0, -0.28804585, 0, 0.9576166, 1.2999107, 0, -0.16921106)
-
-[node name="多肉花盆3" parent="." unique_id=873658614 instance=ExtResource("6_428tp")]
-transform = Transform3D(0.9576166, 0, 0.28804585, 0, 1, 0, -0.28804585, 0, 0.9576166, -0.74038315, 0, -1.8877983)
+transform = Transform3D(0.9916757, 0, 0.12876098, 0, 1, 0, -0.12876098, 0, 0.9916757, -2.1624851, 0, -0.72019625)
+daily_weed_chance = 0.8
+weed_prefab = ExtResource("22_kckv3")
+spawn_inner_radius = 0.5
+spawn_outer_radius = 1.0
 
 [node name="木圆桌" type="Node3D" parent="." unique_id=133857067]
 transform = Transform3D(0.5235387, 0, 0, 0, 0.5235387, 0, 0, 0, 0.5235387, 0, -0.86383224, 0)
 
 [node name="柱体_005" type="MeshInstance3D" parent="木圆桌" unique_id=806114822]
 mesh = SubResource("ArrayMesh_hrlpd")
+
+[node name="CatalogInteractable" type="StaticBody3D" parent="." unique_id=1036481384]
+transform = Transform3D(0.54488313, 0, -0.19849358, 0, 0.5799115, 0, 0.19849358, 0, 0.54488313, 2.233204, -0.6089724, -2.289225)
+collision_layer = 64
+script = ExtResource("17_kbp32")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CatalogInteractable" unique_id=1978373185]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0045166016, -0.1253357, -0.0014648438)
+shape = SubResource("BoxShape3D_kbp32")
+
+[node name="购物目录" type="MeshInstance3D" parent="CatalogInteractable" unique_id=1442919768]
+mesh = SubResource("ArrayMesh_ltasy")
+
+[node name="CatalogUI" type="CanvasLayer" parent="." unique_id=1969793869 node_paths=PackedStringArray("interactable_trigger")]
+layer = 100
+script = ExtResource("18_q817x")
+item_ui_prefab = ExtResource("19_hosio")
+interactable_trigger = NodePath("../CatalogInteractable")
+
+[node name="ColorRect" type="ColorRect" parent="CatalogUI" unique_id=1151193050]
+custom_minimum_size = Vector2(900, 1200)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1475195, 0.17856997, 0.14987299, 0.84313726)
+
+[node name="CloseButton" type="Button" parent="CatalogUI/ColorRect" unique_id=1718126132]
+layout_mode = 0
+offset_left = 573.0
+offset_top = 21.0
+offset_right = 851.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 45
+text = "离开"
+
+[node name="Panel" type="Panel" parent="CatalogUI/ColorRect" unique_id=1410031738]
+clip_contents = true
+custom_minimum_size = Vector2(800, 1000)
+layout_mode = 0
+offset_left = 55.0
+offset_top = 109.0
+offset_right = 855.0
+offset_bottom = 1109.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CatalogUI/ColorRect/Panel" unique_id=757781216]
+clip_contents = false
+layout_mode = 0
+script = ExtResource("21_4a52c")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CatalogUI/ColorRect/Panel/ScrollContainer" unique_id=237736089]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CatalogUI/ColorRect/Panel/ScrollContainer/VBoxContainer" unique_id=110653619]
+layout_mode = 2
+theme_override_font_sizes/font_size = 45
+text = "--常驻商品--"
+
+[node name="PermanentGrid" type="GridContainer" parent="CatalogUI/ColorRect/Panel/ScrollContainer/VBoxContainer" unique_id=2040111365]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="CatalogUI/ColorRect/Panel/ScrollContainer/VBoxContainer" unique_id=1611748683]
+layout_mode = 2
+theme_override_font_sizes/font_size = 45
+text = "--今日限定--"
+
+[node name="DailyGrid" type="GridContainer" parent="CatalogUI/ColorRect/Panel/ScrollContainer/VBoxContainer" unique_id=994819040]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 2

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 TimeManager="*uid://b2p7kvwd72sfs"
+InventoryManager="*uid://chu1xvcq5rnop"
 
 [debug]
 
@@ -85,6 +86,7 @@ left_click={
 3d_physics/layer_3="Glass"
 3d_physics/layer_4="Props"
 3d_physics/layer_6="FlowerPot"
+3d_physics/layer_7="Interactable"
 
 [physics]
 

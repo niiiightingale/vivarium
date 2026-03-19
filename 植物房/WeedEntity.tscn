@@ -1,0 +1,55 @@
+[gd_scene format=4 uid="uid://bj4hxd2hod2xy"]
+
+[ext_resource type="Script" uid="uid://bprt3m3qo3tue" path="res://植物房/WeedEntity.gd" id="1_6ypmx"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vk46g"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6oq5j"]
+_surfaces = [{
+"aabb": AABB(-0.06290467, -0.0031821316, -1.3909539e-10, 0.12580934, 1.1642957, 1e-05),
+"format": 34359742465,
+"index_count": 30,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABgAEAAUABgAFAAcACAAGAAcACAAHAAkACgAIAAkACgAJAAsA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("dQldvOg6jj9FnFAzihAVPF6flD98/FkzdQldPOg6jj9FnFAzihAVvF6flD98/FkzUx/IvMzxej8SCDgzUx/IPMzxej8SCDgz2ecdvTalOz9ZnAkz2ecdPTalOz9ZnAkzyQZXvfl/xD6xGpAyyQZXPfl/xD6xGpAyKtSAvU+LULvf7xivKtSAPU+LULvf7xiv")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_nnghv"]
+resource_name = "杂草_平面_012"
+_surfaces = [{
+"aabb": AABB(-0.06290467, -0.0031821316, -1.3909539e-10, 0.12580934, 1.1642957, 1e-05),
+"attribute_data": PackedByteArray("AAAAAMzMTD4AAIA/AAAAAAAAgD/MzEw+AAAAAAAAAAAAAAAAzMzMPgAAgD/MzMw+AAAAAJqZGT8AAIA/mpkZPwAAAADNzEw/AACAP83MTD8AAAAAAACAPwAAgD8AAIA/"),
+"format": 34359742487,
+"index_count": 30,
+"index_data": PackedByteArray("AAABAAIAAAADAAEABAAAAAIABAACAAUABgAEAAUABgAFAAcACAAGAAcACAAHAAkACgAIAAkACgAJAAsA"),
+"material": SubResource("StandardMaterial3D_vk46g"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("dQldvOg6jj9FnFAzihAVPF6flD98/FkzdQldPOg6jj9FnFAzihAVvF6flD98/FkzUx/IvMzxej8SCDgzUx/IPMzxej8SCDgz2ecdvTalOz9ZnAkz2ecdPTalOz9ZnAkzyQZXvfl/xD6xGpAyyQZXPfl/xD6xGpAyKtSAvU+LULvf7xivKtSAPU+LULvf7xiv/3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_6oq5j")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4a52c"]
+albedo_color = Color(0.39719918, 0.8310774, 0.43551373, 1)
+billboard_mode = 2
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4a52c"]
+radius = 0.2211914
+height = 1.1499634
+
+[node name="WeedEntity" type="Area3D" unique_id=2090197644]
+collision_layer = 64
+script = ExtResource("1_6ypmx")
+
+[node name="Weed_mesh" type="MeshInstance3D" parent="." unique_id=115292409]
+mesh = SubResource("ArrayMesh_nnghv")
+surface_material_override/0 = SubResource("StandardMaterial3D_4a52c")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1091731345]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58169556, 0)
+shape = SubResource("CapsuleShape3D_4a52c")

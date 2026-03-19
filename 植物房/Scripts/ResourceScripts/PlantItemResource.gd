@@ -1,12 +1,11 @@
 class_name PlantItemResource
-extends Resource
+extends ItemResource
 
 # ==========================================
 # 🏷️ 基础身份信息 (Identity)
 # ==========================================
 @export_group("Identity")
 @export var item_id: String = "plant_unknown" 
-@export var display_name: String = "未知植物" 
 @export var is_micro_plant: bool = false 
 
 enum MutationType { NONE, VARIEGATED_WHITE, VARIEGATED_PINK, GOLDEN }
@@ -27,6 +26,9 @@ enum MutationType { NONE, VARIEGATED_WHITE, VARIEGATED_PINK, GOLDEN }
 # ✨ 核心升级：把单一模型变成了一个数组！
 # 在检查器里，索引 0 放阶段 1 的模型（种子），索引 1 放阶段 2 的模型（幼苗）...
 @export var stage_models: Array[PackedScene] = []
+# 数组索引 0 对应 stage 1，索引 1 对应 stage 2...
+# 填入 FlowerPot.PotTier 的枚举值 (0:多肉, 1:小盆, 2:中盆, 3:大盆)
+@export var required_pot_tiers: Array[int] = [0, 0, 0]
 # ⏱️ 新陈代谢与生长速率 (Metabolism & Rates)
 # ==========================================
 @export_group("Metabolism")

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dsfpy2771512h"]
+
+[ext_resource type="Script" uid="uid://wbxyd1uv3a5v" path="res://植物房/Scripts/InventorySlotUI.gd" id="1_1jsuu"]
+
+[node name="InventorySlotUI" type="Button" unique_id=149144341]
+clip_contents = true
+custom_minimum_size = Vector2(100, 100)
+script = ExtResource("1_1jsuu")

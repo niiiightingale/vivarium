@@ -6,6 +6,8 @@ extends Node
 # ==========================================
 var is_interacting: bool = false
 var is_just_interacted: bool = false
+var is_pointing_at_interactable: bool = false
+var hovered_interactable: Node3D = null
 
 # ==========================================
 # 🟤 泥土层探测数据 (Layer 18)
@@ -40,14 +42,21 @@ func _process(_delta: float) -> void:
 	# 3. 分别呼叫两个检测方法
 	_check_dirt_layer(ray_origin, ray_dir, space_state)
 	_check_pot_layer(ray_origin, ray_dir, space_state)
-
+	_check_interactable_layer(ray_origin, ray_dir, space_state) # ✨ 新增调用
+		
+	# 4. ✨ 新增：集中处理通用实体交互
+	if is_just_interacted and is_pointing_at_interactable and hovered_interactable:
+		hovered_interactable.interact()
+		print("点击交互了！")
+		# 清除当帧的交互状态，防止穿透到底层引发其他工具的误判
+		is_just_interacted = false
 
 # ==========================================
 # 📡 射线雷达方法
 # ==========================================
 func _check_dirt_layer(ray_origin: Vector3, ray_dir: Vector3, space_state: PhysicsDirectSpaceState3D):
 	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_dir * 100.0)
-	query.collision_mask = 131072 # Layer 18 的值 (1 << 17)
+	query.collision_mask = 18 # Layer 18 的值 (1 << 17)
 	var result = space_state.intersect_ray(query)
 	
 	if result:
@@ -72,3 +81,19 @@ func _check_pot_layer(ray_origin: Vector3, ray_dir: Vector3, space_state: Physic
 	else:
 		is_pointing_at_pot = false
 		hovered_pot_collider = null
+
+func _check_interactable_layer(ray_origin: Vector3, ray_dir: Vector3, space_state: PhysicsDirectSpaceState3D):
+	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_dir * 100.0)
+	
+	query.collision_mask = 64
+	query.collide_with_areas = true
+	
+	var result = space_state.intersect_ray(query)
+	
+	# 鸭子类型安全校验：撞到的东西必须有 interact 方法
+	if result and result.collider.has_method("interact"):
+		is_pointing_at_interactable = true
+		hovered_interactable = result.collider
+	else:
+		is_pointing_at_interactable = false
+		hovered_interactable = null

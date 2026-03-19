@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://d311d3nnj8aci"]
+
+[ext_resource type="Script" uid="uid://b2ct4tia3e7h2" path="res://植物房/Scripts/CatalogItemUI.gd" id="1_26u42"]
+
+[node name="CatalogItemUI" type="PanelContainer" unique_id=52470243]
+custom_minimum_size = Vector2(200, 80)
+offset_left = 359.0
+offset_top = 45.0
+offset_right = 559.0
+offset_bottom = 125.0
+script = ExtResource("1_26u42")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1706709788]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TextContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1519267471]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 15
+
+[node name="NameLabel" type="Label" parent="HBoxContainer/TextContainer" unique_id=247752581]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72021073, 0.83830565, 0.68655694, 1)
+theme_override_font_sizes/font_size = 50
+text = "姬玉露"
+vertical_alignment = 1
+
+[node name="DescLabel" type="Label" parent="HBoxContainer/TextContainer" unique_id=434347530]
+custom_minimum_size = Vector2(500, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "极其通透的十二卷属多肉，需要细心呵护的微观明珠"
+autowrap_mode = 2
+
+[node name="ActionContainer" type="HBoxContainer" parent="HBoxContainer" unique_id=124474639]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PriceLabel" type="Label" parent="HBoxContainer/ActionContainer" unique_id=577899089]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.99615985, 0.8193396, 0.34745273, 1)
+theme_override_font_sizes/font_size = 50
+text = "100"
+horizontal_alignment = 1
+
+[node name="BuyButton" type="Button" parent="HBoxContainer/ActionContainer" unique_id=589126778]
+layout_mode = 2
+theme_override_font_sizes/font_size = 45
+text = "购买"

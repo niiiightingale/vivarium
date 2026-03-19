@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c1pyw1lx7ul5s"]
 
-[ext_resource type="Script" uid="uid://cb5rcnuem8asm" path="res://植物房/PlantEntity.gd" id="1_dqrhj"]
+[ext_resource type="Script" uid="uid://cb5rcnuem8asm" path="res://植物房/Scripts/PlantEntity.gd" id="1_dqrhj"]
 [ext_resource type="Resource" uid="uid://bk2wqqwbv23s8" path="res://植物房/姬玉露/姬玉露.tres" id="2_sihi4"]
 
 [node name="PlantEntity" type="Node3D" unique_id=1898593668]

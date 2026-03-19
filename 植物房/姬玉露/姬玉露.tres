@@ -1,18 +1,23 @@
 [gd_resource type="Resource" script_class="PlantItemResource" format=3 uid="uid://bk2wqqwbv23s8"]
 
-[ext_resource type="Script" uid="uid://b7foi061mxdy4" path="res://植物房/PlantItemResource.gd" id="1_sfou5"]
+[ext_resource type="Texture2D" uid="uid://c7g57k1mfbu48" path="res://GameSystems/PlacementSystem/TrunkTexture.png" id="1_8hu07"]
+[ext_resource type="Script" uid="uid://b7foi061mxdy4" path="res://植物房/Scripts/ResourceScripts/PlantItemResource.gd" id="2_8hu07"]
 [ext_resource type="PackedScene" uid="uid://blc8rnh3as2ak" path="res://植物房/姬玉露/姬玉露stage_1.tscn" id="2_l6hmd"]
 [ext_resource type="PackedScene" uid="uid://db5hh7rvpm10m" path="res://植物房/姬玉露/姬玉露stage_2.tscn" id="3_olhnb"]
 [ext_resource type="PackedScene" uid="uid://bmc0b1wdl3wgw" path="res://植物房/姬玉露/姬玉露stage_3.tscn" id="4_x1r15"]
 
 [resource]
-script = ExtResource("1_sfou5")
+script = ExtResource("2_8hu07")
 item_id = "plant_test"
-display_name = "姬玉露"
 stage_models = Array[PackedScene]([ExtResource("2_l6hmd"), ExtResource("3_olhnb"), ExtResource("4_x1r15")])
+required_pot_tiers = Array[int]([0, 0, 1])
 daily_water_consumption = 15.0
 daily_nutrition_consumption = 20.0
-thirsty_threshold = 10.0
 healthy_water_threshold = 10.0
 drown_water_threshold = 200.0
+id = "plant_test"
+display_name = "姬玉露"
+icon = ExtResource("1_8hu07")
+price = 100
+description = "极其通透的十二卷属多肉，需要细心呵护的微观明珠"
 metadata/_custom_type_script = "uid://b7foi061mxdy4"
