@@ -5,8 +5,8 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_si33s")
-shader_parameter/glass_color = Color(1, 1, 1, 0.14117648)
-shader_parameter/roughness = 0.15
+shader_parameter/glass_color = Color(1, 1, 1, 0.08235294)
+shader_parameter/roughness = 0.0
 shader_parameter/metallic = 1.0
 shader_parameter/specular_strength = 0.0
 shader_parameter/base_refraction_strength = 0.0050000002375

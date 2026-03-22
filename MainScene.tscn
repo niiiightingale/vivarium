@@ -23,6 +23,7 @@
 [ext_resource type="MultiMesh" uid="uid://cxyejaj0cw3p7" path="res://GameSystems/MossSystem/MossInstance/牛毛藓.tres" id="17_3slyh"]
 [ext_resource type="PackedScene" uid="uid://bkj402wnumr44" path="res://GameSystems/PlacementSystem/PlaceableBranch.tscn" id="20_xtmsi"]
 [ext_resource type="PackedScene" uid="uid://crcy2qluojpwi" path="res://生态缸/_生态缸相关模型/tscn/复古水壶.tscn" id="26_amtbh"]
+[ext_resource type="PackedScene" uid="uid://1dtwkflvm5kb" path="res://placeable钱串.tscn" id="26_obg7t"]
 [ext_resource type="Script" uid="uid://b3lvf13ucx6vo" path="res://GameUI/BuildUI.gd" id="27_obg7t"]
 [ext_resource type="Texture2D" uid="uid://k5am8d24s2eb" path="res://生态缸/圆桌和吊灯/木圆桌_木纹木板贴图 (59)材质贴图下载_爱给网_aigei_com.jpg" id="32_lppff"]
 
@@ -59,8 +60,8 @@ energy_multiplier = 0.5
 sky_material = SubResource("PanoramaSkyMaterial_nm5af")
 
 [sub_resource type="Environment" id="Environment_1305s"]
-background_mode = 2
-background_color = Color(0.11263416, 0.17569956, 0.24776903, 1)
+background_mode = 1
+background_color = Color(0.4520458, 0.5237478, 0.6010949, 1)
 background_energy_multiplier = 0.6
 sky = SubResource("Sky_obg7t")
 ambient_light_source = 3
@@ -316,7 +317,7 @@ tools = [NodePath("PlacementTool"), NodePath("ShovelTool"), NodePath("SmoothTool
 
 [node name="PlacementTool" type="Node3D" parent="ToolManager" unique_id=1989854413 node_paths=PackedStringArray("player_input", "soil_manager")]
 script = ExtResource("5_anuui")
-item_scene = ExtResource("20_xtmsi")
+item_scene = ExtResource("26_obg7t")
 player_input = NodePath("../../PlayerInput")
 soil_manager = NodePath("../../SoilManager")
 
@@ -479,6 +480,7 @@ shadow_enabled = true
 
 [node name="生态箱大灯" type="SpotLight3D" parent="灯光" unique_id=1300166911]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 8.499763, 0)
+visible = false
 light_color = Color(0.8962112, 0.8884251, 0.8451143, 1)
 light_energy = 80.0
 light_indirect_energy = 0.1
@@ -615,6 +617,10 @@ visible = false
 visible = false
 
 [node name="玻璃缸体和底座" parent="环境模型" unique_id=1482169651 instance=ExtResource("9_4mcbk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004094124, 0.6079689, -0.0057401657)
+
+[node name="Placeable钱串" parent="环境模型" unique_id=30144832 instance=ExtResource("26_obg7t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004094124, 0.8862598, -0.0057401657)
+visible = false
 
 [connection signal="tool_selected" from="ToolManager/BuildUI" to="ToolManager" method="switch_tool"]
