@@ -6,11 +6,11 @@ extends Area3D
 func interact():
 	# 1. 向上溯源：找到寄生的花盆，修正底层负面数据
 	var pot_node = get_parent()
-	if pot_node and pot_node is FlowerPot:
+	if pot_node and pot_node is Pot:
 		pot_node.current_weeds -= 1
 		# 安全兜底，防止数值异常穿透为负数
 		pot_node.current_weeds = max(0, pot_node.current_weeds) 
-		print("➖ 成功拔除杂草！当前杂草数: ", pot_node.current_weeds, "/", FlowerPot.MAX_WEEDS[pot_node.pot_tier])
+		print("➖ 成功拔除杂草！当前杂草数: ", pot_node.current_weeds, "/", Pot.MAX_WEEDS[pot_node.pot_tier])
 	
 	# 2. 横向通信：呼叫经济总管加钱
 	var inv_manager = get_tree().get_first_node_in_group("inventory_manager")

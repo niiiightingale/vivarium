@@ -11,10 +11,9 @@ config_version=5
 [application]
 
 config/name="vivarium"
-run/main_scene="uid://o76d02en4m6o"
+run/main_scene="uid://d3r8wywfsi446"
 config/features=PackedStringArray("4.6", "Forward Plus")
-run/max_fps=90
-config/icon="res://icon.svg"
+run/max_fps=120
 
 [autoload]
 
@@ -97,3 +96,5 @@ common/physics_interpolation=true
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+lights_and_shadows/directional_shadow/size=8192
+anti_aliasing/quality/msaa_3d=2

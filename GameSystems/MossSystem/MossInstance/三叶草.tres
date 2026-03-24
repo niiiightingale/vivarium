@@ -1,7 +1,0 @@
-[gd_resource type="MultiMesh" format=3 uid="uid://dpfcjln7lhpsv"]
-
-[ext_resource type="ArrayMesh" uid="uid://ds73gjxjfqcks" path="res://GameSystems/MossSystem/MossInstance/mesh_三叶草.tres" id="1_ncafx"]
-
-[resource]
-transform_format = 1
-mesh = ExtResource("1_ncafx")

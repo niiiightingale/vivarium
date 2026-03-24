@@ -1,7 +1,7 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://tljv81sw3f8h"]
 
-[ext_resource type="Shader" uid="uid://fc1qt3qcxi4l" path="res://植物房/多肉描边nextpass.gdshader" id="1_h4cbk"]
-[ext_resource type="Shader" uid="uid://d2kjh1x12d3yq" path="res://植物房/多肉测试.gdshader" id="2_lnrrj"]
+[ext_resource type="Shader" uid="uid://fc1qt3qcxi4l" path="res://ShaderMaterial/多肉描边nextpass.gdshader" id="1_h4cbk"]
+[ext_resource type="Shader" uid="uid://d2kjh1x12d3yq" path="res://ShaderMaterial/多肉测试.gdshader" id="2_lnrrj"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v0kak"]
 render_priority = 0

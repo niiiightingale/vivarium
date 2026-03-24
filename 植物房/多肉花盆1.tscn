@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://e7b6sbpkc2ke"]
 
-[ext_resource type="Script" uid="uid://qha1nrkanpgp" path="res://植物房/Scripts/FlowerPot.gd" id="1_wr57g"]
+[ext_resource type="Script" uid="uid://qha1nrkanpgp" path="res://Scripts/ResourceScripts/Pot.gd" id="1_wr57g"]
 [ext_resource type="PackedScene" uid="uid://c1pyw1lx7ul5s" path="res://植物房/PlantEntity.tscn" id="2_smysx"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dp1hn"]

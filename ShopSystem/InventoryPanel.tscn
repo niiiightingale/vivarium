@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://n0skdie1jdud"]
+
+[ext_resource type="Script" uid="uid://q7mvjtct1wto" path="res://GameUI/InventoryUI.gd" id="1_ixcos"]
+
+[node name="InventoryPanel" type="PanelContainer" unique_id=1507194385]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -240.5
+offset_right = 830.0
+offset_bottom = 240.5
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_ixcos")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1125140253]
+layout_mode = 2
+
+[node name="Tabs_Category" type="HBoxContainer" parent="VBoxContainer" unique_id=345956949]
+layout_mode = 2
+alignment = 1
+
+[node name="Btn_Seed" type="Button" parent="VBoxContainer/Tabs_Category" unique_id=1137308860]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "种子"
+
+[node name="Btn_Fertilizer" type="Button" parent="VBoxContainer/Tabs_Category" unique_id=2070588663]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "肥料"
+
+[node name="Btn_Pot" type="Button" parent="VBoxContainer/Tabs_Category" unique_id=927385324]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "花盆
+"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=284095275]
+custom_minimum_size = Vector2(830, 400)
+layout_mode = 2
+
+[node name="SlotGrid" type="GridContainer" parent="VBoxContainer/ScrollContainer" unique_id=502530956]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 8
